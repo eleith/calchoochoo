@@ -1,0 +1,38 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.eleith.calchoochoo.DestinationSourceFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/destinationEdit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="destination"/>
+
+        <TextView
+            android:id="@+id/sourceEdit"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="source"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/timeEdit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="departing after ..."/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>
