@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 23
@@ -17,14 +18,44 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'  // butterknife
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
-    compile 'org.apache.commons:commons-lang3:3.4'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile "com.android.support:design:23.4.0"
+
+    //commons-lang (used for fuzzy search)
+    compile 'org.apache.commons:commons-lang3:3.4'
+
+    //sqliteassethelper (used to load existing sqlite db)
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
+
+    //rxjava (currently used for the event bus)
+    compile 'io.reactivex:rxandroid:1.2.0'
+    compile 'io.reactivex:rxjava:1.1.4'
+
+    //dagger2 (dependency injection)
+    apt 'com.google.dagger:dagger-compiler:2.7'
+    compile 'com.google.dagger:dagger:2.7'
+    provided 'javax.annotation:jsr250-api:1.0'
+
+    //butterknife (view injection)
+    compile 'com.jakewharton:butterknife:8.4.0'
+    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+
+    //DBFlow
+    apt "com.github.Raizlabs.DBFlow:dbflow-processor:3.1.1"
+    compile "com.github.Raizlabs.DBFlow:dbflow-core:3.1.1"
+    compile "com.github.Raizlabs.DBFlow:dbflow:3.1.1"
+
+    //Parceler
+    compile 'org.parceler:parceler-api:1.1.1'
+    apt 'org.parceler:parceler:1.1.1'
 }

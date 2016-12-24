@@ -8,6 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.data.Stop;
+import com.eleith.calchoochoo.utils.DistanceUtils;
+import com.eleith.calchoochoo.utils.RxBus;
+import com.eleith.calchoochoo.utils.RxMessage;
+import com.eleith.calchoochoo.utils.RxMessageKeys;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,17 +19,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResultsViewAdapter.ViewHolder> {
 
   private ArrayList<Stop> stops = new ArrayList<Stop>();
   private Location location;
-  private SearchResultsViewAdapterListener listener;
+  private RxBus rxBus;
 
-  public interface SearchResultsViewAdapterListener {
-    void onSearchResultSelect(Stop stop);
+  public SearchResultsViewAdapter(RxBus rxBus) {
+    this.rxBus = rxBus;
   }
 
-  public SearchResultsViewAdapter(ArrayList<Stop> stops) {
+  public void setStops(ArrayList<Stop> stops) {
     this.stops = stops;
   }
 
@@ -40,10 +46,6 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
     }
   }
 
-  public void setSearchResultsViewAdapterListener(SearchResultsViewAdapterListener listener) {
-    this.listener = listener;
-  }
-
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
@@ -53,7 +55,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
     view.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        listener.onSearchResultSelect(holder.mItem);
+        rxBus.send(new RxMessage(RxMessageKeys.SEARCH_RESULT_STOP, holder.mItem));
       }
     });
 

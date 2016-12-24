@@ -2,34 +2,31 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:context=".DepartingArrivingDialog">
+                android:padding="20dp"
+                tools:context=".fragments.DepartingArrivingDialogFragment">
 
-    <LinearLayout
-        android:id="@+id/tabs"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/timeTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_gravity="top">
 
-        <TextView
+        <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Depart at"
-            android:textAlignment="center"/>
+            android:layout_height="match_parent"
+            android:text="Arrive By"/>
 
-        <TextView
+        <android.support.design.widget.TabItem
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Arrive by"
-            android:textAlignment="center"/>
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:text="Depart At"/>
+    </android.support.design.widget.TabLayout>
 
     <LinearLayout
         android:id="@+id/picker"
+        android:layout_below="@id/timeTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tabs"
         android:orientation="horizontal">
 
         <TimePicker
@@ -42,21 +39,28 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/date"
+        android:id="@+id/datePicker"
         android:layout_below="@id/picker"
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-        <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/dateSpinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
-        </HorizontalScrollView>
+            <TextView
+                android:id="@+id/dateSpinnerText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+        </android.support.v4.view.ViewPager>
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/date"
+        android:layout_below="@id/datePicker"
         android:layoutDirection="rtl"
         android:orientation="horizontal">
 

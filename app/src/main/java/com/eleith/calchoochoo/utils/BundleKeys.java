@@ -1,4 +1,4 @@
-package com.eleith.calchoochoo;
+package com.eleith.calchoochoo.utils;
 
 public class BundleKeys {
   public static final String STOPS = "stops";

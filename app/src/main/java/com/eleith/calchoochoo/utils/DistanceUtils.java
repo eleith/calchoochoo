@@ -1,4 +1,4 @@
-package com.eleith.calchoochoo;
+package com.eleith.calchoochoo.utils;
 
 public class DistanceUtils {
   public static Double METERS_IN_A_MILE = 1609.34;
