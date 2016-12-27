@@ -2,17 +2,15 @@ package com.eleith.calchoochoo.utils;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class InfinitePagerAdapter extends PagerAdapter {
   private Context context;
-  private InfinitePagerAdapterData pagerAdapterData;
+  private InfinitePagerData pagerAdapterData;
 
-  public InfinitePagerAdapter(Context context, InfinitePagerAdapterData pagerAdapterData) {
+  public InfinitePagerAdapter(Context context, InfinitePagerData pagerAdapterData) {
     this.pagerAdapterData = pagerAdapterData;
     this.context = context;
   }

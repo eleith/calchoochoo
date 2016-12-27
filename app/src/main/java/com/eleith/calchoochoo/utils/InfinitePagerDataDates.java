@@ -1,20 +1,19 @@
 package com.eleith.calchoochoo.utils;
 
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-public class InfinitePagerAdapterDataDates extends InfinitePagerAdapterData<LocalDate> {
+public class InfinitePagerDataDates extends InfinitePagerData<LocalDate> {
   private LocalDate today = new LocalDate();
   private LocalDate tomorrow = today.plusDays(1);
   private LocalDate yesterday = today.minusDays(1);
   private DateTimeFormatter dateDisplayFormat = DateTimeFormat.forPattern("MMM dd, yyyy");
 
-  public InfinitePagerAdapterDataDates(final ViewPager viewPager, LocalDate[] dataArray) {
-    super(viewPager, dataArray);
+  public InfinitePagerDataDates(LocalDate[] dataArray) {
+    super(dataArray);
   }
 
   @Override

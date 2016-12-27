@@ -52,12 +52,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
-        <android.support.v4.view.ViewPager
+        <com.eleith.calchoochoo.utils.InfinitePager
             android:layout_weight="4"
             android:id="@+id/dateSpinner"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
-        </android.support.v4.view.ViewPager>
+            android:layout_height="match_parent" />
 
         <ImageButton
             android:id="@+id/rightDateButton"
