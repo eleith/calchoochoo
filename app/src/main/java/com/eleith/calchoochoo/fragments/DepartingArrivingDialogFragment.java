@@ -1,29 +1,26 @@
 package com.eleith.calchoochoo.fragments;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.v4.util.TimeUtils;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
-import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.ScheduleExplorerActivity;
+import com.eleith.calchoochoo.utils.InfinitePagerAdapter;
+import com.eleith.calchoochoo.utils.InfinitePagerAdapterDataDates;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxMessage;
 import com.eleith.calchoochoo.utils.RxMessageKeys;
 
-import org.apache.commons.lang3.time.DateFormatUtils;
-import org.w3c.dom.Text;
+import org.joda.time.LocalDate;
 
 import java.util.Date;
 
@@ -31,15 +28,48 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
+import butterknife.OnClick;
 
 public class DepartingArrivingDialogFragment extends android.support.v4.app.DialogFragment {
+  @Inject
+  RxBus rxBus;
+  @BindView(R.id.picker)
+  View picker;
+  @BindView(R.id.timeTabs)
+  TabLayout tabLayout;
+  @BindView(R.id.dateSpinner)
+  ViewPager viewPager;
+  @BindView(R.id.rightDateButton)
+  ImageButton rightDateButton;
+  @BindView(R.id.leftDateButton)
+  ImageButton leftDateButton;
+  @BindView(R.id.departOrArriveCancel)
+  TextView departOrArriveCancelText;
+  @BindView(R.id.departOrArriveSelect)
+  TextView getDepartOrArriveSelectText;
 
-  @Inject RxBus rxBus;
-  @BindView(R.id.picker) View picker;
-  @BindView(R.id.timeTabs) TabLayout tabLayout;
-  @BindView(R.id.dateSpinner) ViewPager viewPager;
-  @BindView(R.id.dateSpinnerText) TextView dateSpinnerText;
+  @OnClick(R.id.rightDateButton)
+  public void rightDateButtonClick() {
+    viewPager.setCurrentItem(2, true);
+  }
+
+  @OnClick(R.id.leftDateButton)
+  public void leftLeftDateButtonClick() {
+    viewPager.setCurrentItem(0, true);
+  }
+
+  @OnClick(R.id.departOrArriveCancel)
+  public void cancelClick() {
+    getDialog().dismiss();
+  }
+
+  @OnClick(R.id.departOrArriveSelect)
+  public void selectClick() {
+    // send departing or arriving
+    // send DateTime
+    rxBus.send(new RxMessage(RxMessageKeys.TIME_SELECTED, new Date()));
+    getDialog().dismiss();
+  }
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,72 +78,22 @@ public class DepartingArrivingDialogFragment extends android.support.v4.app.Dial
   }
 
   @Override
+  @NonNull
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     LayoutInflater inflater = getActivity().getLayoutInflater();
     View view = inflater.inflate(R.layout.fragment_departing_arriving_selector, null);
     ButterKnife.bind(this, view);
 
-    viewPager.setAdapter(new CustomAdapter(getContext()));
+    LocalDate[] pagerData = {new LocalDate().minusDays(1), new LocalDate(), new LocalDate().plusDays(1)};
+    InfinitePagerAdapterDataDates infinitePagerAdapterDataDates = new InfinitePagerAdapterDataDates(viewPager, pagerData);
+    InfinitePagerAdapter infinitePagerAdapter = new InfinitePagerAdapter(getContext(), infinitePagerAdapterDataDates);
+
+    // could pull this out into a InfinitePager class...
+    viewPager.setAdapter(infinitePagerAdapter);
+    viewPager.setCurrentItem(infinitePagerAdapterDataDates.getDataSize() / 2, false);
+
     builder.setView(view);
-
-    View cancelButton = view.findViewById(R.id.departOrArriveCancel);
-    cancelButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        getDialog().dismiss();
-      }
-    });
-
-    View selectButton = view.findViewById(R.id.departOrArriveSelect);
-    selectButton.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        rxBus.send(new RxMessage(RxMessageKeys.TIME_SELECTED, new Date()));
-        getDialog().dismiss();
-      }
-    });
-
     return builder.create();
-  }
-
-  public class CustomAdapter extends PagerAdapter {
-    private Date today;
-    private Date now;
-    private Context context;
-
-    public CustomAdapter(Context context) {
-      today = new Date();
-      now = new Date();
-      this.context = context;
-    }
-
-    @Override
-    public Object instantiateItem(ViewGroup container, int position) {
-      Log.d("poop", "setting date spinner etxt");
-      dateSpinnerText.setText(today.toString());
-      container.addView(dateSpinnerText);
-      return dateSpinnerText;
-    }
-
-    @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
-      container.removeView((View) object);
-    }
-
-    @Override
-    public int getItemPosition(Object object) {
-      return POSITION_NONE;
-    }
-
-    @Override
-    public int getCount() {
-      return 3;
-    }
-
-    @Override
-    public boolean isViewFromObject(View view, Object object) {
-      return view == object;
-    }
   }
 }

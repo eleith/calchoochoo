@@ -45,15 +45,26 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
+        <ImageButton
+            android:id="@+id/leftDateButton"
+            android:src="@drawable/ic_chevron_left_black_24dp"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <android.support.v4.view.ViewPager
+            android:layout_weight="4"
             android:id="@+id/dateSpinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/dateSpinnerText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            android:layout_height="match_parent">
         </android.support.v4.view.ViewPager>
+
+        <ImageButton
+            android:id="@+id/rightDateButton"
+            android:layout_weight="1"
+            android:src="@drawable/ic_chevron_right_black_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

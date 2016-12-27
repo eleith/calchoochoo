@@ -31,6 +31,9 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.4.0'
     compile "com.android.support:design:23.4.0"
 
+    // time library
+    compile 'joda-time:joda-time:2.9.7'
+
     //commons-lang (used for fuzzy search)
     compile 'org.apache.commons:commons-lang3:3.4'
 
