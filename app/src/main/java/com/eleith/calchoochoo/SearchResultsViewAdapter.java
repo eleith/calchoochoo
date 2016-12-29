@@ -12,6 +12,7 @@ import com.eleith.calchoochoo.utils.DistanceUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -53,7 +54,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
     view.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        rxBus.send(new RxMessage(RxMessageKeys.SEARCH_RESULT_STOP, holder.mItem));
+        rxBus.send(new RxMessageStop(RxMessageKeys.SEARCH_RESULT_STOP, holder.mItem));
       }
     });
 

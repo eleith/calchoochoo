@@ -1,32 +1,53 @@
 package com.eleith.calchoochoo.data;
 
 import android.location.Location;
+
+import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.PrimaryKey;
+import com.raizlabs.android.dbflow.annotation.Table;
+import com.raizlabs.android.dbflow.structure.BaseModel;
+
 import org.parceler.Parcel;
-import org.parceler.ParcelConstructor;
 
 import java.util.Comparator;
 
-@Parcel
-public class Stop {
-  String name;
-  int id;
-  String url;
+@Parcel(analyze = Stop.class)
+@Table(database = CaltrainDatabase.class, name = "stops")
+public class Stop extends BaseModel {
+  @Column
+  @PrimaryKey
+  int stop_id;
+
+  @Column
+  String stop_name;
+
+  @Column
+  float stop_lat;
+
+  @Column
+  float stop_lon;
+
+  @Column
+  String stop_url;
+
+  @Column
+  String platform_code;
+
+  @Column
+  String stop_code;
+
   Location location;
   Double distance;
   int fuzzyScore;
 
   public Stop() {
-
+    setLocation(this.stop_lat, this.stop_lon);
   }
 
-  public Stop(int id, String name, String url, float lat, float lon) {
-    this.id = id;
-    this.name = name;
-    this.url = url;
-    this.location = new Location("");
-    this.location.setLatitude(lat);
-    this.location.setLongitude(lon);
-    this.fuzzyScore = 0;
+  public void setLocation(float lon, float lat) {
+    location = new Location("");
+    location.setLongitude(lon);
+    location.setLatitude(lat);
   }
 
   public Location getLocation() {
@@ -50,15 +71,23 @@ public class Stop {
   }
 
   public int getId() {
-    return this.id;
+    return this.stop_id;
   }
 
   public String getName() {
-    return this.name;
+    return this.stop_name;
   }
 
   public String getUrl() {
-    return this.url;
+    return this.stop_url;
+  }
+
+  public float getLatitude() {
+    return this.stop_lat;
+  }
+
+  public float getLongitude() {
+    return this.stop_lon;
   }
 
   public static Comparator<Stop> nameComparator = new Comparator<Stop>() {

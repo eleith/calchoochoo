@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscription;
 import rx.functions.Action1;
 
 
@@ -34,6 +35,7 @@ public class DestinationSourceFragment extends Fragment {
   private Stop stopSource;
   private LocalDateTime stopDateTime = new LocalDateTime();
   private int stopMethod = RxMessageArrivalOrDepartDateTime.ARRIVING;
+  private Subscription subscription;
 
   @BindView(R.id.destinationEdit) TextView destinationEdit;
   @BindView(R.id.sourceEdit) TextView sourceEdit;
@@ -57,13 +59,18 @@ public class DestinationSourceFragment extends Fragment {
   }
 
   @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    subscription.unsubscribe();
+  }
+
+  @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_destination_source, container, false);
     ButterKnife.bind(this, view);
 
+    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleDestinationSourceFragmentRxMessages());
     updateStops();
-    rxBus.observeEvents(RxMessage.class).subscribe(handleDestinationSourceFragmentRxMessages());
-
     return view;
   }
 

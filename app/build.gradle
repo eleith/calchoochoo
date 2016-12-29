@@ -37,9 +37,6 @@ dependencies {
     //commons-lang (used for fuzzy search)
     compile 'org.apache.commons:commons-lang3:3.4'
 
-    //sqliteassethelper (used to load existing sqlite db)
-    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
-
     //rxjava (currently used for the event bus)
     compile 'io.reactivex:rxandroid:1.2.0'
     compile 'io.reactivex:rxjava:1.1.4'

@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import rx.Subscription;
 import rx.functions.Action1;
 
 public class SearchResultsFragment extends Fragment {
@@ -33,6 +34,7 @@ public class SearchResultsFragment extends Fragment {
   private RecyclerView recyclerView;
   private Location location;
   private int searchReason;
+  private Subscription subscription;
 
   @Inject RxBus rxBus;
   @Inject SearchResultsViewAdapter searchResultsViewAdapter;
@@ -53,14 +55,19 @@ public class SearchResultsFragment extends Fragment {
     if (recyclerView != null) {
       searchResultsViewAdapter.setStops(stops);
       searchResultsViewAdapter.setLocation(location);
-
-      rxBus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
+      subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
 
       recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
       recyclerView.setAdapter(searchResultsViewAdapter);
     }
 
     return view;
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    subscription.unsubscribe();
   }
 
   private Action1<RxMessage> handleScheduleExplorerRxMessages() {

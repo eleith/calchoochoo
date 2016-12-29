@@ -19,7 +19,7 @@ public class RxMessageKeys {
 
     map.put(SEARCH_INPUT_STRING, RxMessageString.class);
     map.put(SEARCH_RESULT_PAIR, RxMessagePairStopReason.class);
-    map.put(SEARCH_RESULT_STOP, RxMessage.class);
+    map.put(SEARCH_RESULT_STOP, RxMessageStop.class);
     map.put(DESTINATION_SELECTED, RxMessage.class);
     map.put(SOURCE_SELECTED, RxMessage.class);
     map.put(DATE_TIME_SELECTED, RxMessageArrivalOrDepartDateTime.class);

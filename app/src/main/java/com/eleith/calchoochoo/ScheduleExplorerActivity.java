@@ -15,7 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityComponent;
 import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityModule;
-import com.eleith.calchoochoo.data.DatabaseHelper;
+import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.fragments.DestinationSourceFragment;
 import com.eleith.calchoochoo.fragments.HomeFragment;
@@ -37,12 +37,12 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
+import rx.Subscription;
 import rx.functions.Action1;
 
 public class ScheduleExplorerActivity extends AppCompatActivity {
   private SearchResultsFragment searchResultsFragment;
   private SearchInputFragment searchInputFragment;
-  private DatabaseHelper databaseHelper;
   private Location location;
   private Stop stopDestination;
   private Stop stopSource;
@@ -52,6 +52,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
   private static final String SEARCH_REASON_DESTINATION = "destination";
   private static final String SEARCH_REASON_SOURCE = "source";
   private ScheduleExplorerActivityComponent scheduleExplorerActivityComponent;
+  private Subscription subscription;
 
   @Inject RxBus rxbus;
   @Inject LocationManager locationManager;
@@ -68,9 +69,13 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     initializeLocationListener();
 
     setContentView(R.layout.schedule_explorer_activity);
-    databaseHelper = new DatabaseHelper(this);
     updateDestinationSourceFragment();
-    rxbus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
+    subscription = rxbus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
+  }
+
+  @Override
+  protected void onDestroy() {
+    subscription.unsubscribe();
   }
 
   private Action1<RxMessage> handleScheduleExplorerRxMessages() {
@@ -86,7 +91,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
           } else {
             stopSource = pair.first;
           }
-          // if we have dest/source/method/time, we can do a search!
+          updateDestinationSourceFragment();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DESTINATION_SELECTED)) {
           selectDestination();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SOURCE_SELECTED)) {
@@ -112,7 +117,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     searchResultsFragment = new SearchResultsFragment();
 
     Bundle searchResultsArgs = new Bundle();
-    ArrayList<Stop> stops = databaseHelper.getAllStations();
+    ArrayList<Stop> stops = Queries.getAllStops();
     searchResultsArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
     searchResultsArgs.putParcelable(BundleKeys.LOCATION, location);
     searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
@@ -126,7 +131,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     searchResultsFragment = new SearchResultsFragment();
 
     Bundle searchResultsArgs = new Bundle();
-    ArrayList<Stop> stops = databaseHelper.getAllStations();
+    ArrayList<Stop> stops = Queries.getAllStops();
     searchResultsArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
     searchResultsArgs.putParcelable(BundleKeys.LOCATION, location);
     searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_SOURCE);
