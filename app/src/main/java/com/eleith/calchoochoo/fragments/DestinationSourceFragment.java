@@ -2,6 +2,7 @@ package com.eleith.calchoochoo.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +13,13 @@ import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxMessage;
-import com.eleith.calchoochoo.utils.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageArrivalOrDepartDateTime;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 
-import java.util.Date;
+import org.joda.time.LocalDateTime;
+import org.parceler.Parcels;
 
 import javax.inject.Inject;
 
@@ -28,6 +32,8 @@ import rx.functions.Action1;
 public class DestinationSourceFragment extends Fragment {
   private Stop stopDestination;
   private Stop stopSource;
+  private LocalDateTime stopDateTime = new LocalDateTime();
+  private int stopMethod = RxMessageArrivalOrDepartDateTime.ARRIVING;
 
   @BindView(R.id.destinationEdit) TextView destinationEdit;
   @BindView(R.id.sourceEdit) TextView sourceEdit;
@@ -43,8 +49,10 @@ public class DestinationSourceFragment extends Fragment {
 
     Bundle arguments = getArguments();
     if (arguments != null) {
-      stopDestination = arguments.getParcelable(BundleKeys.DESTINATION);
-      stopSource = arguments.getParcelable(BundleKeys.SOURCE);
+      stopDestination = Parcels.unwrap(arguments.getParcelable(BundleKeys.STOP_DESTINATION));
+      stopSource = Parcels.unwrap(arguments.getParcelable(BundleKeys.STOP_SOURCE));
+      stopDateTime = new LocalDateTime(arguments.getLong(BundleKeys.STOP_DATETIME));
+      stopMethod = arguments.getInt(BundleKeys.STOP_METHOD);
     }
   }
 
@@ -53,14 +61,7 @@ public class DestinationSourceFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_destination_source, container, false);
     ButterKnife.bind(this, view);
 
-    if (stopDestination != null) {
-      destinationEdit.setText(stopDestination.getName());
-    }
-
-    if (stopSource != null) {
-      sourceEdit.setText(stopSource.getName());
-    }
-
+    updateStops();
     rxBus.observeEvents(RxMessage.class).subscribe(handleDestinationSourceFragmentRxMessages());
 
     return view;
@@ -70,15 +71,49 @@ public class DestinationSourceFragment extends Fragment {
     return new Action1<RxMessage>() {
       @Override
       public void call(RxMessage rxMessage) {
-        String type = rxMessage.getType();
-
-        if (type.equals(RxMessageKeys.TIME_SELECTED)) {
-          Date date = (Date) rxMessage.getMessage();
-          timeEdit.setText(date.toString());
+        if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
+          Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
+          stopMethod = pair.first;
+          stopDateTime = pair.second;
+          updateTimeEdit();
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_PAIR)) {
+          Pair<Stop, Integer> pair = ((RxMessagePairStopReason) rxMessage).getMessage();
+          if (pair.second.equals(RxMessagePairStopReason.SEARCH_REASON_DESTINATION)) {
+            stopDestination = pair.first;
+          } else {
+            stopSource = pair.first;
+          }
+          updateStops();
         }
       }
     };
   }
+
+  private void updateStops() {
+    if (stopDestination != null) {
+      destinationEdit.setText(stopDestination.getName());
+    }
+
+    if (stopSource != null) {
+      sourceEdit.setText(stopSource.getName());
+    }
+    updateTimeEdit();
+  }
+
+  private void updateTimeEdit() {
+    if (stopMethod == RxMessageArrivalOrDepartDateTime.ARRIVING) {
+            timeEdit.setText("arriving on " + stopDateTime.toString());
+          } else {
+            timeEdit.setText("departing on " + stopDateTime.toString());
+          }
+
+    if (stopSource == null || stopDestination == null) {
+      timeEdit.setVisibility(View.INVISIBLE);
+    } else {
+      timeEdit.setVisibility(View.VISIBLE);
+    }
+  }
+
   @OnClick(R.id.destinationEdit)
   public void destinationClick() {
     rxBus.send(new RxMessage(RxMessageKeys.DESTINATION_SELECTED));

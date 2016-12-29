@@ -12,14 +12,17 @@
         android:layout_gravity="top">
 
         <android.support.design.widget.TabItem
+            android:id="@+id/methodArriveTab"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Arrive By"/>
 
         <android.support.design.widget.TabItem
+            android:id="@+id/methodDepartTab"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Depart At"/>
+
     </android.support.design.widget.TabLayout>
 
     <LinearLayout

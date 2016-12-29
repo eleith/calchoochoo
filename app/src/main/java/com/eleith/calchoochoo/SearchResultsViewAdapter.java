@@ -10,16 +10,14 @@ import android.widget.TextView;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.DistanceUtils;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxMessage;
-import com.eleith.calchoochoo.utils.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
-
-import javax.inject.Inject;
 
 public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResultsViewAdapter.ViewHolder> {
 

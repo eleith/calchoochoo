@@ -1,10 +1,7 @@
 package com.eleith.calchoochoo.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +11,8 @@ import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.utils.RxBus;
 
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.utils.RxMessage;
-import com.eleith.calchoochoo.utils.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxMessageString;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import javax.inject.Inject;
 import butterknife.BindView;

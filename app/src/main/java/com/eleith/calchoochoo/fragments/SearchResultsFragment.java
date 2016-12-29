@@ -16,10 +16,11 @@ import com.eleith.calchoochoo.SearchResultsViewAdapter;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxMessage;
-import com.eleith.calchoochoo.utils.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxMessagePair;
-import com.eleith.calchoochoo.utils.RxMessageString;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
+
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -31,7 +32,7 @@ public class SearchResultsFragment extends Fragment {
   private ArrayList<Stop> stops;
   private RecyclerView recyclerView;
   private Location location;
-  private String searchReason;
+  private int searchReason;
 
   @Inject RxBus rxBus;
   @Inject SearchResultsViewAdapter searchResultsViewAdapter;
@@ -66,12 +67,10 @@ public class SearchResultsFragment extends Fragment {
     return new Action1<RxMessage>() {
       @Override
       public void call(RxMessage rxMessage) {
-        String type = rxMessage.getType();
-
-        if (type.equals(RxMessageKeys.SEARCH_RESULT_STOP)) {
+        if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_STOP)) {
           Stop stop = (Stop) rxMessage.getMessage();
-          Pair<Stop, String> pair = new Pair<Stop, String>(stop, searchReason);
-          rxBus.send(new RxMessagePair<Stop, String>(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+          Pair<Stop, Integer> pair = new Pair<>(stop, searchReason);
+          rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
         }
       }
     };
@@ -79,9 +78,9 @@ public class SearchResultsFragment extends Fragment {
 
   private void unPackBundle(Bundle bundle) {
     if (bundle != null) {
-      stops = bundle.getParcelableArrayList(BundleKeys.STOPS);
+      stops = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOPS));
       location = bundle.getParcelable(BundleKeys.LOCATION);
-      searchReason = bundle.getString(BundleKeys.SEARCH_REASON);
+      searchReason = bundle.getInt(BundleKeys.SEARCH_REASON);
     }
   }
 

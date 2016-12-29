@@ -24,10 +24,14 @@ import com.eleith.calchoochoo.fragments.SearchResultsFragment;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.Permissions;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxMessage;
-import com.eleith.calchoochoo.utils.RxMessagePair;
-import com.eleith.calchoochoo.utils.RxMessageString;
-import com.eleith.calchoochoo.utils.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageArrivalOrDepartDateTime;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
+
+import org.joda.time.LocalDateTime;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -42,6 +46,8 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
   private Location location;
   private Stop stopDestination;
   private Stop stopSource;
+  private Integer stopMethod = RxMessageArrivalOrDepartDateTime.ARRIVING;
+  private LocalDateTime stopDateTime = new LocalDateTime();
   private LocationListener locationListener;
   private static final String SEARCH_REASON_DESTINATION = "destination";
   private static final String SEARCH_REASON_SOURCE = "source";
@@ -63,7 +69,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
 
     setContentView(R.layout.schedule_explorer_activity);
     databaseHelper = new DatabaseHelper(this);
-    updateFragments(new DestinationSourceFragment(), new HomeFragment());
+    updateDestinationSourceFragment();
     rxbus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
   }
 
@@ -71,19 +77,25 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     return new Action1<RxMessage>() {
       @Override
       public void call(RxMessage rxMessage) {
-        String type = rxMessage.getType();
-
-        if (type.equals(RxMessageKeys.SEARCH_INPUT_STRING) && rxMessage instanceof RxMessageString) {
-          filterSearchResults(((RxMessageString) rxMessage).getMessageString());
-        } else if(type.equals(RxMessageKeys.SEARCH_RESULT_PAIR) && rxMessage instanceof RxMessagePair) {
-          Pair pair = ((RxMessagePair) rxMessage).getMessagePair();
-          if (pair.first instanceof Stop && pair.second instanceof String) {
-            selectSearchResult((Stop) pair.first, (String) pair.second);
+        if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_INPUT_STRING)) {
+          filterSearchResults(((RxMessageString) rxMessage).getMessage());
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_PAIR)) {
+          Pair<Stop, Integer> pair = ((RxMessagePairStopReason) rxMessage).getMessage();
+          if (pair.second.equals(RxMessagePairStopReason.SEARCH_REASON_DESTINATION)) {
+            stopDestination = pair.first;
+          } else {
+            stopSource = pair.first;
           }
-        } else if(type.equals(RxMessageKeys.DESTINATION_SELECTED)) {
+          // if we have dest/source/method/time, we can do a search!
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.DESTINATION_SELECTED)) {
           selectDestination();
-        } else if(type.equals(RxMessageKeys.SOURCE_SELECTED)) {
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.SOURCE_SELECTED)) {
           selectSource();
+        } else if(rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
+          Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
+          stopMethod = pair.first;
+          stopDateTime = pair.second;
+          // if we have dest/source/method/time, we can do a search!
         }
       }
     };
@@ -101,9 +113,9 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
 
     Bundle searchResultsArgs = new Bundle();
     ArrayList<Stop> stops = databaseHelper.getAllStations();
-    searchResultsArgs.putParcelableArrayList(BundleKeys.STOPS, stops);
+    searchResultsArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
     searchResultsArgs.putParcelable(BundleKeys.LOCATION, location);
-    searchResultsArgs.putString(BundleKeys.SEARCH_REASON, SEARCH_REASON_DESTINATION);
+    searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
     searchResultsFragment.setArguments(searchResultsArgs);
 
     updateFragments(searchInputFragment, searchResultsFragment);
@@ -115,25 +127,21 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
 
     Bundle searchResultsArgs = new Bundle();
     ArrayList<Stop> stops = databaseHelper.getAllStations();
-    searchResultsArgs.putParcelableArrayList(BundleKeys.STOPS, stops);
+    searchResultsArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
     searchResultsArgs.putParcelable(BundleKeys.LOCATION, location);
-    searchResultsArgs.putString(BundleKeys.SEARCH_REASON, SEARCH_REASON_SOURCE);
+    searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_SOURCE);
     searchResultsFragment.setArguments(searchResultsArgs);
 
     updateFragments(searchInputFragment, searchResultsFragment);
   }
 
-  private void selectSearchResult(Stop stop, String searchReason) {
-    if (searchReason.equals(SEARCH_REASON_DESTINATION)) {
-      stopDestination = stop;
-    } else if (searchReason.equals(SEARCH_REASON_SOURCE)) {
-      stopSource = stop;
-    }
-
+  private void updateDestinationSourceFragment() {
     Bundle destinationSourceArgs = new Bundle();
     DestinationSourceFragment destinationSourceFragment = new DestinationSourceFragment();
-    destinationSourceArgs.putParcelable(BundleKeys.DESTINATION, stopDestination);
-    destinationSourceArgs.putParcelable(BundleKeys.SOURCE, stopSource);
+    destinationSourceArgs.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
+    destinationSourceArgs.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
+    destinationSourceArgs.putInt(BundleKeys.STOP_METHOD, stopMethod);
+    destinationSourceArgs.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
     destinationSourceFragment.setArguments(destinationSourceArgs);
 
     updateFragments(destinationSourceFragment, new HomeFragment());
