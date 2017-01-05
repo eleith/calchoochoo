@@ -35,7 +35,6 @@ public class DestinationSourceFragment extends Fragment {
   private Stop stopSource;
   private LocalDateTime stopDateTime = new LocalDateTime();
   private int stopMethod = RxMessageArrivalOrDepartDateTime.ARRIVING;
-  private Subscription subscription;
 
   @BindView(R.id.destinationEdit) TextView destinationEdit;
   @BindView(R.id.sourceEdit) TextView sourceEdit;
@@ -61,39 +60,14 @@ public class DestinationSourceFragment extends Fragment {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    subscription.unsubscribe();
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_destination_source, container, false);
     ButterKnife.bind(this, view);
-
-    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleDestinationSourceFragmentRxMessages());
     updateStops();
     return view;
-  }
-
-  private Action1<RxMessage> handleDestinationSourceFragmentRxMessages() {
-    return new Action1<RxMessage>() {
-      @Override
-      public void call(RxMessage rxMessage) {
-        if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
-          Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
-          stopMethod = pair.first;
-          stopDateTime = pair.second;
-          updateTimeEdit();
-        } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_PAIR)) {
-          Pair<Stop, Integer> pair = ((RxMessagePairStopReason) rxMessage).getMessage();
-          if (pair.second.equals(RxMessagePairStopReason.SEARCH_REASON_DESTINATION)) {
-            stopDestination = pair.first;
-          } else {
-            stopSource = pair.first;
-          }
-          updateStops();
-        }
-      }
-    };
   }
 
   private void updateStops() {

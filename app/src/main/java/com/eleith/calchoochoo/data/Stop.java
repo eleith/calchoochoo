@@ -16,7 +16,7 @@ import java.util.Comparator;
 public class Stop extends BaseModel {
   @Column
   @PrimaryKey
-  int stop_id;
+  String stop_id;
 
   @Column
   String stop_name;
@@ -36,41 +36,21 @@ public class Stop extends BaseModel {
   @Column
   String stop_code;
 
-  Location location;
-  Double distance;
-  int fuzzyScore;
+  private Location location;
 
   public Stop() {
-    setLocation(this.stop_lat, this.stop_lon);
-  }
-
-  public void setLocation(float lon, float lat) {
-    location = new Location("");
-    location.setLongitude(lon);
-    location.setLatitude(lat);
   }
 
   public Location getLocation() {
-    return this.location;
-  }
-
-  public void setDistanceFrom(Location location) {
-    if (location != null) {
-      this.distance = location.distanceTo(this.location) / 1.0;
-    } else {
-      this.distance = null;
+    if (location == null) {
+      location = new Location("");
+      location.setLongitude(this.stop_lon);
+      location.setLatitude(this.stop_lat);
     }
+    return location;
   }
 
-  public void setFuzzyScore(int score) {
-    this.fuzzyScore = score;
-  }
-
-  public Double getDistance() {
-    return this.distance;
-  }
-
-  public int getId() {
+  public String getId() {
     return this.stop_id;
   }
 
@@ -94,20 +74,6 @@ public class Stop extends BaseModel {
     @Override
     public int compare(Stop lhs, Stop rhs) {
       return rhs.getName().compareTo(lhs.getName());
-    }
-  };
-
-  public static Comparator<Stop> distanceComparator = new Comparator<Stop>() {
-    @Override
-    public int compare(Stop lhs, Stop rhs) {
-      return Double.compare(rhs.distance, lhs.distance);
-    }
-  };
-
-  public static Comparator<Stop> fuzzyScoreComparator = new Comparator<Stop>() {
-    @Override
-    public int compare(Stop lhs, Stop rhs) {
-      return Integer.compare(rhs.fuzzyScore, lhs.fuzzyScore);
     }
   };
 }

@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.DistanceUtils;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 
@@ -18,7 +17,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResultsViewAdapter.ViewHolder> {
 
@@ -32,17 +34,6 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
 
   public void setStops(ArrayList<Stop> stops) {
     this.stops = stops;
-  }
-
-  public SearchResultsViewAdapter(ArrayList<Stop> stops, Location location) {
-    this.stops = stops;
-    this.location = location;
-
-    if (location != null) {
-      for (Stop stop : this.stops) {
-        stop.setDistanceFrom(location);
-      }
-    }
   }
 
   @Override
@@ -64,16 +55,11 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
   @Override
   public void onBindViewHolder(final ViewHolder holder, int position) {
     Stop stop = stops.get(position);
-    Double distance = stop.getDistance();
+    Double distance = location.distanceTo(stop.getLocation()) / 1.0;
 
     holder.mItem = stop;
     holder.mIdView.setText(stop.getName());
-
-    if (distance != null) {
-      holder.mContentView.setText(String.format(Locale.getDefault(), "%.2f mi", DistanceUtils.meterToMiles(distance)));
-    } else {
-      holder.mContentView.setText("");
-    }
+    holder.mContentView.setText(String.format(Locale.getDefault(), "%.2f mi", DistanceUtils.meterToMiles(distance)));
   }
 
   @Override
@@ -82,26 +68,30 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
   }
 
   public void setLocation(Location location) {
-    if (this.location == null || !this.location.equals(location)) {
-      for (Stop stop : this.stops) {
-        stop.setDistanceFrom(location);
-      }
-      this.notifyDataSetChanged();
-    }
+    this.location = location;
+    this.notifyDataSetChanged();
   }
 
   public void filterByFuzzySearch(ArrayList<Stop> stops, String query) {
     if (query != null && !query.equals("")) {
       ArrayList<Stop> filteredStops =  new ArrayList<Stop>();
+      final HashMap<String, Integer> stopFuzzyScores = new HashMap<String, Integer>();
       for (Stop stop : stops) {
         int fuzzyScore = StringUtils.getFuzzyDistance(stop.getName(), query, Locale.getDefault());
         if (fuzzyScore >= query.length()) {
-          stop.setFuzzyScore(fuzzyScore);
+          stopFuzzyScores.put(stop.getId(), fuzzyScore);
           filteredStops.add(stop);
         }
       }
       this.stops = filteredStops;
-      Collections.sort(this.stops, Stop.fuzzyScoreComparator);
+      Collections.sort(this.stops, new Comparator<Stop>() {
+            @Override
+            public int compare(Stop lhs, Stop rhs) {
+              int rightFuzzyScore = stopFuzzyScores.get(rhs.getId());
+              int leftFuzzyScore = stopFuzzyScores.get(lhs.getId());
+              return Integer.compare(rightFuzzyScore, leftFuzzyScore);
+            }
+      });
     } else {
       this.stops = stops;
       Collections.sort(this.stops, Stop.nameComparator);

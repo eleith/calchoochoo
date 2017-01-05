@@ -17,7 +17,9 @@ import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityComponent;
 import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityModule;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
+import com.eleith.calchoochoo.data.StopTimes;
 import com.eleith.calchoochoo.fragments.DestinationSourceFragment;
+import com.eleith.calchoochoo.fragments.FragmentRouteStops;
 import com.eleith.calchoochoo.fragments.HomeFragment;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
 import com.eleith.calchoochoo.fragments.SearchResultsFragment;
@@ -68,7 +70,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     scheduleExplorerActivityComponent.inject(this);
     initializeLocationListener();
 
-    setContentView(R.layout.schedule_explorer_activity);
+    setContentView(R.layout.activity_schedule_explorer);
     updateDestinationSourceFragment();
     subscription = rxbus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
   }
@@ -92,6 +94,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
             stopSource = pair.first;
           }
           updateDestinationSourceFragment();
+          updateRouteFragment();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DESTINATION_SELECTED)) {
           selectDestination();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SOURCE_SELECTED)) {
@@ -100,7 +103,8 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
           Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
           stopDateTime = pair.second;
-          // if we have dest/source/method/time, we can do a search!
+          updateDestinationSourceFragment();
+          updateRouteFragment();
         }
       }
     };
@@ -123,7 +127,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
     searchResultsFragment.setArguments(searchResultsArgs);
 
-    updateFragments(searchInputFragment, searchResultsFragment);
+    updateTopBottomFragments(searchInputFragment, searchResultsFragment);
   }
 
   private void selectSource() {
@@ -137,7 +141,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_SOURCE);
     searchResultsFragment.setArguments(searchResultsArgs);
 
-    updateFragments(searchInputFragment, searchResultsFragment);
+    updateTopBottomFragments(searchInputFragment, searchResultsFragment);
   }
 
   private void updateDestinationSourceFragment() {
@@ -149,7 +153,21 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     destinationSourceArgs.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
     destinationSourceFragment.setArguments(destinationSourceArgs);
 
-    updateFragments(destinationSourceFragment, new HomeFragment());
+    updateTopBottomFragments(destinationSourceFragment, new HomeFragment());
+  }
+
+  private void updateRouteFragment() {
+    if (stopSource != null && stopDestination != null && stopDateTime != null) {
+      ArrayList<Pair<StopTimes, StopTimes>> stopTimesPairs = Queries.findRoute(stopSource, stopDestination, stopDateTime);
+
+      Bundle routeStopsArgs = new Bundle();
+      routeStopsArgs.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(stopTimesPairs));
+
+      FragmentRouteStops fragmentRouteStops = new FragmentRouteStops();
+      fragmentRouteStops.setArguments(routeStopsArgs);
+
+      updateBottomFragments(fragmentRouteStops);
+    }
   }
 
   private void initializeLocationListener() {
@@ -187,10 +205,17 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     }
   }
 
-  private void updateFragments(Fragment f1, Fragment f2) {
+  private void updateTopBottomFragments(Fragment f1, Fragment f2) {
     FragmentTransaction ft = fragmentManager.beginTransaction();
     ft.replace(R.id.homeTopFragmentContainer, f1);
     ft.replace(R.id.homeFragmentContainer, f2);
+    ft.addToBackStack(null);
+    ft.commit();
+  }
+  
+  private void updateBottomFragments(Fragment f1) {
+    FragmentTransaction ft = fragmentManager.beginTransaction();
+    ft.replace(R.id.homeFragmentContainer, f1);
     ft.addToBackStack(null);
     ft.commit();
   }

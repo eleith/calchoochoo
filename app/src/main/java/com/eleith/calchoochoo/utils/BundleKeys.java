@@ -8,4 +8,5 @@ public class BundleKeys {
   public static final String STOP_SOURCE = "stop_source";
   public static final String STOP_METHOD = "stop_method";
   public static final String STOP_DATETIME = "stop_datetime";
+  public static final String ROUTE_STOPS = "route_stops";
 }

@@ -3,6 +3,7 @@ package com.eleith.calchoochoo.dagger;
 import com.eleith.calchoochoo.fragments.DepartingArrivingDialogFragment;
 import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.fragments.DestinationSourceFragment;
+import com.eleith.calchoochoo.fragments.FragmentRouteStops;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
 import com.eleith.calchoochoo.fragments.SearchResultsFragment;
 
@@ -16,6 +17,7 @@ public interface ScheduleExplorerActivityComponent {
 
   // injection for fragments
   void inject(SearchResultsFragment searchResultsFragment);
+  void inject(FragmentRouteStops fragmentRouteStops);
   void inject(SearchInputFragment searchInputFragment);
   void inject(DestinationSourceFragment destinationSourceFragment);
   void inject(DepartingArrivingDialogFragment departingArrivingDialogFragment);
