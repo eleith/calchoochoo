@@ -16,25 +16,25 @@ import java.util.Comparator;
 public class Stop extends BaseModel {
   @Column
   @PrimaryKey
-  String stop_id;
+  public String stop_id;
 
   @Column
-  String stop_name;
+  public String stop_name;
 
   @Column
-  float stop_lat;
+  public float stop_lat;
 
   @Column
-  float stop_lon;
+  public float stop_lon;
 
   @Column
-  String stop_url;
+  public String stop_url;
 
   @Column
-  String platform_code;
+  public String platform_code;
 
   @Column
-  String stop_code;
+  public String stop_code;
 
   private Location location;
 
@@ -50,30 +50,14 @@ public class Stop extends BaseModel {
     return location;
   }
 
-  public String getId() {
-    return this.stop_id;
-  }
-
-  public String getName() {
-    return this.stop_name;
-  }
-
-  public String getUrl() {
-    return this.stop_url;
-  }
-
-  public float getLatitude() {
-    return this.stop_lat;
-  }
-
-  public float getLongitude() {
-    return this.stop_lon;
+  public void setLocation(Location location) {
+    this.location = location;
   }
 
   public static Comparator<Stop> nameComparator = new Comparator<Stop>() {
     @Override
     public int compare(Stop lhs, Stop rhs) {
-      return rhs.getName().compareTo(lhs.getName());
+      return rhs.stop_name.compareTo(lhs.stop_name);
     }
   };
 }

@@ -72,11 +72,11 @@ public class DestinationSourceFragment extends Fragment {
 
   private void updateStops() {
     if (stopDestination != null) {
-      destinationEdit.setText(stopDestination.getName());
+      destinationEdit.setText(stopDestination.stop_name);
     }
 
     if (stopSource != null) {
-      sourceEdit.setText(stopSource.getName());
+      sourceEdit.setText(stopSource.stop_name);
     }
     updateTimeEdit();
   }

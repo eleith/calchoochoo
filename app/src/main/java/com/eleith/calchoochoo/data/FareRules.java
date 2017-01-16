@@ -13,14 +13,14 @@ import org.parceler.Parcel;
 public class FareRules extends BaseModel {
   @PrimaryKey
   @Column
-  String fare_id;
+  public String fare_id;
 
   @Column
-  String route_id;
+  public String route_id;
 
   @Column
-  int origin_id;
+  public int origin_id;
 
   @Column
-  int destination_id;
+  public int destination_id;
 }

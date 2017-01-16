@@ -32,6 +32,7 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.joda.time.LocalDateTime;
 import org.parceler.Parcels;
 
@@ -158,10 +159,10 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
 
   private void updateRouteFragment() {
     if (stopSource != null && stopDestination != null && stopDateTime != null) {
-      ArrayList<Pair<StopTimes, StopTimes>> stopTimesPairs = Queries.findRoute(stopSource, stopDestination, stopDateTime);
+      ArrayList<Triple<StopTimes, StopTimes, Float>> stopTimesPairsAndPrice = Queries.findTrips(stopSource, stopDestination, stopDateTime, stopMethod == RxMessageArrivalOrDepartDateTime.ARRIVING);
 
       Bundle routeStopsArgs = new Bundle();
-      routeStopsArgs.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(stopTimesPairs));
+      routeStopsArgs.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(stopTimesPairsAndPrice));
 
       FragmentRouteStops fragmentRouteStops = new FragmentRouteStops();
       fragmentRouteStops.setArguments(routeStopsArgs);

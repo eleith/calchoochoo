@@ -11,30 +11,30 @@ import org.parceler.Parcel;
 @Table(database = CaltrainDatabase.class, name = "trips")
 public class Trips extends BaseModel {
   @Column
-  String route_id;
+  public String route_id;
 
   @Column
-  String service_id;
+  public String service_id;
 
   @PrimaryKey
   @Column
-  String trip_id;
+  public String trip_id;
 
   @Column
-  String trip_headsign;
+  public String trip_headsign;
 
   @Column
-  String trip_short_name;
+  public String trip_short_name;
 
   @Column
-  int direction_id;
+  public int direction_id;
 
   @Column
-  String shape_id;
+  public String shape_id;
 
   @Column
-  int wheelchar_accessible;
+  public int wheelchar_accessible;
 
   @Column
-  int bikes_allowed;
+  public int bikes_allowed;
 }

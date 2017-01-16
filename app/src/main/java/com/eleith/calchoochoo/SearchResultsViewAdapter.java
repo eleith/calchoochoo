@@ -55,11 +55,14 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
   @Override
   public void onBindViewHolder(final ViewHolder holder, int position) {
     Stop stop = stops.get(position);
-    Double distance = location.distanceTo(stop.getLocation()) / 1.0;
+
+    if (location != null) {
+      Double distance = location.distanceTo(stop.getLocation()) / 1.0;
+      holder.mContentView.setText(String.format(Locale.getDefault(), "%.2f mi", DistanceUtils.meterToMiles(distance)));
+    }
 
     holder.mItem = stop;
-    holder.mIdView.setText(stop.getName());
-    holder.mContentView.setText(String.format(Locale.getDefault(), "%.2f mi", DistanceUtils.meterToMiles(distance)));
+    holder.mIdView.setText(stop.stop_name);
   }
 
   @Override
@@ -77,9 +80,9 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
       ArrayList<Stop> filteredStops =  new ArrayList<Stop>();
       final HashMap<String, Integer> stopFuzzyScores = new HashMap<String, Integer>();
       for (Stop stop : stops) {
-        int fuzzyScore = StringUtils.getFuzzyDistance(stop.getName(), query, Locale.getDefault());
+        int fuzzyScore = StringUtils.getFuzzyDistance(stop.stop_name, query, Locale.getDefault());
         if (fuzzyScore >= query.length()) {
-          stopFuzzyScores.put(stop.getId(), fuzzyScore);
+          stopFuzzyScores.put(stop.stop_id, fuzzyScore);
           filteredStops.add(stop);
         }
       }
@@ -87,8 +90,8 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
       Collections.sort(this.stops, new Comparator<Stop>() {
             @Override
             public int compare(Stop lhs, Stop rhs) {
-              int rightFuzzyScore = stopFuzzyScores.get(rhs.getId());
-              int leftFuzzyScore = stopFuzzyScores.get(lhs.getId());
+              int rightFuzzyScore = stopFuzzyScores.get(rhs.stop_id);
+              int leftFuzzyScore = stopFuzzyScores.get(lhs.stop_id);
               return Integer.compare(rightFuzzyScore, leftFuzzyScore);
             }
       });

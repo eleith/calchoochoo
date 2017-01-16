@@ -22,6 +22,7 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 
+import org.apache.commons.lang3.tuple.Triple;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import rx.functions.Action1;
 
 public class FragmentRouteStops extends Fragment {
   private Subscription subscription;
-  private ArrayList<Pair<StopTimes, StopTimes>> routeStopTimes;
+  private ArrayList<Triple<StopTimes, StopTimes, Float>> routeStopTimes;
 
   @Inject RxBus rxBus;
   @Inject RouteViewAdapter routeViewAdapter;
@@ -52,9 +53,8 @@ public class FragmentRouteStops extends Fragment {
     RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.searchResults);
 
     if (recyclerView != null) {
-      // routeViewAdapter.setStops(stops);
-      // routeViewAdapter.setLocation(location);
       //subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
+      routeViewAdapter.setRouteStopTimesAndPrice(routeStopTimes);
 
       recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
       recyclerView.setAdapter(routeViewAdapter);

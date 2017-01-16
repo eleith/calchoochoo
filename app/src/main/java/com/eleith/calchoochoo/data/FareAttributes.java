@@ -12,20 +12,20 @@ import org.parceler.Parcel;
 public class FareAttributes extends BaseModel {
   @PrimaryKey
   @Column
-  String fare_id;
+  public String fare_id;
 
   @Column
-  float price;
+  public float price;
 
   @Column
-  int currency_type;
+  public int currency_type;
 
   @Column
-  int payment_method;
+  public int payment_method;
 
   @Column
-  int transfers;
+  public int transfers;
 
   @Column
-  int transfer_duration;
+  public int transfer_duration;
 }

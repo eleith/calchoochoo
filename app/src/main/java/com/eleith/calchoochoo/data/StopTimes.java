@@ -13,23 +13,23 @@ import org.parceler.Parcel;
 public class StopTimes extends BaseModel {
   @PrimaryKey
   @Column
-  String trip_id;
+  public String trip_id;
 
   @Column(typeConverter = LocalTimeConverter.class)
-  LocalTime arrival_time;
+  public LocalTime arrival_time;
 
   @Column(typeConverter = LocalTimeConverter.class)
-  LocalTime departure_time;
+  public LocalTime departure_time;
 
   @Column
-  int stop_id;
+  public String stop_id;
 
   @Column
-  int stop_sequence;
+  public int stop_sequence;
 
   @Column
-  int pickup_time;
+  public int pickup_time;
 
   @Column
-  int drop_off_type;
+  public int drop_off_type;
 }
