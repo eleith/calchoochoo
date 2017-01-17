@@ -15,9 +15,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityComponent;
 import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityModule;
+import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.data.StopTimes;
 import com.eleith.calchoochoo.fragments.DestinationSourceFragment;
 import com.eleith.calchoochoo.fragments.FragmentRouteStops;
 import com.eleith.calchoochoo.fragments.HomeFragment;
@@ -32,7 +32,6 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.joda.time.LocalDateTime;
 import org.parceler.Parcels;
 
@@ -159,10 +158,10 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
 
   private void updateRouteFragment() {
     if (stopSource != null && stopDestination != null && stopDateTime != null) {
-      ArrayList<Triple<StopTimes, StopTimes, Float>> stopTimesPairsAndPrice = Queries.findTrips(stopSource, stopDestination, stopDateTime, stopMethod == RxMessageArrivalOrDepartDateTime.ARRIVING);
+      ArrayList<PossibleTrip> possibleTrips = Queries.findTrips(stopSource, stopDestination, stopDateTime, stopMethod == RxMessageArrivalOrDepartDateTime.ARRIVING);
 
       Bundle routeStopsArgs = new Bundle();
-      routeStopsArgs.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(stopTimesPairsAndPrice));
+      routeStopsArgs.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTrips));
 
       FragmentRouteStops fragmentRouteStops = new FragmentRouteStops();
       fragmentRouteStops.setArguments(routeStopsArgs);

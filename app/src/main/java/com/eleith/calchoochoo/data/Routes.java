@@ -12,17 +12,17 @@ import org.parceler.Parcel;
 public class Routes extends BaseModel {
   @PrimaryKey
   @Column
-  String route_id;
+  public String route_id;
 
   @Column
-  String route_short_name;
+  public String route_short_name;
 
   @Column
-  String route_long_name;
+  public String route_long_name;
 
   @Column
-  int route_type;
+  public int route_type;
 
   @Column
-  String route_color;
+  public String route_color;
 }

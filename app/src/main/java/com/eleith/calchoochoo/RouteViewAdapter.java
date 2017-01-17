@@ -6,26 +6,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
-import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.data.StopTimes;
+import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.utils.RxBus;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.joda.time.Minutes;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.RouteViewHolder> {
-  private ArrayList<Triple<StopTimes, StopTimes, Float>> routeViewStopTimesAndPrice = new ArrayList<>();
+  private ArrayList<PossibleTrip> possibleTrips;
 
   public RouteViewAdapter(RxBus rxBus) {
 
   }
 
-  public void setRouteStopTimesAndPrice(ArrayList<Triple<StopTimes, StopTimes, Float>> routeViewStopTimesAndPrice) {
-    this.routeViewStopTimesAndPrice = routeViewStopTimesAndPrice;
+  public void setPossibleTrips(ArrayList<PossibleTrip> possibleTrips) {
+    this.possibleTrips = possibleTrips;
   }
 
   @Override
@@ -37,27 +36,25 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
 
   @Override
   public void onBindViewHolder(RouteViewHolder holder, int position) {
-    Triple<StopTimes, StopTimes, Float> stopTimesAndPrice = routeViewStopTimesAndPrice.get(position);
-    StopTimes stopTimeStart = stopTimesAndPrice.getMiddle();
-    StopTimes stopTimeEnd = stopTimesAndPrice.getLeft();
-    Float price = stopTimesAndPrice.getRight();
+    PossibleTrip possibleTrip = possibleTrips.get(position);
+    Float price = possibleTrip.getPrice();
+    Routes route = Queries.getRouteById(possibleTrip.getRouteId());
 
-    holder.arrivalTime.setText(stopTimeEnd.arrival_time.toString());
-    holder.departureTime.setText(stopTimeStart.departure_time.toString());
+    holder.arrivalTime.setText(possibleTrip.getArrivalTime().toString());
+    holder.departureTime.setText(possibleTrip.getDepartureTime().toString());
     holder.tripPrice.setText(String.format(Locale.getDefault(), "$%.2f", price));
-    holder.tripRouteName.setText("Baby Bullet");
-    holder.tripTotalTime.setText(String.format(Locale.getDefault(), "%d", Minutes.minutesBetween(stopTimeEnd.arrival_time, stopTimeStart.arrival_time).getMinutes()));
-    holder.tripNumber.setText(stopTimeStart.trip_id);
-  }
 
-  @Override
-  public int getItemViewType(int position) {
-    return 0;
+    if (route != null) {
+      holder.tripRouteName.setText(route.route_long_name);
+    }
+
+    holder.tripTotalTime.setText(String.format(Locale.getDefault(), "%d", Minutes.minutesBetween(possibleTrip.getDepartureTime(), possibleTrip.getArrivalTime()).getMinutes()));
+    holder.tripNumber.setText(possibleTrip.getTripId());
   }
 
   @Override
   public int getItemCount() {
-    return routeViewStopTimesAndPrice.size();
+    return possibleTrips.size();
   }
 
   public class RouteViewHolder extends RecyclerView.ViewHolder {

@@ -6,8 +6,6 @@ import android.support.annotation.Nullable;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
@@ -91,8 +89,8 @@ public class Queries {
     return null;
   }
 
-  public static ArrayList<Triple<StopTimes, StopTimes, Float>> findTrips(Stop source, Stop destination, LocalDateTime dateTime, Boolean arriving) {
-    ArrayList<Triple<StopTimes, StopTimes, Float>> stopTimesPairsAndPrice = new ArrayList<>();
+  public static ArrayList<PossibleTrip> findTrips(Stop source, Stop destination, LocalDateTime dateTime, Boolean arriving) {
+    ArrayList<PossibleTrip> possibleTrips = new ArrayList<>();
     String calendarFilter = " AND calendar.sunday = 1";
 
     switch(dateTime.getDayOfWeek()) {
@@ -105,6 +103,7 @@ public class Queries {
     }
 
     String query = "SELECT " +
+    "routes.route_id as route_id, " +
     "fare_attributes.price as price, " +
     "st1.platform_code as st1__platform_code, st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
     "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, st1.pickup_time as st1__pickup_time, st1.drop_off_type as st1__drop_off_type, " +
@@ -142,38 +141,38 @@ public class Queries {
     Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);
 
     while(cursor.moveToNext()) {
-      StopTimes startStopTimes = new StopTimes();
-      StopTimes endStopTimes = new StopTimes();
-
       Float price = cursor.getFloat(cursor.getColumnIndex("price"));
 
-      startStopTimes.trip_id = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
-      startStopTimes.arrival_time = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__arrival_time")).replaceFirst("^24:", "01:"));
-      startStopTimes.departure_time = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__departure_time")).replaceFirst("^24:", "01:"));
-      startStopTimes.stop_id = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
-      startStopTimes.stop_sequence = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence"));
-      startStopTimes.pickup_time = cursor.getInt(cursor.getColumnIndex("st1__pickup_time"));
-      startStopTimes.drop_off_type = cursor.getInt(cursor.getColumnIndex("st1__drop_off_type"));
+      String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
+      String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
+      String firstStopId = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
+      String lastStopId = cursor.getString(cursor.getColumnIndex("st2__stop_id"));
+      Integer numberOfStops = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence")) - cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
 
-      endStopTimes.trip_id = cursor.getString(cursor.getColumnIndex("st2__trip_id"));
-      endStopTimes.arrival_time = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__arrival_time")).replaceFirst("^24:", "01:"));
-      endStopTimes.departure_time = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__departure_time")).replaceFirst("^24:", "01:"));
-      endStopTimes.stop_id = cursor.getString(cursor.getColumnIndex("st2__stop_id"));
-      endStopTimes.stop_sequence = cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
-      endStopTimes.pickup_time = cursor.getInt(cursor.getColumnIndex("st2__pickup_time"));
-      endStopTimes.drop_off_type = cursor.getInt(cursor.getColumnIndex("st2__drop_off_type"));
+      LocalTime arrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__arrival_time")).replaceFirst("^24:", "01:"));
+      LocalTime departureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__departure_time")).replaceFirst("^24:", "01:"));
+
+      PossibleTrip possibleTrip = new PossibleTrip();
+      possibleTrip.setArrivalTime(arrivalTime);
+      possibleTrip.setDepartureTime(departureTime);
+      possibleTrip.setPrice(price);
+      possibleTrip.setNumberOfStops(numberOfStops);
+      possibleTrip.setFirstStopId(firstStopId);
+      possibleTrip.setLastStopId(lastStopId);
+      possibleTrip.setTripId(tripId);
+      possibleTrip.setRouteId(routeId);
 
       if (arriving) {
-        if (endStopTimes.arrival_time.isBefore(dateTime.toLocalTime().plusMinutes(1))) {
-          stopTimesPairsAndPrice.add(new ImmutableTriple<>(startStopTimes, endStopTimes, price));
+        if (arrivalTime.isBefore(dateTime.toLocalTime().plusMinutes(1))) {
+          possibleTrips.add(possibleTrip);
         }
       } else {
-        if (startStopTimes.departure_time.isBefore(dateTime.toLocalTime().minusMinutes(1))) {
-         stopTimesPairsAndPrice.add(new ImmutableTriple<>(startStopTimes, endStopTimes, price));
+        if (departureTime.isBefore(dateTime.toLocalTime().minusMinutes(1))) {
+          possibleTrips.add(possibleTrip);
         }
       }
     }
 
-    return stopTimesPairsAndPrice;
+    return possibleTrips;
   }
 }
