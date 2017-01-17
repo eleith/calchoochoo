@@ -2,6 +2,7 @@ package com.eleith.calchoochoo.data;
 
 import android.database.Cursor;
 import android.support.annotation.Nullable;
+import android.support.v4.util.Pair;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
@@ -174,5 +175,47 @@ public class Queries {
     }
 
     return possibleTrips;
+  }
+
+  public static ArrayList<Pair<Stop, StopTimes>> findTripDetails(String trip_id) {
+    ArrayList<Pair<Stop, StopTimes>> stopAndTimes = new ArrayList<>();
+
+    String query = "SELECT * " +
+      "  st.trip_id as st__trip_id, st.arrival_time as st__arrival_time, st.departure_time as st__departure_time, " +
+      "  st.stop_id as st__stop_id, st.stop_sequence as st__stop_sequence, st.pickup_time as st__pickup_time, st.drop_off_type as st__drop_off_type, " +
+      "  s.stop_id as s__stop_id, s.stop_name as s__stop_name, s.stop_lat as s__stop_lat, s.stop_lon as s__stop_lon, " +
+      "  s.stop_url as s__stop_url, s.platform_code as s__platform_code, s.stop_code as s__stop_code " +
+      "FROM stops as s, stop_times as st " +
+      "WHERE stop_times.trip_id = ? " +
+      "  AND stops.stop_id = stop_times.stop_id " +
+      "  ORDER BY st.stop_sequence";
+
+    String[] args = {trip_id};
+    Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);
+
+    while(cursor.moveToNext()) {
+      StopTimes stopTimes = new StopTimes();
+      Stop stop = new Stop();
+
+      stopTimes.arrival_time = new LocalTime(cursor.getString(cursor.getColumnIndex("st__arrival_time")).replaceFirst("^24:", "01:"));
+      stopTimes.departure_time = new LocalTime(cursor.getString(cursor.getColumnIndex("st__departure_time")).replaceFirst("^24:", "01:"));
+      stopTimes.trip_id = cursor.getString(cursor.getColumnIndex("st__trip_id"));
+      stopTimes.stop_id = cursor.getString(cursor.getColumnIndex("st__stop_id"));
+      stopTimes.stop_sequence = cursor.getInt(cursor.getColumnIndex("st__stop_sequence"));
+      stopTimes.pickup_time = cursor.getInt(cursor.getColumnIndex("st__pickup_time"));
+      stopTimes.drop_off_type = cursor.getInt(cursor.getColumnIndex("st__drop_off_type"));
+
+      stop.stop_id = stopTimes.stop_id;
+      stop.stop_name = cursor.getString(cursor.getColumnIndex("s__stop_name"));
+      stop.stop_code = cursor.getString(cursor.getColumnIndex("s__stop_code"));
+      stop.platform_code = cursor.getString(cursor.getColumnIndex("s__platform_code"));
+      stop.stop_url = cursor.getString(cursor.getColumnIndex("s__stop_url"));
+      stop.stop_lon = cursor.getFloat(cursor.getColumnIndex("s__stop_lon"));
+      stop.stop_lat = cursor.getFloat(cursor.getColumnIndex("s__stop_lat"));
+
+      stopAndTimes.add(new Pair<>(stop, stopTimes));
+    }
+
+    return stopAndTimes;
   }
 }
