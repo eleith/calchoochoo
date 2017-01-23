@@ -96,17 +96,17 @@ public class DestinationSourceFragment extends Fragment {
   }
 
   @OnClick(R.id.destinationEdit)
-  public void destinationClick() {
+  void destinationClick() {
     rxBus.send(new RxMessage(RxMessageKeys.DESTINATION_SELECTED));
   }
 
   @OnClick(R.id.sourceEdit)
-  public void sourceClick() {
+  void sourceClick() {
     rxBus.send(new RxMessage(RxMessageKeys.SOURCE_SELECTED));
   }
 
   @OnClick(R.id.timeEdit)
-  public void timeClick() {
+  void timeClick() {
     DepartingArrivingDialogFragment dialog = new DepartingArrivingDialogFragment();
     dialog.show(getFragmentManager(), "dialog");
   }

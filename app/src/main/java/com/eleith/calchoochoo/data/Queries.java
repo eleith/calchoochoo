@@ -180,14 +180,14 @@ public class Queries {
   public static ArrayList<Pair<Stop, StopTimes>> findTripDetails(String trip_id) {
     ArrayList<Pair<Stop, StopTimes>> stopAndTimes = new ArrayList<>();
 
-    String query = "SELECT * " +
+    String query = "SELECT " +
       "  st.trip_id as st__trip_id, st.arrival_time as st__arrival_time, st.departure_time as st__departure_time, " +
       "  st.stop_id as st__stop_id, st.stop_sequence as st__stop_sequence, st.pickup_time as st__pickup_time, st.drop_off_type as st__drop_off_type, " +
       "  s.stop_id as s__stop_id, s.stop_name as s__stop_name, s.stop_lat as s__stop_lat, s.stop_lon as s__stop_lon, " +
       "  s.stop_url as s__stop_url, s.platform_code as s__platform_code, s.stop_code as s__stop_code " +
       "FROM stops as s, stop_times as st " +
-      "WHERE stop_times.trip_id = ? " +
-      "  AND stops.stop_id = stop_times.stop_id " +
+      "WHERE st.trip_id = ? " +
+      "  AND s.stop_id = st.stop_id " +
       "  ORDER BY st.stop_sequence";
 
     String[] args = {trip_id};

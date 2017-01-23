@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import rx.Subscription;
 
 public class FragmentRouteStops extends Fragment {
-  private Subscription subscription;
   private ArrayList<PossibleTrip> possibleTrips;
 
   @Inject RxBus rxBus;
@@ -44,7 +43,6 @@ public class FragmentRouteStops extends Fragment {
     RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.searchResults);
 
     if (recyclerView != null) {
-      //subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
       routeViewAdapter.setPossibleTrips(possibleTrips);
 
       recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -57,23 +55,7 @@ public class FragmentRouteStops extends Fragment {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    subscription.unsubscribe();
   }
-
-  /*
-  private Action1<RxMessage> handleScheduleExplorerRxMessages() {
-    return new Action1<RxMessage>() {
-      @Override
-      public void call(RxMessage rxMessage) {
-        if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_STOP)) {
-          Stop stop = (Stop) rxMessage.getMessage();
-          Pair<Stop, Integer> pair = new Pair<>(stop, searchReason);
-          rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
-        }
-      }
-    };
-  }
-  */
 
   private void unPackBundle(Bundle bundle) {
     if (bundle != null) {

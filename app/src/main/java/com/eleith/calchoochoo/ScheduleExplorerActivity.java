@@ -23,6 +23,9 @@ import com.eleith.calchoochoo.fragments.FragmentRouteStops;
 import com.eleith.calchoochoo.fragments.HomeFragment;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
 import com.eleith.calchoochoo.fragments.SearchResultsFragment;
+import com.eleith.calchoochoo.fragments.StopSummaryFragment;
+import com.eleith.calchoochoo.fragments.TripDetailFragment;
+import com.eleith.calchoochoo.fragments.TripSummaryFragment;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.Permissions;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -105,6 +108,15 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
           stopDateTime = pair.second;
           updateDestinationSourceFragment();
           updateRouteFragment();
+        } else if(rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
+          Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
+          stopMethod = pair.first;
+          stopDateTime = pair.second;
+          updateDestinationSourceFragment();
+          updateRouteFragment();
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.TRIP_SELECTED)) {
+          String tripId = ((RxMessageString) rxMessage).getMessage();
+          showTripDetailsFragments(tripId);
         }
       }
     };
@@ -142,6 +154,22 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     searchResultsFragment.setArguments(searchResultsArgs);
 
     updateTopBottomFragments(searchInputFragment, searchResultsFragment);
+  }
+
+  private void showTripDetailsFragments(String tripId) {
+    Bundle tripSummaryArgs = new Bundle();
+
+    TripSummaryFragment tripSummaryFragment = new TripSummaryFragment();
+    TripDetailFragment tripDetailFragment = new TripDetailFragment();
+
+    tripSummaryArgs.putString(BundleKeys.TRIP_ID, tripId);
+    tripSummaryArgs.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
+    tripSummaryArgs.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
+
+    tripSummaryFragment.setArguments(tripSummaryArgs);
+    tripDetailFragment.setArguments(tripSummaryArgs);
+
+    updateTopBottomFragments(tripSummaryFragment, tripDetailFragment);
   }
 
   private void updateDestinationSourceFragment() {

@@ -1,6 +1,7 @@
 package com.eleith.calchoochoo;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,17 +11,23 @@ import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.utils.RxBus;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.Minutes;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.RouteViewHolder> {
   private ArrayList<PossibleTrip> possibleTrips;
+  private RxBus rxBus;
 
   public RouteViewAdapter(RxBus rxBus) {
-
+    this.rxBus = rxBus;
   }
 
   public void setPossibleTrips(ArrayList<PossibleTrip> possibleTrips) {
@@ -65,8 +72,16 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
     TextView tripRouteName;
     TextView tripNumber;
 
+    @OnClick(R.id.trip_summary_detail)
+    void onClickTripSummary() {
+      rxBus.send(new RxMessageString(RxMessageKeys.TRIP_SELECTED, possibleTrips.get(getAdapterPosition()).getTripId()));
+    }
+
     private RouteViewHolder(View v) {
       super(v);
+
+      ButterKnife.bind(this, v);
+
       arrivalTime = (TextView) v.findViewById(R.id.trip_stop_start_time);
       departureTime = (TextView) v.findViewById(R.id.trip_stop_end_time);
       tripPrice = (TextView) v.findViewById(R.id.trip_price);
