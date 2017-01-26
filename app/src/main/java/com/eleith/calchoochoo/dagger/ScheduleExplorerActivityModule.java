@@ -2,10 +2,10 @@ package com.eleith.calchoochoo.dagger;
 
 import android.support.v4.app.FragmentManager;
 
-import com.eleith.calchoochoo.RouteViewAdapter;
+import com.eleith.calchoochoo.adapters.RouteViewAdapter;
 import com.eleith.calchoochoo.ScheduleExplorerActivity;
-import com.eleith.calchoochoo.SearchResultsViewAdapter;
-import com.eleith.calchoochoo.fragments.FragmentRouteStops;
+import com.eleith.calchoochoo.adapters.SearchResultsViewAdapter;
+import com.eleith.calchoochoo.adapters.TripStopsAdapter;
 import com.eleith.calchoochoo.utils.RxBus;
 
 import dagger.Module;
@@ -29,6 +29,12 @@ public class ScheduleExplorerActivityModule {
   @Provides
   public RouteViewAdapter provideRouteViewViewAdapter(RxBus rxBus) {
     return new RouteViewAdapter(rxBus);
+  }
+
+  @ScheduleExplorerActivityScope
+  @Provides
+  public TripStopsAdapter provideTripStopsAdapter(RxBus rxBus) {
+    return new TripStopsAdapter(rxBus);
   }
 
   @ScheduleExplorerActivityScope

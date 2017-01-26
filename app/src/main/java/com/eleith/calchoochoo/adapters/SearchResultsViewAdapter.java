@@ -1,4 +1,4 @@
-package com.eleith.calchoochoo;
+package com.eleith.calchoochoo.adapters;
 
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.DistanceUtils;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -20,7 +21,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResultsViewAdapter.ViewHolder> {
 

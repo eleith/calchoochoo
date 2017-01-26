@@ -19,11 +19,10 @@ import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.fragments.DestinationSourceFragment;
-import com.eleith.calchoochoo.fragments.FragmentRouteStops;
+import com.eleith.calchoochoo.fragments.RouteStopsFragment;
 import com.eleith.calchoochoo.fragments.HomeFragment;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
 import com.eleith.calchoochoo.fragments.SearchResultsFragment;
-import com.eleith.calchoochoo.fragments.StopSummaryFragment;
 import com.eleith.calchoochoo.fragments.TripDetailFragment;
 import com.eleith.calchoochoo.fragments.TripSummaryFragment;
 import com.eleith.calchoochoo.utils.BundleKeys;
@@ -191,10 +190,10 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
       Bundle routeStopsArgs = new Bundle();
       routeStopsArgs.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTrips));
 
-      FragmentRouteStops fragmentRouteStops = new FragmentRouteStops();
-      fragmentRouteStops.setArguments(routeStopsArgs);
+      RouteStopsFragment routeStopsFragment = new RouteStopsFragment();
+      routeStopsFragment.setArguments(routeStopsArgs);
 
-      updateBottomFragments(fragmentRouteStops);
+      updateBottomFragments(routeStopsFragment);
     }
   }
 

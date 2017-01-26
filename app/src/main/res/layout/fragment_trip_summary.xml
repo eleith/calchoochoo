@@ -1,8 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_height="100dp"
+                            xmlns:tools="http://schemas.android.com/tools"
+              android:layout_height="50dp"
               android:layout_width="match_parent"
-              android:orientation="vertical">
+              android:orientation="horizontal">
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Train #"/>
+
+            <TextView
+                android:id="@+id/trip_summary_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="168"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=" ("/>
+
+            <TextView
+                android:id="@+id/trip_summary_route_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Baby Bullet"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=")"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/trip_summary_stop_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="5:45 pm"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text=" - "/>
+
+            <TextView
+                android:id="@+id/trip_summary_stop_end_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="6:25 pm"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/trip_summary_total_time"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                tools:text="42"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" min"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/trip_summary_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="$3.45"/>
+    </LinearLayout>
 
 </LinearLayout>

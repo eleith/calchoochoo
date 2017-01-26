@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.ScheduleExplorerActivity;
-import com.eleith.calchoochoo.SearchResultsViewAdapter;
+import com.eleith.calchoochoo.adapters.SearchResultsViewAdapter;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;

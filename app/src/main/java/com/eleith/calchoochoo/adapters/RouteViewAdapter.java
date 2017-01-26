@@ -1,12 +1,12 @@
-package com.eleith.calchoochoo;
+package com.eleith.calchoochoo.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Routes;
@@ -37,7 +37,7 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
   @Override
   public RouteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view;
-    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_stop_times_trip, parent, false);
+    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_trip_possible, parent, false);
     return new RouteViewHolder(view);
   }
 

@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.RouteViewAdapter;
+import com.eleith.calchoochoo.adapters.RouteViewAdapter;
 import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.utils.BundleKeys;
@@ -21,9 +21,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import rx.Subscription;
-
-public class FragmentRouteStops extends Fragment {
+public class RouteStopsFragment extends Fragment {
   private ArrayList<PossibleTrip> possibleTrips;
 
   @Inject RxBus rxBus;
