@@ -35,7 +35,7 @@ public class StopSummaryFragment extends Fragment implements OnMapReadyCallback 
   private Stop stopDestination;
   private Stop stopSource;
   private String tripId;
-  private ArrayList<Pair<Stop, StopTimes>> tripStops;
+  // private ArrayList<Pair<Stop, StopTimes>> tripStops;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -78,8 +78,8 @@ public class StopSummaryFragment extends Fragment implements OnMapReadyCallback 
       Log.d("poop", "unwrapping bundle");
       stopDestination = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP_DESTINATION));
       stopSource = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP_SOURCE));
-      tripId = savedInstanceState.getString(BundleKeys.TRIP_ID);
-      tripStops = Queries.findTripDetails(tripId);
+      // tripId = savedInstanceState.getString(BundleKeys.TRIP_ID);
+      // tripStops = Queries.findTripDetails(tripId);
       Log.d("poop", stopSource.stop_name);
     }
   }

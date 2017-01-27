@@ -12,7 +12,25 @@ public class PossibleTrip {
   private String routeId;
   private String tripId;
   private float price;
-  private Integer numberOfStops;
+  private Integer firstStopSequence;
+
+  public Integer getLastStopSequence() {
+    return lastStopSequence;
+  }
+
+  public void setLastStopSequence(Integer lastStopSequence) {
+    this.lastStopSequence = lastStopSequence;
+  }
+
+  private Integer lastStopSequence;
+
+  public Integer getFirstStopSequence() {
+    return firstStopSequence;
+  }
+
+  public void setFirstStopSequence(Integer firstStopSequence) {
+    this.firstStopSequence = firstStopSequence;
+  }
 
   public String getTripId() {
     return tripId;
@@ -43,7 +61,7 @@ public class PossibleTrip {
   }
 
   public Integer getNumberOfStops() {
-    return numberOfStops;
+    return Math.abs(this.firstStopSequence - this.lastStopSequence);
   }
 
   public void setFirstStopId(String firstStopId) {
@@ -64,10 +82,6 @@ public class PossibleTrip {
 
   public void setPrice(float price) {
     this.price = price;
-  }
-
-  public void setNumberOfStops(Integer numberOfStops) {
-    this.numberOfStops = numberOfStops;
   }
 
   public LocalTime getDepartureTime() {

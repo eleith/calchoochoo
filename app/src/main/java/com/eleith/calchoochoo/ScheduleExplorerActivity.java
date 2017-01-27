@@ -32,6 +32,7 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageArrivalOrDepartDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.LocalDateTime;
@@ -114,8 +115,8 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
           updateDestinationSourceFragment();
           updateRouteFragment();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.TRIP_SELECTED)) {
-          String tripId = ((RxMessageString) rxMessage).getMessage();
-          showTripDetailsFragments(tripId);
+          PossibleTrip possibleTrip = ((RxMessagePossibleTrip) rxMessage).getMessage();
+          showTripDetailsFragments(possibleTrip);
         }
       }
     };
@@ -155,13 +156,13 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     updateTopBottomFragments(searchInputFragment, searchResultsFragment);
   }
 
-  private void showTripDetailsFragments(String tripId) {
+  private void showTripDetailsFragments(PossibleTrip possibleTrip) {
     Bundle tripSummaryArgs = new Bundle();
 
     TripSummaryFragment tripSummaryFragment = new TripSummaryFragment();
     TripDetailFragment tripDetailFragment = new TripDetailFragment();
 
-    tripSummaryArgs.putString(BundleKeys.TRIP_ID, tripId);
+    tripSummaryArgs.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
     tripSummaryArgs.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
     tripSummaryArgs.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
 

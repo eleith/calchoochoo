@@ -12,6 +12,7 @@ import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.Minutes;
@@ -74,7 +75,7 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
 
     @OnClick(R.id.trip_summary_detail)
     void onClickTripSummary() {
-      rxBus.send(new RxMessageString(RxMessageKeys.TRIP_SELECTED, possibleTrips.get(getAdapterPosition()).getTripId()));
+      rxBus.send(new RxMessagePossibleTrip(RxMessageKeys.TRIP_SELECTED, possibleTrips.get(getAdapterPosition())));
     }
 
     private RouteViewHolder(View v) {

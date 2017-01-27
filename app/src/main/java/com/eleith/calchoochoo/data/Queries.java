@@ -148,7 +148,8 @@ public class Queries {
       String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
       String firstStopId = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
       String lastStopId = cursor.getString(cursor.getColumnIndex("st2__stop_id"));
-      Integer numberOfStops = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence")) - cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
+      Integer firstStopSequence = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence"));
+      Integer secondStopSequence = cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
 
       LocalTime arrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__arrival_time")).replaceFirst("^24:", "01:"));
       LocalTime departureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__departure_time")).replaceFirst("^24:", "01:"));
@@ -157,9 +158,10 @@ public class Queries {
       possibleTrip.setArrivalTime(arrivalTime);
       possibleTrip.setDepartureTime(departureTime);
       possibleTrip.setPrice(price);
-      possibleTrip.setNumberOfStops(numberOfStops);
       possibleTrip.setFirstStopId(firstStopId);
       possibleTrip.setLastStopId(lastStopId);
+      possibleTrip.setFirstStopSequence(firstStopSequence);
+      possibleTrip.setLastStopSequence(secondStopSequence);
       possibleTrip.setTripId(tripId);
       possibleTrip.setRouteId(routeId);
 
@@ -177,8 +179,12 @@ public class Queries {
     return possibleTrips;
   }
 
-  public static ArrayList<Pair<Stop, StopTimes>> findTripDetails(String trip_id) {
+  public static ArrayList<Pair<Stop, StopTimes>> findTripDetails(String trip_id, Integer first_stop_sequence, Integer second_stop_sequence) {
     ArrayList<Pair<Stop, StopTimes>> stopAndTimes = new ArrayList<>();
+
+    Integer higher_stop_sequence = first_stop_sequence > second_stop_sequence ? first_stop_sequence : second_stop_sequence;
+    Integer lower_stop_sequence = first_stop_sequence > second_stop_sequence ? second_stop_sequence : first_stop_sequence;
+    Integer direction = first_stop_sequence > second_stop_sequence ? 1 : 0;
 
     String query = "SELECT " +
       "  st.trip_id as st__trip_id, st.arrival_time as st__arrival_time, st.departure_time as st__departure_time, " +
@@ -188,9 +194,11 @@ public class Queries {
       "FROM stops as s, stop_times as st " +
       "WHERE st.trip_id = ? " +
       "  AND s.stop_id = st.stop_id " +
-      "  ORDER BY st.stop_sequence";
+      "  AND st.stop_sequence >= ? " +
+      "  AND st.stop_sequence <= ? " +
+      "  ORDER BY st.stop_sequence " + ((direction == 1) ? "ASC" : "DESC");
 
-    String[] args = {trip_id};
+    String[] args = {trip_id, Integer.toString(lower_stop_sequence), Integer.toString(higher_stop_sequence)};
     Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);
 
     while(cursor.moveToNext()) {

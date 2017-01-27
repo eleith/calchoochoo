@@ -24,7 +24,7 @@ public class RxMessageKeys {
     map.put(DESTINATION_SELECTED, RxMessage.class);
     map.put(SOURCE_SELECTED, RxMessage.class);
     map.put(DATE_TIME_SELECTED, RxMessageArrivalOrDepartDateTime.class);
-    map.put(TRIP_SELECTED, RxMessageString.class);
+    map.put(TRIP_SELECTED, RxMessagePossibleTrip.class);
 
     return Collections.unmodifiableMap(map);
   }

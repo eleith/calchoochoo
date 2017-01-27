@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.adapters.TripStopsAdapter;
+import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.StopTimes;
@@ -29,7 +30,7 @@ import butterknife.ButterKnife;
 public class TripDetailFragment extends Fragment {
   private Stop stopDestination;
   private Stop stopSource;
-  private String tripId;
+  private PossibleTrip possibleTrip;
   private ArrayList<Pair<Stop, StopTimes>> tripStops;
 
   @Inject
@@ -66,8 +67,8 @@ public class TripDetailFragment extends Fragment {
      if (savedInstanceState != null) {
       stopDestination = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP_DESTINATION));
       stopSource = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP_SOURCE));
-      tripId = savedInstanceState.getString(BundleKeys.TRIP_ID);
-      tripStops = Queries.findTripDetails(tripId);
+      possibleTrip = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.POSSIBLE_TRIP));
+      tripStops = Queries.findTripDetails(possibleTrip.getTripId(), possibleTrip.getFirstStopSequence(), possibleTrip.getLastStopSequence());
     }
   }
 }

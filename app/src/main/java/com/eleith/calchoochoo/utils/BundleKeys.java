@@ -9,5 +9,5 @@ public class BundleKeys {
   public static final String STOP_METHOD = "stop_method";
   public static final String STOP_DATETIME = "stop_datetime";
   public static final String ROUTE_STOPS = "route_stops";
-  public static final String TRIP_ID = "trip_id";
+  public static final String POSSIBLE_TRIP = "possible_trip";
 }
