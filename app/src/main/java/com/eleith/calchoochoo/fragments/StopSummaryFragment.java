@@ -32,10 +32,7 @@ import butterknife.ButterKnife;
 public class StopSummaryFragment extends Fragment implements OnMapReadyCallback {
   private GoogleMap googleMap;
   private MapView googleMapView;
-  private Stop stopDestination;
-  private Stop stopSource;
-  private String tripId;
-  // private ArrayList<Pair<Stop, StopTimes>> tripStops;
+  private Stop stop;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -63,24 +60,15 @@ public class StopSummaryFragment extends Fragment implements OnMapReadyCallback 
   public void onMapReady(GoogleMap googleMap) {
     this.googleMap = googleMap;
 
-    LatLng sourceLatLng = new LatLng(stopSource.stop_lat, stopSource.stop_lon);
-    LatLng destinationLatLng = new LatLng(stopDestination.stop_lat, stopDestination.stop_lon);
-    LatLngBounds latLngBounds = new LatLngBounds(sourceLatLng, destinationLatLng);
-    googleMap.addMarker(new MarkerOptions().position(sourceLatLng).title(stopSource.stop_name));
-    googleMap.addMarker(new MarkerOptions().position(destinationLatLng).title(stopDestination.stop_name));
-
-    CameraPosition cameraPosition = new CameraPosition.Builder().zoom(10).bearing(90).target(latLngBounds.getCenter()).build();
+    LatLng stopLatLng = new LatLng(stop.stop_lat, stop.stop_lon);
+    googleMap.addMarker(new MarkerOptions().position(stopLatLng).title(stop.stop_name));
+    CameraPosition cameraPosition = new CameraPosition.Builder().zoom(15).target(stopLatLng).build();
     googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
   }
 
   private void unWrapBundle(Bundle savedInstanceState) {
      if (savedInstanceState != null) {
-      Log.d("poop", "unwrapping bundle");
-      stopDestination = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP_DESTINATION));
-      stopSource = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP_SOURCE));
-      // tripId = savedInstanceState.getString(BundleKeys.TRIP_ID);
-      // tripStops = Queries.findTripDetails(tripId);
-      Log.d("poop", stopSource.stop_name);
+      stop = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP));
     }
   }
 

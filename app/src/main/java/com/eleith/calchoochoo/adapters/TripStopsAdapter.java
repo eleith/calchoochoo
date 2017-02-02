@@ -16,6 +16,7 @@ import com.eleith.calchoochoo.data.StopTimes;
 import com.eleith.calchoochoo.data.StopTimes$$Parcelable;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.Minutes;
@@ -64,9 +65,9 @@ public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneT
     TextView startTime;
     TextView stopTime;
 
-    //@OnClick(R.id.trip_summary_detail)
+    @OnClick(R.id.one_trip_stop_details)
     void onClickTripSummary() {
-      // rxBus.send(new RxMessageString(RxMessageKeys.TRIP_SELECTED, possibleTrips.get(getAdapterPosition()).getTripId()));
+      rxBus.send(new RxMessageStop(RxMessageKeys.STOP_SELECTED, tripStops.get(getAdapterPosition()).first));
     }
 
     private OneTripStopHolder(View v) {

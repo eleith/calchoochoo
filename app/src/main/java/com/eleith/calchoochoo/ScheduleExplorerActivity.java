@@ -23,6 +23,8 @@ import com.eleith.calchoochoo.fragments.RouteStopsFragment;
 import com.eleith.calchoochoo.fragments.HomeFragment;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
 import com.eleith.calchoochoo.fragments.SearchResultsFragment;
+import com.eleith.calchoochoo.fragments.StopDetailsFragment;
+import com.eleith.calchoochoo.fragments.StopSummaryFragment;
 import com.eleith.calchoochoo.fragments.TripDetailFragment;
 import com.eleith.calchoochoo.fragments.TripSummaryFragment;
 import com.eleith.calchoochoo.utils.BundleKeys;
@@ -33,6 +35,7 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageArrivalOrDepartDateTim
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.LocalDateTime;
@@ -117,6 +120,9 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.TRIP_SELECTED)) {
           PossibleTrip possibleTrip = ((RxMessagePossibleTrip) rxMessage).getMessage();
           showTripDetailsFragments(possibleTrip);
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.STOP_SELECTED)) {
+          Stop stop = ((RxMessageStop) rxMessage).getMessage();
+          showStopDetailsFragments(stop);
         }
       }
     };
@@ -154,6 +160,20 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     searchResultsFragment.setArguments(searchResultsArgs);
 
     updateTopBottomFragments(searchInputFragment, searchResultsFragment);
+  }
+
+  private void showStopDetailsFragments(Stop stop) {
+    Bundle stopSummaryArgs = new Bundle();
+
+    StopSummaryFragment stopSummaryFragment = new StopSummaryFragment();
+    StopDetailsFragment stopDetailsFragment = new StopDetailsFragment();
+
+    stopSummaryArgs.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
+
+    stopSummaryFragment.setArguments(stopSummaryArgs);
+    stopDetailsFragment.setArguments(stopSummaryArgs);
+
+    updateTopBottomFragments(stopSummaryFragment, stopDetailsFragment);
   }
 
   private void showTripDetailsFragments(PossibleTrip possibleTrip) {

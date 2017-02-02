@@ -6,6 +6,7 @@ import com.eleith.calchoochoo.fragments.DestinationSourceFragment;
 import com.eleith.calchoochoo.fragments.RouteStopsFragment;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
 import com.eleith.calchoochoo.fragments.SearchResultsFragment;
+import com.eleith.calchoochoo.fragments.StopDetailsFragment;
 import com.eleith.calchoochoo.fragments.StopSummaryFragment;
 import com.eleith.calchoochoo.fragments.TripDetailFragment;
 import com.eleith.calchoochoo.fragments.TripSummaryFragment;
@@ -25,6 +26,7 @@ public interface ScheduleExplorerActivityComponent {
   void inject(DestinationSourceFragment destinationSourceFragment);
   void inject(DepartingArrivingDialogFragment departingArrivingDialogFragment);
   void inject(StopSummaryFragment stopSummaryFragment);
+  void inject(StopDetailsFragment stopDetailsFragment);
   void inject(TripSummaryFragment tripSummaryFragment);
   void inject(TripDetailFragment tripDetailFragment);
 }

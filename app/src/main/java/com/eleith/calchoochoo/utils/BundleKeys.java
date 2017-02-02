@@ -1,6 +1,7 @@
 package com.eleith.calchoochoo.utils;
 
 public class BundleKeys {
+  public static final String STOP = "stop";
   public static final String STOPS = "stops";
   public static final String LOCATION = "location";
   public static final String SEARCH_REASON = "search_reason";
