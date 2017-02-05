@@ -19,6 +19,7 @@ import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.fragments.DestinationSourceFragment;
+import com.eleith.calchoochoo.fragments.MapSearchFragment;
 import com.eleith.calchoochoo.fragments.RouteStopsFragment;
 import com.eleith.calchoochoo.fragments.HomeFragment;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
@@ -54,7 +55,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
   private Location location;
   private Stop stopDestination;
   private Stop stopSource;
-  private Integer stopMethod = RxMessageArrivalOrDepartDateTime.ARRIVING;
+  private Integer stopMethod = RxMessageArrivalOrDepartDateTime.DEPARTING;
   private LocalDateTime stopDateTime = new LocalDateTime();
   private LocationListener locationListener;
   private static final String SEARCH_REASON_DESTINATION = "destination";
@@ -77,8 +78,9 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     initializeLocationListener();
 
     setContentView(R.layout.activity_schedule_explorer);
-    updateDestinationSourceFragment();
+
     subscription = rxbus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
+    showMapSearchFragment();
   }
 
   @Override
@@ -99,7 +101,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
           } else {
             stopSource = pair.first;
           }
-          updateDestinationSourceFragment();
+          showDestinationSourceFragment();
           updateRouteFragment();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DESTINATION_SELECTED)) {
           selectDestination();
@@ -109,13 +111,13 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
           Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
           stopDateTime = pair.second;
-          updateDestinationSourceFragment();
+          showDestinationSourceFragment();
           updateRouteFragment();
         } else if(rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
           stopDateTime = pair.second;
-          updateDestinationSourceFragment();
+          showDestinationSourceFragment();
           updateRouteFragment();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.TRIP_SELECTED)) {
           PossibleTrip possibleTrip = ((RxMessagePossibleTrip) rxMessage).getMessage();
@@ -192,8 +194,27 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     updateTopBottomFragments(tripSummaryFragment, tripDetailFragment);
   }
 
-  private void updateDestinationSourceFragment() {
+  private void showMapSearchFragment() {
+    Bundle mapSearchArgs = new Bundle();
+    MapSearchFragment mapSearchFragment = new MapSearchFragment();
+    ArrayList<Stop> stops = Queries.getAllStops();
+    mapSearchArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
+    mapSearchArgs.putParcelable(BundleKeys.LOCATION, location);
+    mapSearchFragment.setArguments(mapSearchArgs);
+
+    updateTopBottomFragments(null, mapSearchFragment);
+  }
+
+  private void showDestinationSourceFragment() {
     Bundle destinationSourceArgs = new Bundle();
+
+    if (stopSource == null || stopSource.equals(stopDestination)) {
+      stopSource = Queries.findStopClosestTo(location);
+      if (stopSource.equals(stopDestination)) {
+        stopSource = null;
+      }
+    }
+
     DestinationSourceFragment destinationSourceFragment = new DestinationSourceFragment();
     destinationSourceArgs.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
     destinationSourceArgs.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
@@ -254,16 +275,48 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
   }
 
   private void updateTopBottomFragments(Fragment f1, Fragment f2) {
+    Fragment header = fragmentManager.findFragmentById(R.id.homeTopFragmentContainer);
+    Fragment main = fragmentManager.findFragmentById(R.id.homeFragmentContainer);
     FragmentTransaction ft = fragmentManager.beginTransaction();
-    ft.replace(R.id.homeTopFragmentContainer, f1);
-    ft.replace(R.id.homeFragmentContainer, f2);
+
+    if (header != null) {
+      if (f1 == null) {
+        ft.remove(header);
+      } else {
+        ft.replace(R.id.homeTopFragmentContainer, f1);
+      }
+    } else if (f1 != null) {
+      ft.add(R.id.homeTopFragmentContainer, f1);
+    }
+
+    if (main != null) {
+      if (f2 == null) {
+        ft.remove(main);
+      } else {
+        ft.replace(R.id.homeFragmentContainer, f2);
+      }
+    } else if (f2 != null) {
+      ft.add(R.id.homeFragmentContainer, f2);
+    }
+
     ft.addToBackStack(null);
     ft.commit();
   }
   
   private void updateBottomFragments(Fragment f1) {
     FragmentTransaction ft = fragmentManager.beginTransaction();
-    ft.replace(R.id.homeFragmentContainer, f1);
+    Fragment main = fragmentManager.findFragmentById(R.id.homeFragmentContainer);
+
+    if (main != null) {
+      if (f1 == null) {
+        ft.remove(main);
+      } else {
+        ft.replace(R.id.homeFragmentContainer, f1);
+      }
+    } else if (f1 != null) {
+      ft.add(R.id.homeFragmentContainer, f1);
+    }
+
     ft.addToBackStack(null);
     ft.commit();
   }

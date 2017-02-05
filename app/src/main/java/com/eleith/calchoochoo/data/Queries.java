@@ -1,6 +1,7 @@
 package com.eleith.calchoochoo.data;
 
 import android.database.Cursor;
+import android.location.Location;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 
@@ -53,12 +54,27 @@ public class Queries {
 
   @Nullable
   public static Stop getStopById(String stop_id) {
-    for (Stop stop : allDirectionalStops) {
+    for (Stop stop : allStops) {
       if (stop.stop_id.equals(stop_id)) {
         return stop;
       }
     }
     return null;
+  }
+
+  @Nullable
+  public static Stop findStopClosestTo(Location location) {
+    Float smallestDistance = null;
+    Stop nearestStop = null;
+
+    for (Stop stop : allStops) {
+      Float distance = Math.abs(location.distanceTo(stop.getLocation()));
+      if (smallestDistance == null || distance < smallestDistance) {
+        smallestDistance = distance;
+        nearestStop = stop;
+      }
+    }
+    return nearestStop;
   }
 
   @Nullable

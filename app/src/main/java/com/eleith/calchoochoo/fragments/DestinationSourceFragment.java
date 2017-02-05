@@ -88,11 +88,11 @@ public class DestinationSourceFragment extends Fragment {
             timeEdit.setText("departing on " + stopDateTime.toString());
           }
 
-    if (stopSource == null || stopDestination == null) {
-      timeEdit.setVisibility(View.INVISIBLE);
-    } else {
-      timeEdit.setVisibility(View.VISIBLE);
-    }
+    //if (stopSource == null || stopDestination == null) {
+    //  timeEdit.setVisibility(View.INVISIBLE);
+    //} else {
+    //  timeEdit.setVisibility(View.VISIBLE);
+    //}
   }
 
   @OnClick(R.id.destinationEdit)
