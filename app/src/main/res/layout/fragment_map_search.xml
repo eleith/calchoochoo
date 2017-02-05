@@ -9,7 +9,7 @@
         android:layout_height="match_parent" />
 
     <EditText
-        android:id="@+id/mapSearchInput"
+        android:id="@+id/map_search_input"
         android:background="#ffffff"
         android:padding="10dp"
         android:layout_width="match_parent"

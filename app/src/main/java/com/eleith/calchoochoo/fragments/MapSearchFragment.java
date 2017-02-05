@@ -14,6 +14,7 @@ import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,6 +33,7 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   private GoogleMap googleMap;
@@ -62,6 +64,11 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     googleMapView.getMapAsync(this);
 
     return view;
+  }
+
+  @OnClick(R.id.map_search_input)
+  void onClickSearchInput() {
+    rxBus.send(new RxMessage(RxMessageKeys.DESTINATION_SELECTED));
   }
 
   @Override
