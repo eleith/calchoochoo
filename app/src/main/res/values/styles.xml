@@ -1,12 +1,4 @@
 <resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:datePickerStyle">@style/SpinnerDatePicker</item>
-        <item name="android:timePickerStyle">@style/SpinnerTimePicker</item>
-    </style>
-
     <style name="SpinnerDatePicker" parent="android:Widget.Material.Light.DatePicker">
         <item name="android:datePickerMode">spinner</item>
     </style>
@@ -15,4 +7,15 @@
         <item name="android:timePickerMode">spinner</item>
     </style>
 
+    <style name="CalChooChooTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:colorPrimary">@color/primary_material_light</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark_material_light</item>
+        <item name="android:colorAccent">@color/accent_material_light</item>
+        <item name="android:textColorPrimary">@color/primary_text_material_light</item>
+
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:datePickerStyle">@style/SpinnerDatePicker</item>
+        <item name="android:timePickerStyle">@style/SpinnerTimePicker</item>
+
+    </style>
 </resources>

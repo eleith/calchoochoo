@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
               android:layout_height="match_parent"
               android:layout_width="match_parent">
 
@@ -15,5 +16,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:hint="search for a caltrain stop" />
+        android:focusable="false"
+        android:hint="Search for CalTrain stop" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:src="@drawable/ic_gps_not_fixed_black_24dp"
+        android:tint="@color/background_material_light"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/map_action_button"/>
 </FrameLayout>
