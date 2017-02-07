@@ -58,7 +58,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
 
     if (location != null) {
       Double distance = location.distanceTo(stop.getLocation()) / 1.0;
-      holder.mContentView.setText(String.format(Locale.getDefault(), "%.2f mi", DistanceUtils.meterToMiles(distance)));
+      holder.mContentView.setText(String.format(Locale.getDefault(), "%.2f", DistanceUtils.meterToMiles(distance)));
     }
 
     holder.mItem = stop;
@@ -103,17 +103,17 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
     this.notifyDataSetChanged();
   }
 
-  public class ViewHolder extends RecyclerView.ViewHolder {
-    public final View mView;
-    public final TextView mIdView;
-    public final TextView mContentView;
-    public Stop mItem;
+  class ViewHolder extends RecyclerView.ViewHolder {
+    final View mView;
+    final TextView mIdView;
+    final TextView mContentView;
+    Stop mItem;
 
-    public ViewHolder(View view) {
+    ViewHolder(View view) {
       super(view);
       mView = view;
-      mIdView = (TextView) view.findViewById(R.id.name);
-      mContentView = (TextView) view.findViewById(R.id.description);
+      mIdView = (TextView) view.findViewById(R.id.search_result_name);
+      mContentView = (TextView) view.findViewById(R.id.search_result_description);
     }
 
     @Override

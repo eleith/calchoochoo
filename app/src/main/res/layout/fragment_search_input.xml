@@ -4,10 +4,21 @@
     android:layout_height="match_parent"
     tools:context="com.eleith.calchoochoo.fragments.SearchInputFragment">
 
-    <EditText
-        android:id="@+id/searchInput"
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="search for a caltrain stop" />
+        android:layout_margin="20dp"
+        android:background="@color/background_material_light"
+        android:elevation="4dp"
+        android:padding="10dp">
+
+        <EditText
+            android:id="@+id/searchInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:hint="Search for CalTrain stop"/>
+
+    </LinearLayout>
 
 </FrameLayout>

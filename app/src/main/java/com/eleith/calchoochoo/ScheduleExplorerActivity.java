@@ -85,6 +85,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
 
   @Override
   protected void onDestroy() {
+    super.onDestroy();
     subscription.unsubscribe();
   }
 
