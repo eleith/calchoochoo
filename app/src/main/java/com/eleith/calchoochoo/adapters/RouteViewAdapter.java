@@ -52,11 +52,6 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
     holder.departureTime.setText(possibleTrip.getDepartureTime().toString());
     holder.tripPrice.setText(String.format(Locale.getDefault(), "$%.2f", price));
 
-    if (route != null) {
-      holder.tripRouteName.setText(route.route_long_name);
-    }
-
-    holder.tripTotalTime.setText(String.format(Locale.getDefault(), "%d", Minutes.minutesBetween(possibleTrip.getDepartureTime(), possibleTrip.getArrivalTime()).getMinutes()));
     holder.tripNumber.setText(possibleTrip.getTripId());
   }
 
@@ -69,8 +64,6 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
     TextView arrivalTime;
     TextView departureTime;
     TextView tripPrice;
-    TextView tripTotalTime;
-    TextView tripRouteName;
     TextView tripNumber;
 
     @OnClick(R.id.trip_summary_detail)
@@ -86,8 +79,6 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
       arrivalTime = (TextView) v.findViewById(R.id.trip_stop_start_time);
       departureTime = (TextView) v.findViewById(R.id.trip_stop_end_time);
       tripPrice = (TextView) v.findViewById(R.id.trip_price);
-      tripTotalTime = (TextView) v.findViewById(R.id.trip_total_time);
-      tripRouteName = (TextView) v.findViewById(R.id.trip_route_name);
       tripNumber = (TextView) v.findViewById(R.id.trip_id);
     }
   }

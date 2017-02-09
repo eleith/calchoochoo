@@ -2,7 +2,6 @@ package com.eleith.calchoochoo.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +15,9 @@ import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageArrivalOrDepartDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.parceler.Parcels;
 
 import javax.inject.Inject;
@@ -26,8 +25,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscription;
-import rx.functions.Action1;
 
 
 public class DestinationSourceFragment extends Fragment {
@@ -36,11 +33,19 @@ public class DestinationSourceFragment extends Fragment {
   private LocalDateTime stopDateTime = new LocalDateTime();
   private int stopMethod = RxMessageArrivalOrDepartDateTime.ARRIVING;
 
-  @BindView(R.id.destinationEdit) TextView destinationEdit;
-  @BindView(R.id.sourceEdit) TextView sourceEdit;
-  @BindView(R.id.timeEdit) TextView timeEdit;
+  @BindView(R.id.trip_filter_destination)
+  TextView destinationEdit;
+  @BindView(R.id.trip_filter_source)
+  TextView sourceEdit;
+  @BindView(R.id.trip_filter_datetime)
+  TextView timeEdit;
+  @BindView(R.id.trip_filter_method_arriving)
+  TextView methodArrivingText;
+  @BindView(R.id.trip_filter_method_departing)
+  TextView methodDepartingText;
 
-  @Inject RxBus rxBus;
+  @Inject
+  RxBus rxBus;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +69,7 @@ public class DestinationSourceFragment extends Fragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_destination_source, container, false);
+    View view = inflater.inflate(R.layout.fragment_trip_filter, container, false);
     ButterKnife.bind(this, view);
     updateStops();
     return view;
@@ -83,29 +88,26 @@ public class DestinationSourceFragment extends Fragment {
 
   private void updateTimeEdit() {
     if (stopMethod == RxMessageArrivalOrDepartDateTime.ARRIVING) {
-            timeEdit.setText("arriving on " + stopDateTime.toString());
-          } else {
-            timeEdit.setText("departing on " + stopDateTime.toString());
-          }
-
-    //if (stopSource == null || stopDestination == null) {
-    //  timeEdit.setVisibility(View.INVISIBLE);
-    //} else {
-    //  timeEdit.setVisibility(View.VISIBLE);
-    //}
+      methodDepartingText.setVisibility(View.GONE);
+      methodArrivingText.setVisibility(View.VISIBLE);
+    } else {
+      methodArrivingText.setVisibility(View.GONE);
+      methodDepartingText.setVisibility(View.VISIBLE);
+    }
+    timeEdit.setText(DateTimeFormat.forPattern("E, MMM d @ h:mma").print(stopDateTime));
   }
 
-  @OnClick(R.id.destinationEdit)
+  @OnClick(R.id.trip_filter_destination)
   void destinationClick() {
     rxBus.send(new RxMessage(RxMessageKeys.DESTINATION_SELECTED));
   }
 
-  @OnClick(R.id.sourceEdit)
+  @OnClick(R.id.trip_filter_source)
   void sourceClick() {
     rxBus.send(new RxMessage(RxMessageKeys.SOURCE_SELECTED));
   }
 
-  @OnClick(R.id.timeEdit)
+  @OnClick(R.id.trip_filter_datetime)
   void timeClick() {
     DepartingArrivingDialogFragment dialog = new DepartingArrivingDialogFragment();
     dialog.show(getFragmentManager(), "dialog");
