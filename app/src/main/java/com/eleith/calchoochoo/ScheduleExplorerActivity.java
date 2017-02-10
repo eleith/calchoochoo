@@ -18,7 +18,7 @@ import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityModule;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.fragments.DestinationSourceFragment;
+import com.eleith.calchoochoo.fragments.TripFilterFragment;
 import com.eleith.calchoochoo.fragments.MapSearchFragment;
 import com.eleith.calchoochoo.fragments.RouteStopsFragment;
 import com.eleith.calchoochoo.fragments.HomeFragment;
@@ -216,14 +216,14 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
       }
     }
 
-    DestinationSourceFragment destinationSourceFragment = new DestinationSourceFragment();
+    TripFilterFragment tripFilterFragment = new TripFilterFragment();
     destinationSourceArgs.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
     destinationSourceArgs.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
     destinationSourceArgs.putInt(BundleKeys.STOP_METHOD, stopMethod);
     destinationSourceArgs.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
-    destinationSourceFragment.setArguments(destinationSourceArgs);
+    tripFilterFragment.setArguments(destinationSourceArgs);
 
-    updateTopBottomFragments(destinationSourceFragment, new HomeFragment());
+    updateTopBottomFragments(tripFilterFragment, new HomeFragment());
   }
 
   private void updateRouteFragment() {

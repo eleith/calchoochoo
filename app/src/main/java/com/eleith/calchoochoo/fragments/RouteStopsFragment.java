@@ -1,7 +1,9 @@
 package com.eleith.calchoochoo.fragments;
 
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -39,13 +41,12 @@ public class RouteStopsFragment extends Fragment {
     unPackBundle(savedInstanceState);
     View view = inflater.inflate(R.layout.fragment_search_results, container, false);
     RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.searchResults);
+    recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-    if (recyclerView != null) {
-      routeViewAdapter.setPossibleTrips(possibleTrips);
+    routeViewAdapter.setPossibleTrips(possibleTrips);
 
-      recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-      recyclerView.setAdapter(routeViewAdapter);
-    }
+    recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+    recyclerView.setAdapter(routeViewAdapter);
 
     return view;
   }

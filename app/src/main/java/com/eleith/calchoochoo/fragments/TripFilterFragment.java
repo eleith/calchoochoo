@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class DestinationSourceFragment extends Fragment {
+public class TripFilterFragment extends Fragment {
   private Stop stopDestination;
   private Stop stopSource;
   private LocalDateTime stopDateTime = new LocalDateTime();

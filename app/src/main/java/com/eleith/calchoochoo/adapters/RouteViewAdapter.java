@@ -1,9 +1,11 @@
 package com.eleith.calchoochoo.adapters;
 
+import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
@@ -13,9 +15,9 @@ import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
-import org.joda.time.Minutes;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -47,10 +49,19 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
     PossibleTrip possibleTrip = possibleTrips.get(position);
     Float price = possibleTrip.getPrice();
     Routes route = Queries.getRouteById(possibleTrip.getRouteId());
+    DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
 
-    holder.arrivalTime.setText(possibleTrip.getArrivalTime().toString());
-    holder.departureTime.setText(possibleTrip.getDepartureTime().toString());
+    holder.arrivalTime.setText(dateTimeFormatter.print(possibleTrip.getArrivalTime()));
+    holder.departureTime.setText(dateTimeFormatter.print(possibleTrip.getDepartureTime()));
     holder.tripPrice.setText(String.format(Locale.getDefault(), "$%.2f", price));
+
+    if(route != null && route.route_long_name.contains("Bullet")) {
+      holder.trainLocalImage.setVisibility(View.GONE);
+      holder.trainBulletImage.setVisibility(View.VISIBLE);
+    } else {
+      holder.trainBulletImage.setVisibility(View.GONE);
+      holder.trainLocalImage.setVisibility(View.VISIBLE);
+    }
 
     holder.tripNumber.setText(possibleTrip.getTripId());
   }
@@ -65,8 +76,10 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
     TextView departureTime;
     TextView tripPrice;
     TextView tripNumber;
+    ImageView trainBulletImage;
+    ImageView trainLocalImage;
 
-    @OnClick(R.id.trip_summary_detail)
+    @OnClick(R.id.trip_possible_summary)
     void onClickTripSummary() {
       rxBus.send(new RxMessagePossibleTrip(RxMessageKeys.TRIP_SELECTED, possibleTrips.get(getAdapterPosition())));
     }
@@ -76,10 +89,12 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
 
       ButterKnife.bind(this, v);
 
-      arrivalTime = (TextView) v.findViewById(R.id.trip_stop_start_time);
-      departureTime = (TextView) v.findViewById(R.id.trip_stop_end_time);
-      tripPrice = (TextView) v.findViewById(R.id.trip_price);
-      tripNumber = (TextView) v.findViewById(R.id.trip_id);
+      arrivalTime = (TextView) v.findViewById(R.id.trip_possible_trip_stop_start_time);
+      departureTime = (TextView) v.findViewById(R.id.trip_possible_trip_stop_end_time);
+      tripPrice = (TextView) v.findViewById(R.id.trip_possible_trip_price);
+      tripNumber = (TextView) v.findViewById(R.id.trip_possible_trip_id);
+      trainBulletImage = (ImageView) v.findViewById(R.id.trip_possible_train_bullet);
+      trainLocalImage = (ImageView) v.findViewById(R.id.trip_possible_train_local);
     }
   }
 }
