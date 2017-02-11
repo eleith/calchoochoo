@@ -1,100 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                            xmlns:tools="http://schemas.android.com/tools"
-              android:layout_height="50dp"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
-              android:orientation="horizontal">
+              android:layout_height="wrap_content"
+              android:background="@color/primary_material_light"
+              android:orientation="vertical"
+              android:padding="10dp">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Train #"/>
+            <ImageView
+                android:id="@+id/trip_summary_train_bullet"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_train_bullet"/>
 
-            <TextView
-                android:id="@+id/trip_summary_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="168"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text=" ("/>
-
-            <TextView
-                android:id="@+id/trip_summary_route_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="Baby Bullet"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text=")"/>
+            <ImageView
+                android:id="@+id/trip_summary_train_local"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_train_local"
+                android:visibility="gone"/>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/trip_summary_stop_start_time"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="5:45 pm"/>
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text=" - "/>
+                <TextView
+                    android:id="@+id/trip_summary_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/background_material_light"
+                    android:textSize="25sp"
+                    tools:text="Milbrae"/>
 
-            <TextView
-                android:id="@+id/trip_summary_stop_end_time"
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="6:25 pm"/>
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/trip_summary_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/background_material_light"
+                    tools:text="to Mountain View"/>
+            </LinearLayout>
+
         </LinearLayout>
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:gravity="end"
-        android:orientation="vertical">
-
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/trip_summary_total_time"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                tools:text="42"/>
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/background_material_light"
+                tools:text="42 min"/>
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="1dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/background_material_light"/>
 
             <TextView
+                android:id="@+id/trip_summary_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" min"/>
+                android:layout_gravity="center"
+                android:textColor="@color/background_material_light"
+                tools:text="$4.25 pm"/>
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/trip_summary_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="$3.45"/>
     </LinearLayout>
 
 </LinearLayout>
