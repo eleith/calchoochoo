@@ -2,23 +2,13 @@ package com.eleith.calchoochoo.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.parceler.Parcels;
 
@@ -30,7 +20,7 @@ public class StopDetailsFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
+    //((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
     unWrapBundle(getArguments());
   }
 

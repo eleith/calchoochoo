@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import com.eleith.calchoochoo.adapters.RouteViewAdapter;
 import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.adapters.SearchResultsViewAdapter;
+import com.eleith.calchoochoo.adapters.StopCardAdapter;
 import com.eleith.calchoochoo.adapters.TripStopsAdapter;
 import com.eleith.calchoochoo.utils.RxBus;
 
@@ -35,6 +36,12 @@ public class ScheduleExplorerActivityModule {
   @Provides
   public TripStopsAdapter provideTripStopsAdapter(RxBus rxBus) {
     return new TripStopsAdapter(rxBus);
+  }
+
+  @ScheduleExplorerActivityScope
+  @Provides
+  public StopCardAdapter provideStopCardAdapter(RxBus rxBus) {
+    return new StopCardAdapter(rxBus);
   }
 
   @ScheduleExplorerActivityScope

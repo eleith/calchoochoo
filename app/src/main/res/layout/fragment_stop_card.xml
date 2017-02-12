@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    xmlns:card="http://schemas.android.com/apk/res-auto"
+                                    xmlns:map="http://schemas.android.com/apk/res-auto"
+                                    xmlns:tools="http://schemas.android.com/tools"
+                                    android:layout_margin="10dp"
+                                    card:cardCornerRadius="2dp"
+                                    android:elevation="2dp"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/stop_card_map_view"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            map:liteMode="true">
+        </com.google.android.gms.maps.MapView>
+
+        <TextView
+            android:id="@+id/stop_card_stop_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:textSize="22sp"
+            tools:text="name"
+            />
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

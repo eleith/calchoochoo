@@ -18,6 +18,7 @@ import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityModule;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
+import com.eleith.calchoochoo.fragments.StopCardsFragment;
 import com.eleith.calchoochoo.fragments.TripFilterFragment;
 import com.eleith.calchoochoo.fragments.MapSearchFragment;
 import com.eleith.calchoochoo.fragments.RouteStopsFragment;
@@ -25,7 +26,6 @@ import com.eleith.calchoochoo.fragments.HomeFragment;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
 import com.eleith.calchoochoo.fragments.SearchResultsFragment;
 import com.eleith.calchoochoo.fragments.StopDetailsFragment;
-import com.eleith.calchoochoo.fragments.StopSummaryFragment;
 import com.eleith.calchoochoo.fragments.TripDetailFragment;
 import com.eleith.calchoochoo.fragments.TripSummaryFragment;
 import com.eleith.calchoochoo.utils.BundleKeys;
@@ -125,7 +125,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
           showTripDetailsFragments(possibleTrip);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.STOP_SELECTED)) {
           Stop stop = ((RxMessageStop) rxMessage).getMessage();
-          showStopDetailsFragments(stop);
+          showStopsFragments(stop);
         }
       }
     };
@@ -165,18 +165,18 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     updateTopBottomFragments(searchInputFragment, searchResultsFragment);
   }
 
-  private void showStopDetailsFragments(Stop stop) {
+  private void showStopsFragments(Stop stop) {
     Bundle stopSummaryArgs = new Bundle();
 
-    StopSummaryFragment stopSummaryFragment = new StopSummaryFragment();
     StopDetailsFragment stopDetailsFragment = new StopDetailsFragment();
+    StopCardsFragment stopCardsFragment = new StopCardsFragment();
 
     stopSummaryArgs.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
 
-    stopSummaryFragment.setArguments(stopSummaryArgs);
     stopDetailsFragment.setArguments(stopSummaryArgs);
+    stopCardsFragment.setArguments(stopSummaryArgs);
 
-    updateTopBottomFragments(stopSummaryFragment, stopDetailsFragment);
+    updateTopBottomFragments(stopDetailsFragment, stopCardsFragment);
   }
 
   private void showTripDetailsFragments(PossibleTrip possibleTrip) {

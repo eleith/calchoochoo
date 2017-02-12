@@ -1,6 +1,5 @@
 package com.eleith.calchoochoo.adapters;
 
-import android.provider.ContactsContract;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;

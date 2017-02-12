@@ -2,7 +2,6 @@ package com.eleith.calchoochoo.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,21 +9,23 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.adapters.RouteViewAdapter;
 import com.eleith.calchoochoo.ScheduleExplorerActivity;
-import com.eleith.calchoochoo.data.PossibleTrip;
+import com.eleith.calchoochoo.adapters.StopCardAdapter;
+import com.eleith.calchoochoo.data.Queries;
+import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.RxBus;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
 import org.parceler.Parcels;
-import java.util.ArrayList;
 import javax.inject.Inject;
 
-public class RouteStopsFragment extends Fragment {
-  private ArrayList<PossibleTrip> possibleTrips;
+public class StopCardsFragment extends Fragment {
+  private Stop currentStop;
 
-  @Inject RxBus rxBus;
-  @Inject RouteViewAdapter routeViewAdapter;
+  @Inject
+  StopCardAdapter stopCardAdapter;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -36,26 +37,26 @@ public class RouteStopsFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     unPackBundle(savedInstanceState);
-    View view = inflater.inflate(R.layout.fragment_search_results, container, false);
-    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.searchResults);
-    recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-
-    routeViewAdapter.setPossibleTrips(possibleTrips);
+    View view = inflater.inflate(R.layout.fragment_stop_cards, container, false);
+    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stop_cards_recycler_view);
 
     recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-    recyclerView.setAdapter(routeViewAdapter);
+    recyclerView.setAdapter(stopCardAdapter);
+
+    int position = Queries.getAllStops().indexOf(currentStop);
+    recyclerView.scrollToPosition(position);
 
     return view;
   }
 
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-  }
-
   private void unPackBundle(Bundle bundle) {
     if (bundle != null) {
-      possibleTrips = Parcels.unwrap(bundle.getParcelable(BundleKeys.ROUTE_STOPS));
+      currentStop = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP));
     }
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
   }
 }

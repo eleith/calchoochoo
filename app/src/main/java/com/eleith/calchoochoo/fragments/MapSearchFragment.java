@@ -25,6 +25,7 @@ import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -109,8 +110,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
       public boolean onMarkerClick(Marker marker) {
         String stopId = (String) marker.getTag();
         Stop touchedStop = Queries.getStopById(stopId);
-        Pair<Stop, Integer> pair = new Pair<>(touchedStop, RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
-        rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+        rxBus.send(new RxMessageStop(RxMessageKeys.STOP_SELECTED, touchedStop));
         return true;
       }
     });
