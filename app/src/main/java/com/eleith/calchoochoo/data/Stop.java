@@ -25,6 +25,9 @@ public class Stop extends BaseModel {
   public float stop_lat;
 
   @Column
+  public String parent_station;
+
+  @Column
   public float stop_lon;
 
   @Column
@@ -35,6 +38,12 @@ public class Stop extends BaseModel {
 
   @Column
   public String stop_code;
+
+  @Column
+  public int zone_id;
+
+  @Column
+  public int wheelchar_board;
 
   private Location location;
 

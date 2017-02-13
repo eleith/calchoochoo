@@ -14,9 +14,6 @@ import com.eleith.calchoochoo.adapters.StopCardAdapter;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
 
 import org.parceler.Parcels;
 import javax.inject.Inject;

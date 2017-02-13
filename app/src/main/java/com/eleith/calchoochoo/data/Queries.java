@@ -63,6 +63,16 @@ public class Queries {
   }
 
   @Nullable
+  public static Integer getZoneOfParentStop(String stop_id) {
+    for (Stop stop : allDirectionalStops) {
+      if (stop.parent_station.equals(stop_id)) {
+        return stop.zone_id;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
   public static Stop findStopClosestTo(Location location) {
     Float smallestDistance = null;
     Stop nearestStop = null;
@@ -205,7 +215,7 @@ public class Queries {
     String query = "SELECT " +
       "  st.trip_id as st__trip_id, st.arrival_time as st__arrival_time, st.departure_time as st__departure_time, " +
       "  st.stop_id as st__stop_id, st.stop_sequence as st__stop_sequence, st.pickup_time as st__pickup_time, st.drop_off_type as st__drop_off_type, " +
-      "  s.stop_id as s__stop_id, s.stop_name as s__stop_name, s.stop_lat as s__stop_lat, s.stop_lon as s__stop_lon, " +
+      "  s.stop_id as s__stop_id, s.zone_id as s__zone_id, s.stop_name as s__stop_name, s.stop_lat as s__stop_lat, s.stop_lon as s__stop_lon, " +
       "  s.stop_url as s__stop_url, s.platform_code as s__platform_code, s.stop_code as s__stop_code " +
       "FROM stops as s, stop_times as st " +
       "WHERE st.trip_id = ? " +
@@ -232,6 +242,7 @@ public class Queries {
       stop.stop_id = stopTimes.stop_id;
       stop.stop_name = cursor.getString(cursor.getColumnIndex("s__stop_name"));
       stop.stop_code = cursor.getString(cursor.getColumnIndex("s__stop_code"));
+      stop.zone_id = cursor.getInt(cursor.getColumnIndex("s__zone_id"));
       stop.platform_code = cursor.getString(cursor.getColumnIndex("s__platform_code"));
       stop.stop_url = cursor.getString(cursor.getColumnIndex("s__stop_url"));
       stop.stop_lon = cursor.getFloat(cursor.getColumnIndex("s__stop_lon"));

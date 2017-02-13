@@ -1,5 +1,9 @@
 package com.eleith.calchoochoo.adapters;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,17 +14,15 @@ import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 
 import java.util.ArrayList;
+import java.util.Locale;
+
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCardHolder> {
   private ArrayList<Stop> stops;
@@ -41,7 +43,12 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
   @Override
   public void onBindViewHolder(StopCardHolder holder, int position) {
     Stop stop = stops.get(position);
+    Integer zone = Queries.getZoneOfParentStop(stop.stop_id);
     holder.stopName.setText(stop.stop_name);
+
+    if (zone != null) {
+      holder.stopZone.setText(String.format(Locale.getDefault(), "%d", zone));
+    }
   }
 
   @Override
@@ -49,44 +56,50 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
     return stops.size();
   }
 
-  class StopCardHolder extends RecyclerView.ViewHolder implements OnMapReadyCallback {
-    private MapView mapView;
-    private GoogleMap googleMap;
+  class StopCardHolder extends RecyclerView.ViewHolder {
     private Stop stop;
+
+    @BindView(R.id.stop_card_stop_name)
     TextView stopName;
 
-    //@OnClick(R.id.trip_possible_summary)
-    //void onClickTripSummary() {
-    //  rxBus.send(new RxMessagePossibleTrip(RxMessageKeys.TRIP_SELECTED, possibleTrips.get(getAdapterPosition())));
-    //}
+    @BindView(R.id.stop_card_zone)
+    TextView stopZone;
+
+    @OnClick(R.id.stop_card_link)
+    void onClickLink() {
+      Stop stop = stops.get(getAdapterPosition());
+      Intent intent = new Intent(Intent.ACTION_VIEW);
+      intent.setData(Uri.parse(stop.stop_url));
+      itemView.getContext().startActivity(intent);
+    }
+
+    @OnClick(R.id.stop_card_map_to)
+    void onClickMap() {
+      Stop stop = stops.get(getAdapterPosition());
+      Uri gmmIntentUri = Uri.parse("geo:" + stop.stop_lat + "," + stop.stop_lon + "?z=13&q=" + Uri.encode(stop.stop_name));
+      Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+      mapIntent.setPackage("com.google.android.apps.maps");
+      itemView.getContext().startActivity(mapIntent);
+    }
+
+    @OnClick(R.id.stop_card_leave_from)
+    void onClickLeaveFrom() {
+      Stop stop = stops.get(getAdapterPosition());
+      Pair<Stop, Integer> pair = new Pair<>(stop, RxMessagePairStopReason.SEARCH_REASON_SOURCE);
+      rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+    }
+
+    @OnClick(R.id.stop_card_go_to)
+    void onClickGoTo() {
+      Stop stop = stops.get(getAdapterPosition());
+      Pair<Stop, Integer> pair = new Pair<>(stop, RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
+      rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+    }
 
     private StopCardHolder(View view) {
       super(view);
-
-      // initialize the map!
-      mapView = ((MapView) view.findViewById(R.id.stop_card_map_view));
-      mapView.onCreate(null);
-      mapView.getMapAsync(this);
-
-      stopName = (TextView) view.findViewById(R.id.stop_card_stop_name);
-
       ButterKnife.bind(this, view);
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-      this.googleMap = googleMap;
-      int position = getAdapterPosition();
-
-      if (position >= 0 && position < stops.size()) {
-        stop = stops.get(position);
-
-        LatLng stopLatLng = new LatLng(stop.stop_lat, stop.stop_lon);
-        googleMap.getUiSettings().setMapToolbarEnabled(false);
-        googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        CameraPosition cameraPosition = new CameraPosition.Builder().tilt(15).zoom(18).target(stopLatLng).build();
-        googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-      }
-    }
   }
 }

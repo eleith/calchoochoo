@@ -1,5 +1,6 @@
 package com.eleith.calchoochoo.dagger;
 
+import android.content.Context;
 import android.support.v4.app.FragmentManager;
 
 import com.eleith.calchoochoo.adapters.RouteViewAdapter;

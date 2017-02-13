@@ -26,7 +26,7 @@ public interface ScheduleExplorerActivityComponent {
   void inject(SearchInputFragment searchInputFragment);
   void inject(TripFilterFragment tripFilterFragment);
   void inject(DepartingArrivingDialogFragment departingArrivingDialogFragment);
-  //void inject(StopDetailsFragment stopDetailsFragment);
+  void inject(StopDetailsFragment stopDetailsFragment);
   void inject(TripSummaryFragment tripSummaryFragment);
   void inject(TripDetailFragment tripDetailFragment);
   void inject(MapSearchFragment mapSearchFragment);

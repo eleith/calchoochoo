@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 
@@ -20,7 +21,7 @@ public class StopDetailsFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    //((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
+    ((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
     unWrapBundle(getArguments());
   }
 

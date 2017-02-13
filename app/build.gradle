@@ -65,4 +65,7 @@ dependencies {
     //Parceler
     compile 'org.parceler:parceler-api:1.1.1'
     apt 'org.parceler:parceler:1.1.1'
+
+    // Glide image loading lib
+    compile 'com.github.bumptech.glide:glide:3.7.0'
 }
