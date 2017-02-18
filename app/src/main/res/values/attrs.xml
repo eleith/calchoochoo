@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TripVisualView">
+        <attr name="lineType" format="enum">
+            <enum name="source" value="0"/>
+            <enum name="destination" value="1"/>
+            <enum name="middle" value="2"/>
+        </attr>
+        <attr name="lineWidth" format="dimension"/>
+        <attr name="lineCircleRadius" format="dimension"/>
+    </declare-styleable>
+</resources>
