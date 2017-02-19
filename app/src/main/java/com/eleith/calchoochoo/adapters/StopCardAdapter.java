@@ -27,6 +27,9 @@ import butterknife.OnClick;
 public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCardHolder> {
   private ArrayList<Stop> stops;
   private RxBus rxBus;
+  private int highlightedStopPosition;
+  private static final int TYPE_NORMAL_STOP = 0;
+  private static final int TYPE_HIGHLIGHTED_STOP = 1;
 
   public StopCardAdapter(RxBus rxBus) {
     stops = Queries.getAllStops();
@@ -36,7 +39,11 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
   @Override
   public StopCardHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view;
-    view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_stop_card, parent, false);
+    if (viewType == TYPE_NORMAL_STOP) {
+      view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_stop_card, parent, false);
+    } else {
+      view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_stop_card_highlighted, parent, false);
+    }
     return new StopCardHolder(view);
   }
 
@@ -54,6 +61,19 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
   @Override
   public int getItemCount() {
     return stops.size();
+  }
+
+  @Override
+  public int getItemViewType(int position) {
+    if (position == highlightedStopPosition) {
+      return TYPE_HIGHLIGHTED_STOP;
+    } else {
+      return TYPE_NORMAL_STOP;
+    }
+  }
+
+  public void setHighlightedStop(int position) {
+    highlightedStopPosition = position;
   }
 
   class StopCardHolder extends RecyclerView.ViewHolder {

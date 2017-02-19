@@ -65,8 +65,8 @@ public class TripSummaryFragment extends Fragment {
     Routes route = Queries.getRouteById(possibleTrip.getRouteId());
     ButterKnife.bind(this, view);
 
-    tripSummaryFrom.setText(stopSource.stop_name);
-    tripSummaryTo.setText(stopDestination.stop_name);
+    tripSummaryFrom.setText(stopSource.stop_name.replace(" Caltrain", ""));
+    tripSummaryTo.setText(stopDestination.stop_name.replace(" Caltrain", ""));
     tripSummaryPrice.setText(String.format(Locale.getDefault(), "$%.2f", possibleTrip.getPrice()));
     tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime(), possibleTrip.getDepartureTime()).getMinutes()));
 

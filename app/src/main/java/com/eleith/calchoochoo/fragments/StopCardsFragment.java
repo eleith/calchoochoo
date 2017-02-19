@@ -34,13 +34,15 @@ public class StopCardsFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     unPackBundle(savedInstanceState);
-    View view = inflater.inflate(R.layout.fragment_stop_cards, container, false);
-    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stop_cards_recycler_view);
 
+    View view = inflater.inflate(R.layout.fragment_stop_cards, container, false);
+    int position = Queries.getAllStops().indexOf(currentStop);
+
+    stopCardAdapter.setHighlightedStop(position);
+
+    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stop_cards_recycler_view);
     recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     recyclerView.setAdapter(stopCardAdapter);
-
-    int position = Queries.getAllStops().indexOf(currentStop);
     recyclerView.scrollToPosition(position);
 
     return view;

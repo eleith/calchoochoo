@@ -12,7 +12,7 @@ import com.eleith.calchoochoo.R;
 public class TripVisualView extends View {
 
   private Paint paint;
-  private String tripType;
+  private int tripType;
   private int viewWidth;
   private int viewHeight;
   private float tripLineWidth;
@@ -20,9 +20,12 @@ public class TripVisualView extends View {
   private Canvas canvas;
   private Context context;
 
-  static float TRIP_LINE_WIDTH_DEFAULT = 10.0f;
-  static float TRIP_LINE_CIRCLE_RADIUS_DEFAULT = 20.0f;
-  static String TRIP_TYPE_DEFAULT = "middle";
+  private static float TRIP_LINE_WIDTH_DEFAULT = 10.0f;
+  private static float TRIP_LINE_CIRCLE_RADIUS_DEFAULT = 20.0f;
+  private final static int TRIP_TYPE_DEFAULT = 2;
+  private final static int ITEM_TYPE_SOURCE = 0;
+  private final static int ITEM_TYPE_DESTINATION = 1;
+  private final static int ITEM_TYPE_MIDDLE = 2;
 
   public TripVisualView(Context context) {
     super(context);
@@ -50,13 +53,9 @@ public class TripVisualView extends View {
     TypedArray typedArray = context.getTheme().obtainStyledAttributes(attributeSet, R.styleable.TripVisualView, 0, 0);
 
     try {
-      tripType = typedArray.getString(R.styleable.TripVisualView_lineType);
+      tripType = typedArray.getInt(R.styleable.TripVisualView_lineType, ITEM_TYPE_MIDDLE);
       tripLineRadius = typedArray.getDimension(R.styleable.TripVisualView_lineCircleRadius, TRIP_LINE_CIRCLE_RADIUS_DEFAULT);
       tripLineWidth = typedArray.getDimension(R.styleable.TripVisualView_lineWidth, TRIP_LINE_WIDTH_DEFAULT);
-
-      if (tripType == null) {
-        tripType = TRIP_TYPE_DEFAULT;
-      }
     } finally {
       typedArray.recycle();
     }
@@ -76,15 +75,22 @@ public class TripVisualView extends View {
   private void drawTripLine() {
     paint.setColor(getResources().getColor(android.support.v7.appcompat.R.color.accent_material_light, context.getTheme()));
     switch (tripType) {
-      case "source":
+      case ITEM_TYPE_SOURCE:
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(tripLineWidth);
         canvas.drawCircle(viewWidth / 2, viewHeight / 2, tripLineRadius, paint);
-        canvas.drawRect(viewWidth / 2 - tripLineWidth, viewHeight / 2 + tripLineRadius + 2, viewWidth / 2 + tripLineWidth, viewHeight, paint);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawRect(viewWidth / 2 - tripLineWidth, viewHeight / 2 + tripLineRadius + tripLineWidth, viewWidth / 2 + tripLineWidth, viewHeight, paint);
         break;
-      case "destination":
+      case ITEM_TYPE_DESTINATION:
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(tripLineWidth);
         canvas.drawCircle(viewWidth / 2, viewHeight / 2, tripLineRadius, paint);
-        canvas.drawRect(viewWidth / 2 - tripLineWidth, 0, viewWidth / 2 + tripLineWidth, viewHeight / 2 - tripLineRadius - 2, paint);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawRect(viewWidth / 2 - tripLineWidth, 0, viewWidth / 2 + tripLineWidth, viewHeight / 2 - tripLineRadius - tripLineWidth, paint);
         break;
       default:
+        canvas.drawCircle(viewWidth / 2, viewHeight / 2, tripLineRadius, paint);
         canvas.drawRect(viewWidth / 2 - tripLineWidth, 0, viewWidth / 2 + tripLineWidth, viewHeight, paint);
         break;
     }

@@ -33,11 +33,11 @@ public class ScheduleExplorerActivityModule {
     return new RouteViewAdapter(rxBus);
   }
 
-  @ScheduleExplorerActivityScope
-  @Provides
-  public TripStopsAdapter provideTripStopsAdapter(RxBus rxBus) {
-    return new TripStopsAdapter(rxBus);
-  }
+  //@ScheduleExplorerActivityScope
+  //@Provides
+  //public TripStopsAdapter provideTripStopsAdapter(RxBus rxBus) {
+  //  return new TripStopsAdapter(rxBus);
+  //}
 
   @ScheduleExplorerActivityScope
   @Provides
