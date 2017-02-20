@@ -5,41 +5,53 @@
               android:layout_height="wrap_content"
               android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/search_result_name"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:tint="@android:color/secondary_text_dark"
+            android:src="@drawable/ic_room_black_24dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/search_result_description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="italic"
+                tools:text="15.45"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" mi"
+                android:textStyle="italic"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/search_result_name"
+        android:layout_width="0dp"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:textSize="20sp"
+        android:layout_weight="5"
         tools:text="name"
         />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="end"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="("
-            android:textStyle="italic"
-            />
-
-        <TextView
-            android:id="@+id/search_result_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textStyle="italic"
-            tools:text="15.45"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=" miles away)"
-            android:textStyle="italic"
-            />
-    </LinearLayout>
 </LinearLayout>

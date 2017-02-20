@@ -4,6 +4,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.util.Pair;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ public class SearchResultsFragment extends Fragment {
     unPackBundle(savedInstanceState);
     View view = inflater.inflate(R.layout.fragment_search_results, container, false);
     recyclerView = (RecyclerView) view.findViewById(R.id.searchResults);
+    recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
     if (recyclerView != null) {
       searchResultsViewAdapter.setStops(stops);

@@ -6,15 +6,25 @@
     android:orientation="vertical"
     tools:context="com.eleith.calchoochoo.fragments.SearchResultsFragment">
 
-    <android.support.v7.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/searchResults"
-        android:name="com.eleith.calchoochoo.SearchResultsFragment"
+    <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layoutManager="LinearLayoutManager"
-        tools:listitem="@layout/fragment_search_result"/>
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
+        >
+
+        <android.support.v7.widget.RecyclerView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/searchResults"
+            android:name="com.eleith.calchoochoo.SearchResultsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/fragment_search_result"/>
+    </android.support.v7.widget.CardView>
 
 </FrameLayout>
