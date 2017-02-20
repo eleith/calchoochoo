@@ -17,7 +17,7 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
                 android:padding="12dp"
@@ -27,12 +27,20 @@
             <EditText
                 android:id="@+id/trip_filter_source"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
                 android:backgroundTint="@color/background_material_light"
                 android:focusable="false"
                 android:text="select a caltrain stop"
                 android:textColor="@color/background_material_light"/>
+
+                                    <View
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_refresh_black_24dp"
+                />
         </TableRow>
 
         <TableRow>
@@ -50,12 +58,18 @@
                 android:id="@+id/trip_filter_destination"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
+                android:layout_weight="2"
                 android:backgroundTint="@color/background_material_light"
                 android:focusable="false"
                 android:text="select a caltrain stop"
                 android:textColor="@color/background_material_light"/>
 
+                        <View
+                android:layout_height="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"
+                />
         </TableRow>
 
         <TableRow>
@@ -86,12 +100,23 @@
             <EditText
                 android:id="@+id/trip_filter_datetime"
                 android:layout_width="0dp"
+                android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
                 android:backgroundTint="@color/background_material_light"
                 android:focusable="false"
                 android:text="10/2/17 @ 5:19pm"
                 android:textColor="@color/background_material_light"/>
+
+            <ImageView
+                android:id="@+id/trip_filter_refresh_date"
+                android:layout_height="25dp"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:tint="@color/background_material_light"
+                android:layout_gravity="center"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/ic_restore_black_24dp"
+                />
         </TableRow>
 
     </TableLayout>

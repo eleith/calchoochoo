@@ -97,6 +97,12 @@ public class TripFilterFragment extends Fragment {
     timeEdit.setText(DateTimeFormat.forPattern("E, MMM d @ h:mma").print(stopDateTime));
   }
 
+  @OnClick(R.id.trip_filter_refresh_date)
+  void refreshDateClick() {
+   stopDateTime = new LocalDateTime();
+   updateTimeEdit();
+  }
+
   @OnClick(R.id.trip_filter_destination)
   void destinationClick() {
     rxBus.send(new RxMessage(RxMessageKeys.DESTINATION_SELECTED));

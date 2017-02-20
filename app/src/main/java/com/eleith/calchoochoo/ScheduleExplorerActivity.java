@@ -108,6 +108,12 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
           selectDestination();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SOURCE_SELECTED)) {
           selectSource();
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED)) {
+          Stop tempStop = stopDestination;
+          stopDestination = stopSource;
+          stopSource = tempStop;
+          showDestinationSourceFragment();
+          updateRouteFragment();
         } else if(rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
           stopMethod = pair.first;

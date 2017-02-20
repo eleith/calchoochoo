@@ -13,6 +13,7 @@ public class RxMessageKeys {
   public static final String DATE_TIME_SELECTED = "dateTimeSelected";
   public static final String TRIP_SELECTED = "tripSelected";
   public static final String STOP_SELECTED = "stopSelected";
+  public static final String SWITCH_SOURCE_DESTINATION_SELECTED = "switchSourceDestinationSelected";
 
   private static final Map<String, Class> keyToClassMap = createKeyMap();
 
@@ -24,6 +25,7 @@ public class RxMessageKeys {
     map.put(SEARCH_RESULT_STOP, RxMessageStop.class);
     map.put(DESTINATION_SELECTED, RxMessage.class);
     map.put(SOURCE_SELECTED, RxMessage.class);
+    map.put(SWITCH_SOURCE_DESTINATION_SELECTED, RxMessage.class);
     map.put(DATE_TIME_SELECTED, RxMessageArrivalOrDepartDateTime.class);
     map.put(TRIP_SELECTED, RxMessagePossibleTrip.class);
     map.put(STOP_SELECTED, RxMessageStop.class);

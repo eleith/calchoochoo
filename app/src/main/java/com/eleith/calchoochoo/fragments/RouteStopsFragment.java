@@ -15,16 +15,26 @@ import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 
 import org.parceler.Parcels;
 import java.util.ArrayList;
 import javax.inject.Inject;
+
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class RouteStopsFragment extends Fragment {
   private ArrayList<PossibleTrip> possibleTrips;
 
   @Inject RxBus rxBus;
   @Inject RouteViewAdapter routeViewAdapter;
+
+  @OnClick(R.id.search_results_switch)
+  void switchRoutesClick() {
+    rxBus.send(new RxMessage(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED));
+  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -36,14 +46,16 @@ public class RouteStopsFragment extends Fragment {
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     unPackBundle(savedInstanceState);
-    View view = inflater.inflate(R.layout.fragment_search_results, container, false);
-    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.searchResults);
+    View view = inflater.inflate(R.layout.fragment_trips_possible, container, false);
+    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.trips_possible_recyclerview);
     recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
     routeViewAdapter.setPossibleTrips(possibleTrips);
 
     recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     recyclerView.setAdapter(routeViewAdapter);
+
+    ButterKnife.bind(this, view);
 
     return view;
   }
