@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 public class InfinitePager extends ViewPager{
   private Boolean stateChanged = false;
   private InfinitePagerAdapter infinitePagerAdapter;
+  private OnClickListener onClickListener;
 
   public InfinitePager(Context context) {
     super(context);
@@ -17,11 +18,17 @@ public class InfinitePager extends ViewPager{
   }
 
   public void setOnItemClickListener(OnClickListener onClickListener) {
+    this.onClickListener = onClickListener;
     infinitePagerAdapter.setOnClickListener(onClickListener);
   }
 
   public void setInfinitePagerData(final InfinitePagerData infinitePagerData) {
     infinitePagerAdapter = new InfinitePagerAdapter(getContext(), infinitePagerData);
+
+    if (onClickListener != null) {
+      infinitePagerAdapter.setOnClickListener(onClickListener);
+    }
+
     setAdapter(infinitePagerAdapter);
     setCurrentItem(infinitePagerData.getDataSize() / 2, false);
 

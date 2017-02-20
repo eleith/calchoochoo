@@ -9,7 +9,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.ImageButton;
@@ -93,7 +92,7 @@ public class DepartingArrivingDialogFragment extends android.support.v4.app.Dial
     DatePickerDialog dialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
       @Override
       public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        LocalDate setDate = new LocalDate(year, month - 1, dayOfMonth);
+        LocalDate setDate = new LocalDate(year, month + 1, dayOfMonth);
         infinitePager.setInfinitePagerData(new InfinitePagerDataDates(setDate));
       }
     }, selectedDate.getYear(), selectedDate.getMonthOfYear() - 1, selectedDate.getDayOfMonth());
