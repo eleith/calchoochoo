@@ -1,7 +1,5 @@
 package com.eleith.calchoochoo.utils;
 
-import android.support.v4.view.ViewPager;
-
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -14,6 +12,10 @@ public class InfinitePagerDataDates extends InfinitePagerData<LocalDate> {
 
   public InfinitePagerDataDates(LocalDate[] dataArray) {
     super(dataArray);
+  }
+
+  public InfinitePagerDataDates(LocalDate initialDate) {
+    super(initialDate);
   }
 
   @Override

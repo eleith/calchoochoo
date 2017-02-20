@@ -1,12 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:tools="http://schemas.android.com/tools"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="20dp"
                 tools:context=".fragments.DepartingArrivingDialogFragment">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/timeTabs"
+        app:tabBackground="@color/accent_material_light"
+        app:tabIndicatorColor="@color/primary_text_material_light"
+        app:tabSelectedTextColor="@color/background_material_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top">
@@ -27,9 +30,10 @@
 
     <LinearLayout
         android:id="@+id/picker"
-        android:layout_below="@id/timeTabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/timeTabs"
+        android:gravity="center"
         android:orientation="horizontal">
 
         <TimePicker
@@ -41,53 +45,73 @@
 
     </LinearLayout>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/picker"
+        android:background="@android:drawable/divider_horizontal_bright"/>
+
     <LinearLayout
         android:id="@+id/datePicker"
-        android:layout_below="@id/picker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/picker"
         android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/leftDateButton"
-            android:src="@drawable/ic_chevron_left_black_24dp"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:src="@drawable/ic_chevron_left_black_24dp"/>
 
         <com.eleith.calchoochoo.utils.InfinitePager
-            android:layout_weight="4"
             android:id="@+id/dateSpinner"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="4"/>
 
         <ImageButton
             android:id="@+id/rightDateButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_chevron_right_black_24dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:src="@drawable/ic_chevron_right_black_24dp"/>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/datePicker"
+        android:background="@android:drawable/divider_horizontal_bright"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="5dp"
         android:layout_below="@id/datePicker"
-        android:layoutDirection="rtl"
+        android:gravity="end"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/departOrArriveSelect"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Done"/>
-
-        <TextView
+        <Button
             android:id="@+id/departOrArriveCancel"
+            style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/accent_material_light"
             android:text="Cancel"/>
+
+        <Button
+            android:id="@+id/departOrArriveSelect"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Ok"
+            android:textColor="@color/accent_material_light"/>
+
     </LinearLayout>
 
 </RelativeLayout>

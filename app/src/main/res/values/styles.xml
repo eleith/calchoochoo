@@ -14,8 +14,8 @@
         <item name="android:textColorPrimary">@color/primary_text_material_light</item>
 
         <item name="android:windowContentTransitions">true</item>
-        <item name="android:datePickerStyle">@style/SpinnerDatePicker</item>
         <item name="android:timePickerStyle">@style/SpinnerTimePicker</item>
+
 
     </style>
 </resources>

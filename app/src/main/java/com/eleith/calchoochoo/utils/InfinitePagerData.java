@@ -1,10 +1,29 @@
 package com.eleith.calchoochoo.utils;
 
+import java.util.ArrayList;
+
 public class InfinitePagerData<T> {
   private T[] dataArray;
   private T temporarySavedData;
 
   public InfinitePagerData(T[] dataArray) {
+    setDataArray(dataArray);
+  }
+
+  public InfinitePagerData(T initialData) {
+    ArrayList<T> newArrayData = new ArrayList<T>();
+
+    newArrayData.add(initialData);
+    newArrayData.add(initialData);
+    newArrayData.add(initialData);
+
+    dataArray = (T[]) newArrayData.toArray();
+
+    shiftLeft();
+    shiftRight();
+    shiftRight();
+    shiftLeft();
+
     setDataArray(dataArray);
   }
 
