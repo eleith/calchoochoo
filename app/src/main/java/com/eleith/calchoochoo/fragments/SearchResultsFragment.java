@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.ScheduleExplorerActivity;
@@ -21,12 +22,19 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 
+import org.apache.commons.lang3.StringUtils;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Locale;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import rx.Subscription;
 import rx.functions.Action1;
 
@@ -36,6 +44,11 @@ public class SearchResultsFragment extends Fragment {
   private Location location;
   private int searchReason;
   private Subscription subscription;
+
+  @BindView(R.id.search_results_empty_state)
+  LinearLayout searchResultsEmptyState;
+  @BindView(R.id.search_results_recyclerview)
+  RecyclerView searchResultsRecyclerView;
 
   @Inject RxBus rxBus;
   @Inject SearchResultsViewAdapter searchResultsViewAdapter;
@@ -51,7 +64,7 @@ public class SearchResultsFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     unPackBundle(savedInstanceState);
     View view = inflater.inflate(R.layout.fragment_search_results, container, false);
-    recyclerView = (RecyclerView) view.findViewById(R.id.searchResults);
+    recyclerView = (RecyclerView) view.findViewById(R.id.search_results_recyclerview);
     recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
     if (recyclerView != null) {
@@ -63,6 +76,7 @@ public class SearchResultsFragment extends Fragment {
       recyclerView.setAdapter(searchResultsViewAdapter);
     }
 
+    ButterKnife.bind(this, view);
     return view;
   }
 
@@ -94,8 +108,47 @@ public class SearchResultsFragment extends Fragment {
   }
 
   public void filterResultsBy(String searchQuery, Location location) {
+    ArrayList<Stop> filteredStops = filterByFuzzySearch(stops, searchQuery);
     searchResultsViewAdapter.setLocation(location);
-    searchResultsViewAdapter.filterByFuzzySearch(stops, searchQuery);
+
+    if (filteredStops.size() > 0) {
+      searchResultsEmptyState.setVisibility(View.GONE);
+      searchResultsRecyclerView.setVisibility(View.VISIBLE);
+      searchResultsViewAdapter.setStops(filteredStops);
+      searchResultsViewAdapter.notifyDataSetChanged();
+    } else {
+      searchResultsRecyclerView.setVisibility(View.GONE);
+      searchResultsEmptyState.setVisibility(View.VISIBLE);
+    }
+
     recyclerView.swapAdapter(searchResultsViewAdapter, false);
+  }
+
+  public ArrayList<Stop> filterByFuzzySearch(ArrayList<Stop> stops, String query) {
+    ArrayList<Stop> filteredStops;
+    if (query != null && !query.equals("")) {
+      filteredStops =  new ArrayList<Stop>();
+      final HashMap<String, Integer> stopFuzzyScores = new HashMap<String, Integer>();
+      for (Stop stop : stops) {
+        int fuzzyScore = StringUtils.getFuzzyDistance(stop.stop_name, query, Locale.getDefault());
+        if (fuzzyScore >= query.length()) {
+          stopFuzzyScores.put(stop.stop_id, fuzzyScore);
+          filteredStops.add(stop);
+        }
+      }
+      Collections.sort(filteredStops, new Comparator<Stop>() {
+            @Override
+            public int compare(Stop lhs, Stop rhs) {
+              int rightFuzzyScore = stopFuzzyScores.get(rhs.stop_id);
+              int leftFuzzyScore = stopFuzzyScores.get(lhs.stop_id);
+              return Integer.compare(rightFuzzyScore, leftFuzzyScore);
+            }
+      });
+    } else {
+      filteredStops = stops;
+      Collections.sort(filteredStops, Stop.nameComparator);
+    }
+
+    return filteredStops;
   }
 }

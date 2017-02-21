@@ -75,34 +75,6 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
     this.notifyDataSetChanged();
   }
 
-  public void filterByFuzzySearch(ArrayList<Stop> stops, String query) {
-    if (query != null && !query.equals("")) {
-      ArrayList<Stop> filteredStops =  new ArrayList<Stop>();
-      final HashMap<String, Integer> stopFuzzyScores = new HashMap<String, Integer>();
-      for (Stop stop : stops) {
-        int fuzzyScore = StringUtils.getFuzzyDistance(stop.stop_name, query, Locale.getDefault());
-        if (fuzzyScore >= query.length()) {
-          stopFuzzyScores.put(stop.stop_id, fuzzyScore);
-          filteredStops.add(stop);
-        }
-      }
-      this.stops = filteredStops;
-      Collections.sort(this.stops, new Comparator<Stop>() {
-            @Override
-            public int compare(Stop lhs, Stop rhs) {
-              int rightFuzzyScore = stopFuzzyScores.get(rhs.stop_id);
-              int leftFuzzyScore = stopFuzzyScores.get(lhs.stop_id);
-              return Integer.compare(rightFuzzyScore, leftFuzzyScore);
-            }
-      });
-    } else {
-      this.stops = stops;
-      Collections.sort(this.stops, Stop.nameComparator);
-    }
-
-    this.notifyDataSetChanged();
-  }
-
   class ViewHolder extends RecyclerView.ViewHolder {
     final View mView;
     final TextView mIdView;
