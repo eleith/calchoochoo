@@ -6,6 +6,29 @@
     android:orientation="vertical"
     tools:context="com.eleith.calchoochoo.fragments.SearchResultsFragment">
 
+    <LinearLayout
+        android:id="@+id/trips_possible_empty_state"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_cal_choo_choo"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="40dp"
+            android:text="Sorry, there are no more trips at this time."
+            android:textSize="30sp"/>
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -18,7 +41,7 @@
         tools:listitem="@layout/fragment_trip_possible"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/search_results_switch"
+        android:id="@+id/trips_possible_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
