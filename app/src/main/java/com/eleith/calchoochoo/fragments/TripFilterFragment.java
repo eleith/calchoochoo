@@ -115,7 +115,11 @@ public class TripFilterFragment extends Fragment {
 
   @OnClick(R.id.trip_filter_datetime)
   void timeClick() {
-    DepartingArrivingDialogFragment dialog = new DepartingArrivingDialogFragment();
+    Bundle bundle = new Bundle();
+    TripFilterTimeAndMethodDialogFragment dialog = new TripFilterTimeAndMethodDialogFragment();
+    bundle.putInt(BundleKeys.STOP_METHOD, stopMethod);
+    bundle.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
+    dialog.setArguments(bundle);
     dialog.show(getFragmentManager(), "dialog");
   }
 }

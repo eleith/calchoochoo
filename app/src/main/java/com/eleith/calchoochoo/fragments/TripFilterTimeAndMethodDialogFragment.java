@@ -17,6 +17,7 @@ import android.widget.TimePicker;
 
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.ScheduleExplorerActivity;
+import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.InfinitePager;
 import com.eleith.calchoochoo.utils.InfinitePagerDataDates;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -33,7 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class DepartingArrivingDialogFragment extends android.support.v4.app.DialogFragment {
+public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.app.DialogFragment {
   @Inject
   RxBus rxBus;
   @BindView(R.id.timePicker)
@@ -52,7 +53,8 @@ public class DepartingArrivingDialogFragment extends android.support.v4.app.Dial
   TabLayout timeTabs;
 
   private int departOrArriveMethod = RxMessageArrivalOrDepartDateTime.ARRIVING;
-  private InfinitePagerDataDates infinitePagerDataDates = new InfinitePagerDataDates(new LocalDate());
+  private LocalDateTime localDateTime = new LocalDateTime();
+  private InfinitePagerDataDates infinitePagerDataDates;
 
   @OnClick(R.id.rightDateButton)
   public void rightDateButtonClick() {
@@ -87,7 +89,7 @@ public class DepartingArrivingDialogFragment extends android.support.v4.app.Dial
     getDialog().dismiss();
   }
 
-  public void openDatePicker() {
+  private void openDatePicker() {
     LocalDate selectedDate = infinitePagerDataDates.getData(infinitePager.getCurrentItem());
     DatePickerDialog dialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
       @Override
@@ -103,6 +105,11 @@ public class DepartingArrivingDialogFragment extends android.support.v4.app.Dial
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
+    if (savedInstanceState == null) {
+      unWrapBundle(getArguments());
+    } else {
+      unWrapBundle(savedInstanceState);
+    }
   }
 
   @Override
@@ -114,6 +121,23 @@ public class DepartingArrivingDialogFragment extends android.support.v4.app.Dial
     ButterKnife.bind(this, view);
     builder.setView(view);
 
+    unWrapBundle(savedInstanceState);
+    initializeDialogValues();
+
+    return builder.create();
+  }
+
+  private void initializeDialogValues() {
+    timePicker.setHour(localDateTime.getHourOfDay());
+    timePicker.setMinute(localDateTime.getMinuteOfHour());
+
+    int position = departOrArriveMethod == RxMessageArrivalOrDepartDateTime.ARRIVING ? 0 : 1;
+    TabLayout.Tab tab = timeTabs.getTabAt(position);
+    if(tab != null) {
+      tab.select();
+    }
+
+    infinitePagerDataDates = new InfinitePagerDataDates(localDateTime.toLocalDate());
     infinitePager.setInfinitePagerData(infinitePagerDataDates);
     infinitePager.setOnItemClickListener(new View.OnClickListener() {
       @Override
@@ -121,7 +145,12 @@ public class DepartingArrivingDialogFragment extends android.support.v4.app.Dial
         openDatePicker();
       }
     });
+  }
 
-    return builder.create();
+  private void unWrapBundle(Bundle bundle) {
+    if(bundle != null) {
+      departOrArriveMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+      localDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME));
+    }
   }
 }

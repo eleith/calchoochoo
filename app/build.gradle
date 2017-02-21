@@ -37,6 +37,7 @@ dependencies {
     // google services
     compile 'com.google.android.gms:play-services-maps:9.6.0'
     compile 'com.google.android.gms:play-services-analytics:9.6.0'
+    compile 'com.google.android.gms:play-services-location:9.6.0'
 
     // time library
     compile 'joda-time:joda-time:2.9.7'

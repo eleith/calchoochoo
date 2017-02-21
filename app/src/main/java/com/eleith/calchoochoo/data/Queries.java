@@ -177,8 +177,8 @@ public class Queries {
       Integer firstStopSequence = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence"));
       Integer secondStopSequence = cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
 
-      LocalTime arrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__arrival_time")).replaceFirst("^24:", "01:"));
-      LocalTime departureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__departure_time")).replaceFirst("^24:", "01:"));
+      LocalTime arrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__departure_time")).replaceFirst("^24:", "01:"));
+      LocalTime departureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__arrival_time")).replaceFirst("^24:", "01:"));
 
       PossibleTrip possibleTrip = new PossibleTrip();
       possibleTrip.setArrivalTime(arrivalTime);
@@ -192,11 +192,11 @@ public class Queries {
       possibleTrip.setRouteId(routeId);
 
       if (arriving) {
-        if (arrivalTime.isBefore(dateTime.toLocalTime().plusMinutes(1))) {
+        if (departureTime.isBefore(dateTime.toLocalTime()) && departureTime.plusHours(3).isAfter(dateTime.toLocalTime())) {
           possibleTrips.add(possibleTrip);
         }
       } else {
-        if (departureTime.isBefore(dateTime.toLocalTime().minusMinutes(1))) {
+        if (arrivalTime.isAfter(dateTime.toLocalTime())) {
           possibleTrips.add(possibleTrip);
         }
       }
