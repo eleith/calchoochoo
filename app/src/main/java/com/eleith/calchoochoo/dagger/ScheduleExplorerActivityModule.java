@@ -23,30 +23,6 @@ public class ScheduleExplorerActivityModule {
 
   @ScheduleExplorerActivityScope
   @Provides
-  public SearchResultsViewAdapter provideResultsViewAdapter(RxBus rxBus) {
-    return new SearchResultsViewAdapter(rxBus);
-  }
-
-  @ScheduleExplorerActivityScope
-  @Provides
-  public RouteViewAdapter provideRouteViewViewAdapter(RxBus rxBus) {
-    return new RouteViewAdapter(rxBus);
-  }
-
-  //@ScheduleExplorerActivityScope
-  //@Provides
-  //public TripStopsAdapter provideTripStopsAdapter(RxBus rxBus) {
-  //  return new TripStopsAdapter(rxBus);
-  //}
-
-  @ScheduleExplorerActivityScope
-  @Provides
-  public StopCardAdapter provideStopCardAdapter(RxBus rxBus) {
-    return new StopCardAdapter(rxBus);
-  }
-
-  @ScheduleExplorerActivityScope
-  @Provides
   public FragmentManager provideFragmentManager() {
     return scheduleExplorerActivity.getSupportFragmentManager();
   }

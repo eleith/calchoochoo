@@ -66,7 +66,7 @@ public class Stop extends BaseModel {
   public static Comparator<Stop> nameComparator = new Comparator<Stop>() {
     @Override
     public int compare(Stop lhs, Stop rhs) {
-      return rhs.stop_name.compareTo(lhs.stop_name);
+      return lhs.stop_name.compareTo(rhs.stop_name);
     }
   };
 }

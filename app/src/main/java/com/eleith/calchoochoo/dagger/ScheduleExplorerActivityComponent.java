@@ -11,6 +11,7 @@ import com.eleith.calchoochoo.fragments.SearchResultsFragment;
 import com.eleith.calchoochoo.fragments.StopDetailsFragment;
 import com.eleith.calchoochoo.fragments.TripDetailFragment;
 import com.eleith.calchoochoo.fragments.TripSummaryFragment;
+import com.eleith.calchoochoo.utils.DeviceLocation;
 
 import dagger.Subcomponent;
 

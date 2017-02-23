@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import com.eleith.calchoochoo.R;
 
 
-public class HomeFragment extends Fragment {
+public class TripFilterSelectMoreFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -18,7 +18,7 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_trip_filter_select_more, container, false);
     }
 
     @Override

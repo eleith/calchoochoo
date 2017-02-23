@@ -31,7 +31,7 @@
                 android:layout_weight="4"
                 android:backgroundTint="@color/background_material_light"
                 android:focusable="false"
-                android:text="select a caltrain stop"
+                android:hint="select a caltrain stop"
                 android:textColor="@color/background_material_light"/>
 
                                     <View
@@ -61,7 +61,7 @@
                 android:layout_weight="4"
                 android:backgroundTint="@color/background_material_light"
                 android:focusable="false"
-                android:text="select a caltrain stop"
+                android:hint="select a caltrain stop"
                 android:textColor="@color/background_material_light"/>
 
                         <View

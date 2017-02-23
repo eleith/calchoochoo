@@ -1,13 +1,16 @@
 package com.eleith.calchoochoo.utils;
 
 import android.graphics.Point;
+import android.location.Location;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 
@@ -42,5 +45,12 @@ public class MapUtils {
         }
       }
     });
+  }
+
+  static public void moveMapToLocation(Location location, GoogleMap googleMap, CameraPosition.Builder cameraBuilder) {
+    LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+    cameraBuilder.target(myLatLng);
+    CameraPosition cameraPosition = cameraBuilder.build();
+    googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
   }
 }

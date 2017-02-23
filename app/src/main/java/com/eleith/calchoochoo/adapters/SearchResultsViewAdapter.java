@@ -5,29 +5,34 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityScope;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.DistanceUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+@ScheduleExplorerActivityScope
 public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResultsViewAdapter.ViewHolder> {
 
   private ArrayList<Stop> stops = new ArrayList<Stop>();
   private Location location;
   private RxBus rxBus;
 
+  @Inject
   public SearchResultsViewAdapter(RxBus rxBus) {
     this.rxBus = rxBus;
   }
@@ -40,16 +45,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     View view = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.fragment_search_result, parent, false);
-    final ViewHolder holder = new ViewHolder(view);
-
-    view.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        rxBus.send(new RxMessageStop(RxMessageKeys.SEARCH_RESULT_STOP, holder.mItem));
-      }
-    });
-
-    return holder;
+    return new ViewHolder(view);
   }
 
   @Override
@@ -59,6 +55,9 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
     if (location != null) {
       Double distance = location.distanceTo(stop.getLocation()) / 1.0;
       holder.mContentView.setText(String.format(Locale.getDefault(), "%.2f", DistanceUtils.meterToMiles(distance)));
+      holder.mContentView.setVisibility(View.VISIBLE);
+    } else {
+      holder.mContentView.setVisibility(View.INVISIBLE);
     }
 
     holder.mItem = stop;
@@ -76,16 +75,21 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
   }
 
   class ViewHolder extends RecyclerView.ViewHolder {
-    final View mView;
-    final TextView mIdView;
-    final TextView mContentView;
+    @BindView(R.id.search_result_description)
+    TextView mContentView;
+    @BindView(R.id.search_result_name)
+    TextView mIdView;
+
     Stop mItem;
+
+    @OnClick(R.id.search_result_item)
+    void onClickTripSummary() {
+      rxBus.send(new RxMessageStop(RxMessageKeys.SEARCH_RESULT_STOP, mItem));
+    }
 
     ViewHolder(View view) {
       super(view);
-      mView = view;
-      mIdView = (TextView) view.findViewById(R.id.search_result_name);
-      mContentView = (TextView) view.findViewById(R.id.search_result_description);
+      ButterKnife.bind(this, view);
     }
 
     @Override

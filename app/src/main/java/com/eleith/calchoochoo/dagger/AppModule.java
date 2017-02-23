@@ -1,10 +1,12 @@
 package com.eleith.calchoochoo.dagger;
 
 import android.content.Context;
-import android.location.LocationManager;
 
 import com.eleith.calchoochoo.ChooChooApplication;
+import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 
 import javax.inject.Singleton;
 
@@ -27,7 +29,21 @@ public class AppModule {
 
   @Provides
   @Singleton
-  public LocationManager provideLocationManager() {
-    return (LocationManager) application.getSystemService(Context.LOCATION_SERVICE);
+  public Context provideApplicationContext() {
+    return application;
+  }
+
+  @Provides
+  @Singleton
+  GoogleApiClient providesGoogleApiClient(Context context) {
+    return new GoogleApiClient.Builder(context)
+        .addApi(LocationServices.API)
+        .build();
+  }
+
+  @Provides
+  @Singleton
+  DeviceLocation providesDeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient) {
+    return new DeviceLocation(rxBus, googleApiClient);
   }
 }

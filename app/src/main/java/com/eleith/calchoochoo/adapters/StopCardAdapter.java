@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityScope;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -20,10 +21,13 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+@ScheduleExplorerActivityScope
 public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCardHolder> {
   private ArrayList<Stop> stops;
   private RxBus rxBus;
@@ -31,6 +35,7 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
   private static final int TYPE_NORMAL_STOP = 0;
   private static final int TYPE_HIGHLIGHTED_STOP = 1;
 
+  @Inject
   public StopCardAdapter(RxBus rxBus) {
     stops = Queries.getAllStops();
     this.rxBus = rxBus;

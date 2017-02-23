@@ -9,7 +9,6 @@ import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 public class ChooChooApplication extends Application {
-
   private AppComponent appComponent;
 
   @Override
@@ -22,5 +21,4 @@ public class ChooChooApplication extends Application {
   public AppComponent getAppComponent() {
     return appComponent;
   }
-
 }

@@ -1,15 +1,10 @@
 package com.eleith.calchoochoo.fragments;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,18 +15,13 @@ import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.DeviceLocation;
+import com.eleith.calchoochoo.utils.DrawableUtils;
 import com.eleith.calchoochoo.utils.MapUtils;
-import com.eleith.calchoochoo.utils.Permissions;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
-import com.eleith.calchoochoo.utils.DrawableUtils;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -51,37 +41,31 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscription;
 
 import static com.eleith.calchoochoo.utils.DrawableUtils.getBitmapCircle;
 
-public class MapSearchFragment extends Fragment
-    implements
-    OnMapReadyCallback,
-    GoogleApiClient.ConnectionCallbacks,
-    GoogleApiClient.OnConnectionFailedListener,
-    LocationListener,
-    ActivityCompat.OnRequestPermissionsResultCallback {
+public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   private GoogleMap googleMap;
   private MapView googleMapView;
   private ArrayList<Stop> stops;
-  private Location location;
-  private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-  private GoogleApiClient googleApiClient;
   private Location lastLocation;
   private Marker locationMarker;
   private LatLng myDefaultLatLng = new LatLng(37.30, -122.06);
+  private Subscription subscription;
 
   @BindView(R.id.map_action_button)
   FloatingActionButton mapActionButton;
 
   @Inject
   RxBus rxBus;
+  @Inject
+  DeviceLocation deviceLocation;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
-    initializeGoogleApiClient();
     unWrapBundle(getArguments());
   }
 
@@ -96,7 +80,6 @@ public class MapSearchFragment extends Fragment
     googleMapView = ((MapView) view.findViewById(R.id.search_google_maps));
     googleMapView.onCreate(savedInstanceState);
     googleMapView.getMapAsync(this);
-
     return view;
   }
 
@@ -113,15 +96,20 @@ public class MapSearchFragment extends Fragment
   }
 
   @Override
-  public void onMapReady(GoogleMap googleMap) {
+  public void onMapReady(final GoogleMap googleMap) {
     this.googleMap = googleMap;
     CameraPosition.Builder cameraBuilder = new CameraPosition.Builder().zoom(13);
     LatLng myLatLng;
 
     setStopMarkers();
 
-    if (location != null) {
-      myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+    if (locationMarker != null) {
+      locationMarker.remove();
+      locationMarker = null;
+    }
+
+    if (lastLocation != null) {
+      myLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
     } else {
       myLatLng = myDefaultLatLng;
     }
@@ -140,10 +128,25 @@ public class MapSearchFragment extends Fragment
         return true;
       }
     });
+
+    deviceLocation.requestLocation(new DeviceLocation.LocationGetListener() {
+      @Override
+      public void onLocationGet(Location location) {
+        MapUtils.moveMapToLocation(location, googleMap, new CameraPosition.Builder().zoom(13));
+        setMyLocationMarker(location);
+      }
+    });
+
+    subscription = deviceLocation.subscribeToLocationUpdates(new DeviceLocation.LocationGetListener() {
+      @Override
+      public void onLocationGet(Location location) {
+        setMyLocationMarker(location);
+      }
+    });
   }
 
   private void setStopMarkers() {
-     for (Stop stop : stops) {
+    for (Stop stop : stops) {
       LatLng stopLatLng = new LatLng(stop.stop_lat, stop.stop_lon);
       Bitmap trainIcon = DrawableUtils.getBitmapFromVectorDrawable(getContext(), R.drawable.ic_train_local, 0.25f);
       MarkerOptions markerOptions = new MarkerOptions().position(stopLatLng).title(stop.stop_name);
@@ -157,32 +160,10 @@ public class MapSearchFragment extends Fragment
   private void unWrapBundle(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
       stops = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOPS));
-      location = savedInstanceState.getParcelable(BundleKeys.LOCATION);
       // if googleMap is set, then it never got the location!
       if (googleMap != null) {
         onMapReady(googleMap);
       }
-    }
-  }
-
-  @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-      if (getContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-        onLocationChanged(location);
-      }
-    }
-  }
-
-  private void initializeGoogleApiClient() {
-    if (googleApiClient == null) {
-      googleApiClient = new GoogleApiClient.Builder(getContext())
-          .addConnectionCallbacks(this)
-          .addOnConnectionFailedListener(this)
-          .addApi(LocationServices.API)
-          .build();
-      googleApiClient.connect();
     }
   }
 
@@ -197,46 +178,13 @@ public class MapSearchFragment extends Fragment
       markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getBitmapCircle(104, 3, Color.RED, Color.WHITE)));
       locationMarker = googleMap.addMarker(markerOptions);
     }
-  }
-
-  @Override
-  public void onConnected(@Nullable Bundle bundle) {
-    Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-    onLocationChanged(location);
-
-    LocationRequest locationRequest = new LocationRequest();
-    locationRequest.setInterval(5000); //5 seconds
-    locationRequest.setFastestInterval(3000); //3 seconds
-    locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-    if (getContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-      LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-    } else {
-      requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Permissions.READ_GPS);
-    }
-  }
-
-  @Override
-  public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-  }
-
-  @Override
-  public void onConnectionSuspended(int i) {
-  }
-
-  @Override
-  public void onLocationChanged(Location location) {
-    if (location != null) {
-      lastLocation = location;
-      mapActionButton.setVisibility(View.VISIBLE);
-      setMyLocationMarker(location);
-    }
+    lastLocation = location;
+    mapActionButton.setVisibility(View.VISIBLE);
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    googleApiClient.reconnect();
     googleMapView.onResume();
   }
 
@@ -249,8 +197,7 @@ public class MapSearchFragment extends Fragment
   @Override
   public void onDestroy() {
     super.onDestroy();
-    googleApiClient.disconnect();
-    LocationServices.FusedLocationApi.removeLocationUpdates(googleApiClient, this);
+    subscription.unsubscribe();
     googleMapView.onDestroy();
   }
 
