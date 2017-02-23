@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.adapters.SearchResultsViewAdapter;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
@@ -22,6 +22,7 @@ import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.parceler.Parcels;
 
@@ -55,7 +56,7 @@ public class SearchResultsFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
+    ((ChooChooActivity) getActivity()).getComponent().inject(this);
     unPackBundle(savedInstanceState != null ? savedInstanceState : getArguments());
   }
 
@@ -104,6 +105,9 @@ public class SearchResultsFragment extends Fragment {
           Stop stop = (Stop) rxMessage.getMessage();
           Pair<Stop, Integer> pair = new Pair<>(stop, searchReason);
           rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_INPUT_STRING)) {
+          String filterString = ((RxMessageString) rxMessage).getMessage();
+          filterResultsBy(filterString);
         }
       }
     };

@@ -1,9 +1,6 @@
 package com.eleith.calchoochoo;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 
@@ -12,7 +9,6 @@ import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityModule;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.fragments.TripFilterSelectMoreFragment;
 import com.eleith.calchoochoo.fragments.MapSearchFragment;
 import com.eleith.calchoochoo.fragments.RouteStopsFragment;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
@@ -21,6 +17,7 @@ import com.eleith.calchoochoo.fragments.StopCardsFragment;
 import com.eleith.calchoochoo.fragments.StopDetailsFragment;
 import com.eleith.calchoochoo.fragments.TripDetailFragment;
 import com.eleith.calchoochoo.fragments.TripFilterFragment;
+import com.eleith.calchoochoo.fragments.TripFilterSelectMoreFragment;
 import com.eleith.calchoochoo.fragments.TripSummaryFragment;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.DeviceLocation;
@@ -44,26 +41,24 @@ import javax.inject.Inject;
 import rx.Subscription;
 import rx.functions.Action1;
 
-public class ScheduleExplorerActivity extends AppCompatActivity {
+public class ChooChooActivity extends AppCompatActivity {
   private SearchResultsFragment searchResultsFragment;
   private SearchInputFragment searchInputFragment;
   private Stop stopDestination;
   private Stop stopSource;
   private Integer stopMethod = RxMessageArrivalOrDepartDateTime.DEPARTING;
   private LocalDateTime stopDateTime = new LocalDateTime();
-  private static final String SEARCH_REASON_DESTINATION = "destination";
-  private static final String SEARCH_REASON_SOURCE = "source";
   private ScheduleExplorerActivityComponent scheduleExplorerActivityComponent;
   private Subscription subscription;
 
   @Inject
   RxBus rxbus;
   @Inject
-  FragmentManager fragmentManager;
-  @Inject
   GoogleApiClient googleApiClient;
   @Inject
   DeviceLocation deviceLocation;
+  @Inject
+  ChooChooFragmentManager chooChooFragmentManager;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +69,6 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
 
     scheduleExplorerActivityComponent.inject(this);
     setContentView(R.layout.activity_schedule_explorer);
-
-    deviceLocation.registerActivity(this);
 
     subscription = rxbus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
     showMapSearchFragment();
@@ -114,9 +107,7 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     return new Action1<RxMessage>() {
       @Override
       public void call(RxMessage rxMessage) {
-        if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_INPUT_STRING)) {
-          filterSearchResults(((RxMessageString) rxMessage).getMessage());
-        } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_PAIR)) {
+        if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_PAIR)) {
           Pair<Stop, Integer> pair = ((RxMessagePairStopReason) rxMessage).getMessage();
           if (pair.second.equals(RxMessagePairStopReason.SEARCH_REASON_DESTINATION)) {
             stopDestination = pair.first;
@@ -124,7 +115,6 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
             stopSource = pair.first;
           }
           showDestinationSourceFragment();
-          updateRouteFragment();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DESTINATION_SELECTED)) {
           selectDestination();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SOURCE_SELECTED)) {
@@ -134,19 +124,16 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
           stopDestination = stopSource;
           stopSource = tempStop;
           showDestinationSourceFragment();
-          updateRouteFragment();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
           stopDateTime = pair.second;
           showDestinationSourceFragment();
-          updateRouteFragment();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
           stopDateTime = pair.second;
           showDestinationSourceFragment();
-          updateRouteFragment();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.TRIP_SELECTED)) {
           PossibleTrip possibleTrip = ((RxMessagePossibleTrip) rxMessage).getMessage();
           showTripDetailsFragments(possibleTrip);
@@ -156,12 +143,6 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
         }
       }
     };
-  }
-
-  private void filterSearchResults(String filterString) {
-    if (searchResultsFragment != null && searchResultsFragment.isVisible()) {
-      searchResultsFragment.filterResultsBy(filterString);
-    }
   }
 
   private void selectDestination() {
@@ -174,7 +155,8 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
     searchResultsFragment.setArguments(searchResultsArgs);
 
-    updateTopBottomFragments(searchInputFragment, searchResultsFragment);
+    chooChooFragmentManager.updateTopAndBottomFragments(searchInputFragment, searchResultsFragment);
+    chooChooFragmentManager.commit();
   }
 
   private void selectSource() {
@@ -187,7 +169,8 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_SOURCE);
     searchResultsFragment.setArguments(searchResultsArgs);
 
-    updateTopBottomFragments(searchInputFragment, searchResultsFragment);
+    chooChooFragmentManager.updateTopAndBottomFragments(searchInputFragment, searchResultsFragment);
+    chooChooFragmentManager.commit();
   }
 
   private void showStopsFragments(Stop stop) {
@@ -201,7 +184,8 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     stopDetailsFragment.setArguments(stopSummaryArgs);
     stopCardsFragment.setArguments(stopSummaryArgs);
 
-    updateTopBottomFragments(stopDetailsFragment, stopCardsFragment);
+    chooChooFragmentManager.updateTopAndBottomFragments(stopDetailsFragment, stopCardsFragment);
+    chooChooFragmentManager.commit();
   }
 
   private void showTripDetailsFragments(PossibleTrip possibleTrip) {
@@ -217,7 +201,8 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     tripSummaryFragment.setArguments(tripSummaryArgs);
     tripDetailFragment.setArguments(tripSummaryArgs);
 
-    updateTopBottomFragments(tripSummaryFragment, tripDetailFragment);
+    chooChooFragmentManager.updateTopAndBottomFragments(tripSummaryFragment, tripDetailFragment);
+    chooChooFragmentManager.commit();
   }
 
   private void showMapSearchFragment() {
@@ -227,7 +212,8 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     mapSearchArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
     mapSearchFragment.setArguments(mapSearchArgs);
 
-    updateTopBottomFragments(null, mapSearchFragment);
+    chooChooFragmentManager.updateTopAndBottomFragments(null, mapSearchFragment);
+    chooChooFragmentManager.commit();
   }
 
   private void showDestinationSourceFragment() {
@@ -240,7 +226,9 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
     destinationSourceArgs.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
     tripFilterFragment.setArguments(destinationSourceArgs);
 
-    updateTopBottomFragments(tripFilterFragment, new TripFilterSelectMoreFragment());
+    chooChooFragmentManager.updateTopAndBottomFragments(tripFilterFragment, new TripFilterSelectMoreFragment());
+    updateRouteFragment();
+    chooChooFragmentManager.commit();
   }
 
   private void updateRouteFragment() {
@@ -253,55 +241,8 @@ public class ScheduleExplorerActivity extends AppCompatActivity {
       RouteStopsFragment routeStopsFragment = new RouteStopsFragment();
       routeStopsFragment.setArguments(routeStopsArgs);
 
-      updateBottomFragments(routeStopsFragment);
+      chooChooFragmentManager.updateBottomFragment(routeStopsFragment);
     }
-  }
-
-  private void updateTopBottomFragments(Fragment f1, Fragment f2) {
-    Fragment header = fragmentManager.findFragmentById(R.id.homeTopFragmentContainer);
-    Fragment main = fragmentManager.findFragmentById(R.id.homeFragmentContainer);
-    FragmentTransaction ft = fragmentManager.beginTransaction();
-
-    if (header != null) {
-      if (f1 == null) {
-        ft.remove(header);
-      } else {
-        ft.replace(R.id.homeTopFragmentContainer, f1);
-      }
-    } else if (f1 != null) {
-      ft.add(R.id.homeTopFragmentContainer, f1);
-    }
-
-    if (main != null) {
-      if (f2 == null) {
-        ft.remove(main);
-      } else {
-        ft.replace(R.id.homeFragmentContainer, f2);
-      }
-    } else if (f2 != null) {
-      ft.add(R.id.homeFragmentContainer, f2);
-    }
-
-    ft.addToBackStack(null);
-    ft.commit();
-  }
-
-  private void updateBottomFragments(Fragment f1) {
-    FragmentTransaction ft = fragmentManager.beginTransaction();
-    Fragment main = fragmentManager.findFragmentById(R.id.homeFragmentContainer);
-
-    if (main != null) {
-      if (f1 == null) {
-        ft.remove(main);
-      } else {
-        ft.replace(R.id.homeFragmentContainer, f1);
-      }
-    } else if (f1 != null) {
-      ft.add(R.id.homeFragmentContainer, f1);
-    }
-
-    ft.addToBackStack(null);
-    ft.commit();
   }
 
   public ScheduleExplorerActivityComponent getComponent() {

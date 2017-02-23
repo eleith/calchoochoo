@@ -12,7 +12,7 @@ import android.widget.LinearLayout;
 
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.adapters.RouteViewAdapter;
-import com.eleith.calchoochoo.ScheduleExplorerActivity;
+import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -50,7 +50,7 @@ public class RouteStopsFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
+    ((ChooChooActivity) getActivity()).getComponent().inject(this);
     unPackBundle(savedInstanceState != null ? savedInstanceState : getArguments());
   }
 

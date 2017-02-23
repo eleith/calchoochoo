@@ -1,7 +1,7 @@
 package com.eleith.calchoochoo.dagger;
 
 import com.eleith.calchoochoo.fragments.TripFilterTimeAndMethodDialogFragment;
-import com.eleith.calchoochoo.ScheduleExplorerActivity;
+import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.fragments.StopCardsFragment;
 import com.eleith.calchoochoo.fragments.TripFilterFragment;
 import com.eleith.calchoochoo.fragments.MapSearchFragment;
@@ -11,7 +11,6 @@ import com.eleith.calchoochoo.fragments.SearchResultsFragment;
 import com.eleith.calchoochoo.fragments.StopDetailsFragment;
 import com.eleith.calchoochoo.fragments.TripDetailFragment;
 import com.eleith.calchoochoo.fragments.TripSummaryFragment;
-import com.eleith.calchoochoo.utils.DeviceLocation;
 
 import dagger.Subcomponent;
 
@@ -19,7 +18,7 @@ import dagger.Subcomponent;
 @Subcomponent(modules = ScheduleExplorerActivityModule.class)
 public interface ScheduleExplorerActivityComponent {
   // injection for activity
-  void inject(ScheduleExplorerActivity scheduleExplorerActivity);
+  void inject(ChooChooActivity chooChooActivity);
 
   // injection for fragments
   void inject(SearchResultsFragment searchResultsFragment);

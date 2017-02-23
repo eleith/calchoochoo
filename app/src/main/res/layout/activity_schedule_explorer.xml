@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.eleith.calchoochoo.ScheduleExplorerActivity">
+    tools:context="com.eleith.calchoochoo.ChooChooActivity">
 
     <FrameLayout
         android:id="@+id/homeTopFragmentContainer"

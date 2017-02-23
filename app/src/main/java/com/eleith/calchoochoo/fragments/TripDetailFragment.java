@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.adapters.TripStopsAdapter;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
@@ -41,7 +41,7 @@ public class TripDetailFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
+    ((ChooChooActivity) getActivity()).getComponent().inject(this);
     unWrapBundle(getArguments());
   }
 

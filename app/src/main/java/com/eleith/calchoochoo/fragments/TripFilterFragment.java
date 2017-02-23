@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.ScheduleExplorerActivity;
+import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -51,7 +51,7 @@ public class TripFilterFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    ((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
+    ((ChooChooActivity) getActivity()).getComponent().inject(this);
 
     Bundle arguments = getArguments();
     if (arguments != null) {

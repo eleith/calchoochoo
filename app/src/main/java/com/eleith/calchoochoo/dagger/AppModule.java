@@ -2,6 +2,7 @@ package com.eleith.calchoochoo.dagger;
 
 import android.content.Context;
 
+import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooApplication;
 import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -39,11 +40,5 @@ public class AppModule {
     return new GoogleApiClient.Builder(context)
         .addApi(LocationServices.API)
         .build();
-  }
-
-  @Provides
-  @Singleton
-  DeviceLocation providesDeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient) {
-    return new DeviceLocation(rxBus, googleApiClient);
   }
 }

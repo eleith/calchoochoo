@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageLocation;
 import com.google.android.gms.common.ConnectionResult;
@@ -28,19 +29,17 @@ public class DeviceLocation
 
   private RxBus rxBus;
   private GoogleApiClient googleApiClient;
-  private Activity activity;
+  //private Activity activity;
+  private ChooChooActivity activity;
   private Boolean googleApiClientReady = false;
   private Boolean requestingLocation = false;
   private Boolean getRequestingLocationUpdates = false;
   private int requestedUpdates = 0;
 
   @Inject
-  public DeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient) {
+  public DeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient, ChooChooActivity activity) {
     this.rxBus = rxBus;
     this.googleApiClient = googleApiClient;
-  }
-
-  public void registerActivity(Activity activity) {
     this.activity = activity;
     googleApiClient.registerConnectionFailedListener(this);
     googleApiClient.registerConnectionCallbacks(this);

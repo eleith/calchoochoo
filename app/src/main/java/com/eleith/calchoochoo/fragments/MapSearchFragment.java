@@ -10,8 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.ScheduleExplorerActivity;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
@@ -65,7 +65,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ((ScheduleExplorerActivity) getActivity()).getComponent().inject(this);
+    ((ChooChooActivity) getActivity()).getComponent().inject(this);
     unWrapBundle(getArguments());
   }
 
