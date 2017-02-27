@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/trips_possible_empty_state"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:drawableTop="@drawable/ic_cal_choo_choo"
         android:gravity="center"

@@ -20,7 +20,7 @@
             android:visibility="gone"
             android:drawableTop="@drawable/ic_cal_choo_choo"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/no_matching_stops"
