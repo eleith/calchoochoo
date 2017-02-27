@@ -3,100 +3,99 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
-              android:background="@color/primary_material_light"
-              android:orientation="vertical"
+              android:background="?attr/colorPrimary"
+              android:baselineAligned="false"
+              android:orientation="horizontal"
               android:padding="10dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+
+        <ImageView
+            android:id="@+id/trip_summary_train_bullet"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/bullet_train"
+            android:src="@drawable/ic_train_bullet"/>
+
+        <ImageView
+            android:id="@+id/trip_summary_train_local"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/local_train"
+            android:src="@drawable/ic_train_local"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/trip_summary_train_bullet"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_train_bullet"/>
-
-            <ImageView
-                android:id="@+id/trip_summary_train_local"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_train_local"
-                android:visibility="gone"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:orientation="vertical">
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/trip_summary_from"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/trip_summary_from"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/background_material_light"
-                    android:textSize="25sp"
-                    tools:text="Milbrae"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/trip_summary_to"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/background_material_light"
-                    tools:text="to Mountain View"/>
-            </LinearLayout>
+                android:textColor="?android:colorBackground"
+                android:textSize="25sp"
+                tools:text="Milbrae"/>
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/trip_summary_total_time"
+                android:id="@+id/trip_summary_to"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="@color/background_material_light"
-                tools:text="42 min"/>
-
-            <View
-                android:layout_width="20dp"
-                android:layout_height="1dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="5dp"
-                android:layout_marginTop="5dp"
-                android:background="@color/background_material_light"/>
-
-            <TextView
-                android:id="@+id/trip_summary_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="@color/background_material_light"
-                tools:text="$4.25 pm"/>
+                android:textColor="?android:colorBackground"
+                tools:text="to Mountain View"/>
         </LinearLayout>
 
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/trip_summary_total_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="?android:colorBackground"
+            tools:text="42 min"/>
+
+        <View
+            android:layout_width="20dp"
+            android:layout_height="1dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:background="?android:colorBackground"/>
+
+        <TextView
+            android:id="@+id/trip_summary_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="?android:colorBackground"
+            tools:text="$4.25 pm"/>
+    </LinearLayout>
+
 </LinearLayout>
+

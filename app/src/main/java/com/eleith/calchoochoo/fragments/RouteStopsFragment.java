@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.adapters.RouteViewAdapter;
@@ -20,6 +21,7 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 
 import org.parceler.Parcels;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -38,7 +40,7 @@ public class RouteStopsFragment extends Fragment {
   RouteViewAdapter routeViewAdapter;
 
   @BindView(R.id.trips_possible_empty_state)
-  LinearLayout tripsPossibleEmptyState;
+  TextView tripsPossibleEmptyState;
   @BindView(R.id.trips_possible_recyclerview)
   RecyclerView tripsPossibleRecyclerView;
 

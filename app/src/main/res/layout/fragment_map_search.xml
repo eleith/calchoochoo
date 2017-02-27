@@ -9,23 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <LinearLayout
+    <EditText
+        android:id="@+id/map_search_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:background="@color/background_material_light"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:background="?android:colorBackground"
         android:elevation="4dp"
-        android:padding="10dp">
+        android:hint="@string/search_for_stop"
+        android:padding="10dp"/>
 
-        <EditText
-            android:id="@+id/map_search_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:focusable="false"
-            android:hint="Search for CalTrain stop"/>
-
-    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/map_action_button"
@@ -33,7 +29,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:visibility="gone"
         android:src="@drawable/ic_gps_not_fixed_black_24dp"
-        android:tint="@color/background_material_light"/>
+        android:visibility="visible"/>
 </FrameLayout>

@@ -5,45 +5,32 @@
               android:id="@+id/one_trip_stop_details"
               android:layout_width="match_parent"
               android:layout_height="50dp"
-              android:orientation="horizontal">
+              android:orientation="horizontal"
+              android:paddingEnd="20dp"
+              android:paddingStart="20dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="vertical"
-        android:paddingEnd="20dp"
-        android:paddingStart="20dp">
+    <TextView
+        android:id="@+id/one_trip_stop_start_time"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="end"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="5:45 pm"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+    <com.eleith.calchoochoo.utils.TripVisualView
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        app:lineType="destination"/>
 
-            <TextView
-                android:id="@+id/one_trip_stop_start_time"
-                android:layout_width="70dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="end"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="5:45 pm"/>
-
-            <com.eleith.calchoochoo.utils.TripVisualView
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                app:lineType="destination"/>
-
-            <TextView
-                android:id="@+id/one_trip_stop_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="mountain view"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/one_trip_stop_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        tools:text="mountain view"/>
 
 </LinearLayout>

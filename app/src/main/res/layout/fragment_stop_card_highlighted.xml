@@ -10,9 +10,9 @@
                                     card:cardCornerRadius="2dp">
 
     <LinearLayout
-        android:background="@color/primary_material_light_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
         android:orientation="vertical">
 
         <TextView
@@ -22,7 +22,7 @@
             android:paddingEnd="10dp"
             android:paddingStart="10dp"
             android:paddingTop="10dp"
-            android:textColor="@color/background_material_light"
+            android:textColor="?android:colorBackground"
             android:textSize="22sp"
             tools:text="name"
             />
@@ -39,8 +39,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                            android:textColor="@color/background_material_light"
-                android:text="Zone "
+                android:text="@string/zone"
+                android:textColor="?android:colorBackground"
                 android:textSize="14sp"
                 />
 
@@ -48,7 +48,7 @@
                 android:id="@+id/stop_card_zone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                            android:textColor="@color/background_material_light"
+                android:textColor="?android:colorBackground"
                 android:textSize="14sp"
                 tools:text="5"
                 />
@@ -57,7 +57,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/background_material_light"/>
+            android:background="?android:colorBackground"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -69,9 +69,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
-                            android:textColor="@color/background_material_light"
                 android:layout_marginEnd="20dp"
-                android:text="Go To"
+                android:text="@string/go_to"
+                android:textColor="?android:colorBackground"
                 android:textSize="16sp"
                 />
 
@@ -81,8 +81,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
                 android:layout_toEndOf="@id/stop_card_go_to"
-                            android:textColor="@color/background_material_light"
-                android:text="Leave From"
+                android:layout_toStartOf="@id/stop_card_map_to"
+                android:text="@string/leave_from"
+                android:textColor="?android:colorBackground"
                 android:textSize="16sp"
                 />
 
@@ -91,9 +92,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:contentDescription="link"
+                android:contentDescription="@string/link"
                 android:src="@drawable/ic_link_black_24dp"
-                android:tint="@color/background_material_light"/>
+                android:textColor="?android:colorBackground"/>
 
             <ImageView
                 android:id="@+id/stop_card_map_to"
@@ -101,9 +102,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
                 android:layout_toStartOf="@id/stop_card_link"
-                android:contentDescription="map"
+                android:contentDescription="@string/map_link"
                 android:src="@drawable/ic_room_black_24dp"
-                android:tint="@color/background_material_light"/>
+                android:textColor="?android:colorBackground"/>
 
         </RelativeLayout>
 

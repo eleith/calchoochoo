@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
@@ -44,7 +45,7 @@ public class SearchResultsFragment extends Fragment {
   private int searchReason;
 
   @BindView(R.id.search_results_empty_state)
-  LinearLayout searchResultsEmptyState;
+  TextView searchResultsEmptyState;
   @BindView(R.id.search_results_recyclerview)
   RecyclerView searchResultsRecyclerView;
 

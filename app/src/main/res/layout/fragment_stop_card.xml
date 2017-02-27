@@ -38,7 +38,9 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Zone "
+                android:paddingEnd="5dp"
+                android:paddingStart="0dp"
+                android:text="@string/zone"
                 android:textSize="14sp"
                 />
 
@@ -67,17 +69,18 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
                 android:layout_marginEnd="20dp"
-                android:text="Go To"
+                android:text="@string/go_to"
                 android:textSize="16sp"
                 />
 
             <TextView
                 android:id="@+id/stop_card_leave_from"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_marginEnd="20dp"
                 android:layout_toEndOf="@id/stop_card_go_to"
-                android:text="Leave From"
+                android:layout_toStartOf="@+id/stop_card_map_to"
+                android:text="@string/leave_from"
                 android:textSize="16sp"
                 />
 
@@ -86,17 +89,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:contentDescription="link"
+                android:contentDescription="@string/link"
                 android:src="@drawable/ic_link_black_24dp"
                 android:tint="?android:textColorSecondaryInverse"/>
 
             <ImageView
-                android:id="@+id/stop_card_map_to"
+                android:id="@id/stop_card_map_to"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="20dp"
                 android:layout_toStartOf="@id/stop_card_link"
-                android:contentDescription="map"
+                android:contentDescription="@string/map_link"
                 android:src="@drawable/ic_room_black_24dp"
                 android:tint="?android:textColorSecondaryInverse"/>
 

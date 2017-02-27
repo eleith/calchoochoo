@@ -11,27 +11,19 @@
         android:layout_height="match_parent"
         >
 
-        <LinearLayout
+        <TextView
             android:id="@+id/trip_filter_select_other_train_holder"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:drawableTop="@drawable/ic_cal_choo_choo"
             android:gravity="center"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="40dp"
+            android:text="@string/select_stops"
+            android:textSize="20sp">
+        </TextView>
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_cal_choo_choo"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="40dp"
-                android:text="Please select both a 'To' and 'From' stop."
-                android:textSize="30sp"/>
-        </LinearLayout>
     </android.support.v7.widget.CardView>
 
 </FrameLayout>

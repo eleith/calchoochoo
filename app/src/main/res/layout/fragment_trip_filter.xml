@@ -1,124 +1,124 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
-             android:layout_height="match_parent"
+             android:layout_height="wrap_content"
+             android:background="?attr/colorPrimary"
              android:clipToPadding="false"
-             android:paddingBottom="3dp"
+             android:elevation="5dp"
              tools:context="com.eleith.calchoochoo.fragments.TripFilterFragment">
 
-    <TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:elevation="5dp"
-        android:background="@color/primary_material_light">
+    <TableRow>
 
-        <TableRow>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="end"
+            android:labelFor="@+id/trip_filter_source"
+            android:padding="12dp"
+            android:text="@string/from"
+            android:textColor="?android:colorBackground"
+            android:textSize="18sp"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:gravity="end"
-                android:padding="12dp"
-                android:text="From "
-                android:textColor="@color/background_material_light"/>
+        <EditText
+            android:id="@id/trip_filter_source"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:focusable="false"
+            android:hint="@string/search_for_stop"
+            android:textColor="?android:colorBackground"
+            android:textColorHint="?android:colorBackground"
+            android:textSize="18sp"/>
 
-            <EditText
-                android:id="@+id/trip_filter_source"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:backgroundTint="@color/background_material_light"
-                android:focusable="false"
-                android:hint="select a caltrain stop"
-                android:textColor="@color/background_material_light"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_refresh_black_24dp"
+            />
+    </TableRow>
 
-                                    <View
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_refresh_black_24dp"
-                />
-        </TableRow>
+    <TableRow>
 
-        <TableRow>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="end"
+            android:labelFor="@+id/trip_filter_destination"
+            android:padding="12dp"
+            android:text="@string/to"
+            android:textColor="?android:colorBackground"
+            android:textSize="18sp"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                android:gravity="end"
-                android:padding="12dp"
-                android:text="To "
-                android:textColor="@color/background_material_light"/>
+        <EditText
+            android:id="@id/trip_filter_destination"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:focusable="false"
+            android:hint="@string/search_for_stop"
+            android:textColor="?android:colorBackground"
+            android:textColorHint="?android:colorBackground"/>
 
-            <EditText
-                android:id="@+id/trip_filter_destination"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:backgroundTint="@color/background_material_light"
-                android:focusable="false"
-                android:hint="select a caltrain stop"
-                android:textColor="@color/background_material_light"/>
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            />
+    </TableRow>
 
-                        <View
-                android:layout_height="match_parent"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="10dp"
-                />
-        </TableRow>
+    <TableRow>
 
-        <TableRow>
+        <TextView
+            android:id="@+id/trip_filter_method_arriving"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_weight="2"
+            android:gravity="end"
+            android:padding="12dp"
+            android:text="@string/arriving"
+            android:textColor="?android:colorBackground"
+            android:textSize="18sp"
+            android:visibility="gone"/>
 
-            <TextView
-                android:id="@+id/trip_filter_method_arriving"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="2"
-                android:gravity="end"
-                android:padding="12dp"
-                android:text="Arriving "
-                android:textColor="@color/background_material_light"
-                android:visibility="gone"/>
+        <TextView
+            android:id="@+id/trip_filter_method_departing"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_weight="2"
+            android:gravity="end"
+            android:labelFor="@+id/trip_filter_datetime"
+            android:padding="12dp"
+            android:text="@string/departing"
+            android:textColor="?android:colorBackground"
+            android:textSize="18sp"/>
 
-            <TextView
-                android:id="@+id/trip_filter_method_departing"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_weight="2"
-                android:gravity="end"
-                android:padding="12dp"
-                android:text="Departing "
-                android:textColor="@color/background_material_light"/>
+        <EditText
+            android:id="@id/trip_filter_datetime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:focusable="false"
+            android:inputType="text"
+            android:textColor="?android:colorBackground"
+            android:textColorHint="?android:colorBackground"/>
 
-            <EditText
-                android:id="@+id/trip_filter_datetime"
-                android:layout_width="0dp"
-                android:layout_weight="4"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/background_material_light"
-                android:focusable="false"
-                android:text="10/2/17 @ 5:19pm"
-                android:textColor="@color/background_material_light"/>
+        <ImageView
+            android:id="@+id/trip_filter_refresh_date"
+            android:layout_width="0dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10dp"
+            android:layout_weight="1"
+            android:contentDescription="@string/reset_to_today"
+            android:src="@drawable/ic_restore_black_24dp"
+            />
+    </TableRow>
 
-            <ImageView
-                android:id="@+id/trip_filter_refresh_date"
-                android:layout_height="25dp"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:tint="@color/background_material_light"
-                android:layout_gravity="center"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_restore_black_24dp"
-                />
-        </TableRow>
-
-    </TableLayout>
-
-</FrameLayout>
+</TableLayout>

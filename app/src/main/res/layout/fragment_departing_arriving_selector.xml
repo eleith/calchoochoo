@@ -1,30 +1,29 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:context=".fragments.TripFilterTimeAndMethodDialogFragment">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/timeTabs"
-        app:tabBackground="@color/accent_material_light"
-        app:tabIndicatorColor="@color/primary_text_material_light"
-        app:tabSelectedTextColor="@color/background_material_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top">
+        android:layout_gravity="top"
+        app:tabBackground="?attr/colorAccent"
+        app:tabIndicatorColor="@color/primary_text_material_light">
 
         <android.support.design.widget.TabItem
             android:id="@+id/methodArriveTab"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Arrive By"/>
+            android:text="@string/arrive_by"/>
 
         <android.support.design.widget.TabItem
             android:id="@+id/methodDepartTab"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Depart At"/>
+            android:text="@string/depart_at"/>
 
     </android.support.design.widget.TabLayout>
 
@@ -49,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/picker"
-        android:background="@android:drawable/divider_horizontal_bright"/>
+        android:background="@color/secondary_text_material_dark"/>
 
     <LinearLayout
         android:id="@+id/datePicker"
@@ -64,7 +63,9 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_chevron_left_black_24dp"/>
+            android:contentDescription="@string/previous_day"
+            android:src="@drawable/ic_chevron_left_black_24dp"
+            android:tint="?android:attr/textColorPrimary"/>
 
         <com.eleith.calchoochoo.utils.InfinitePager
             android:id="@+id/dateSpinner"
@@ -78,7 +79,9 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_weight="1"
-            android:src="@drawable/ic_chevron_right_black_24dp"/>
+            android:contentDescription="@string/next_day"
+            android:src="@drawable/ic_chevron_right_black_24dp"
+            android:tint="?android:attr/textColorPrimary"/>
 
     </LinearLayout>
 
@@ -86,31 +89,31 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@id/datePicker"
-        android:background="@android:drawable/divider_horizontal_bright"/>
+        android:background="@color/secondary_text_material_dark"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
         android:layout_below="@id/datePicker"
         android:gravity="end"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:padding="5dp">
 
         <Button
             android:id="@+id/departOrArriveCancel"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/accent_material_light"
-            android:text="Cancel"/>
+            android:text="@string/cancel"
+            android:textColor="?attr/colorAccent"/>
 
         <Button
             android:id="@+id/departOrArriveSelect"
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ok"
-            android:textColor="@color/accent_material_light"/>
+            android:text="@string/ok"
+            android:textColor="?attr/colorAccent"/>
 
     </LinearLayout>
 

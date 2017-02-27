@@ -1,6 +1,28 @@
 <resources>
     <string name="app_name">CalChooChoo</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="arrive_by">Arrive By</string>
+    <string name="depart_at">Depart At</string>
+    <string name="previous_day">previous day</string>
+    <string name="next_day">next day</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="search_for_stop">Search for a stop</string>
+    <string name="stop">Stop</string>
+    <string name="miles">mi</string>
+    <string name="no_matching_stops">Sorry, no stops match your search.</string>
+    <string name="zone">Zone</string>
+    <string name="link">Link</string>
+    <string name="map_link">Map Link</string>
+    <string name="go_to">Go To</string>
+    <string name="leave_from">Leave From</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="arriving">Arriving</string>
+    <string name="departing">Departing</string>
+    <string name="reset_to_today">Reset to today</string>
+    <string name="select_stops">Please select the stops you want to travel between.</string>
+    <string name="bullet_train">Bullet Train</string>
+    <string name="local_train">Local Train</string>
+    <string name="train_number">Train #</string>
+    <string name="no_more_trains">Sorry, there are no more trips at this time.</string>
 </resources>

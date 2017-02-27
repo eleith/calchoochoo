@@ -15,28 +15,18 @@
         android:layout_marginTop="10dp"
         >
 
-        <LinearLayout
+        <TextView
             android:id="@+id/search_results_empty_state"
             android:visibility="gone"
+            android:drawableTop="@drawable/ic_cal_choo_choo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
+            android:text="@string/no_matching_stops"
+            android:textSize="20sp"
             android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_cal_choo_choo"/>
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="40dp"
-                android:text="Sorry, no stops match your search."
-                android:textSize="30sp"/>
-        </LinearLayout>
+        </TextView>
 
         <android.support.v7.widget.RecyclerView
             xmlns:android="http://schemas.android.com/apk/res/android"
