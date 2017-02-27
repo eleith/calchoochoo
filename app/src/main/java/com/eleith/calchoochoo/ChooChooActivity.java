@@ -1,6 +1,7 @@
 package com.eleith.calchoochoo;
 
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 
@@ -64,10 +65,7 @@ public class ChooChooActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    scheduleExplorerActivityComponent = ((ChooChooApplication) getApplication()).getAppComponent()
-        .activityComponent(new ScheduleExplorerActivityModule(this));
-
-    scheduleExplorerActivityComponent.inject(this);
+    getComponent();
     setContentView(R.layout.activity_schedule_explorer);
 
     subscription = rxbus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
@@ -246,6 +244,12 @@ public class ChooChooActivity extends AppCompatActivity {
   }
 
   public ScheduleExplorerActivityComponent getComponent() {
-    return this.scheduleExplorerActivityComponent;
+    if (scheduleExplorerActivityComponent == null) {
+      scheduleExplorerActivityComponent = ((ChooChooApplication) getApplication()).getAppComponent()
+          .activityComponent(new ScheduleExplorerActivityModule(this));
+
+      scheduleExplorerActivityComponent.inject(this);
+    }
+    return scheduleExplorerActivityComponent;
   }
 }

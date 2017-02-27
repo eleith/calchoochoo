@@ -66,7 +66,11 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
-    unWrapBundle(getArguments());
+    if (savedInstanceState == null) {
+      unWrapBundle(getArguments());
+    } else {
+      unWrapBundle(savedInstanceState);
+    }
   }
 
   @Override
@@ -157,9 +161,9 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     }
   }
 
-  private void unWrapBundle(Bundle savedInstanceState) {
-    if (savedInstanceState != null) {
-      stops = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOPS));
+  private void unWrapBundle(Bundle bundle) {
+    if (bundle != null) {
+      stops = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOPS));
       // if googleMap is set, then it never got the location!
       if (googleMap != null) {
         onMapReady(googleMap);
@@ -203,8 +207,9 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
-    super.onSaveInstanceState(outState);
     googleMapView.onSaveInstanceState(outState);
+    outState.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
+    super.onSaveInstanceState(outState);
   }
 
   @Override
