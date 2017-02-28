@@ -9,16 +9,6 @@ import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityModule;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.fragments.MapSearchFragment;
-import com.eleith.calchoochoo.fragments.RouteStopsFragment;
-import com.eleith.calchoochoo.fragments.SearchInputFragment;
-import com.eleith.calchoochoo.fragments.SearchResultsFragment;
-import com.eleith.calchoochoo.fragments.StopCardsFragment;
-import com.eleith.calchoochoo.fragments.StopDetailsFragment;
-import com.eleith.calchoochoo.fragments.TripDetailFragment;
-import com.eleith.calchoochoo.fragments.TripFilterFragment;
-import com.eleith.calchoochoo.fragments.TripFilterSelectMoreFragment;
-import com.eleith.calchoochoo.fragments.TripSummaryFragment;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -41,8 +31,6 @@ import rx.Subscription;
 import rx.functions.Action1;
 
 public class ChooChooActivity extends AppCompatActivity {
-  private SearchResultsFragment searchResultsFragment;
-  private SearchInputFragment searchInputFragment;
   private Stop stopDestination;
   private Stop stopSource;
   private Integer stopMethod = RxMessageArrivalOrDepartDateTime.DEPARTING;
@@ -70,7 +58,10 @@ public class ChooChooActivity extends AppCompatActivity {
     setContentView(R.layout.activity_schedule_explorer);
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
-    showMapSearchFragment();
+
+    if (savedInstanceState == null) {
+      chooChooFragmentManager.loadMapSearchFragment();
+    }
   }
 
   @Override
@@ -113,121 +104,35 @@ public class ChooChooActivity extends AppCompatActivity {
           } else {
             stopSource = pair.first;
           }
-          showDestinationSourceFragment();
+          chooChooFragmentManager.loadTripFilterFragment(stopMethod, stopDateTime, stopDestination, stopSource);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DESTINATION_SELECTED)) {
-          searchForSpot(RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
+          chooChooFragmentManager.loadSearchForSpotFragment(RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SOURCE_SELECTED)) {
-          searchForSpot(RxMessagePairStopReason.SEARCH_REASON_SOURCE);
+          chooChooFragmentManager.loadSearchForSpotFragment(RxMessagePairStopReason.SEARCH_REASON_SOURCE);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED)) {
           Stop tempStop = stopDestination;
           stopDestination = stopSource;
           stopSource = tempStop;
-          showDestinationSourceFragment();
+          chooChooFragmentManager.loadTripFilterFragment(stopMethod, stopDateTime, stopDestination, stopSource);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
           stopDateTime = pair.second;
-          showDestinationSourceFragment();
+          chooChooFragmentManager.loadTripFilterFragment(stopMethod, stopDateTime, stopDestination, stopSource);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageArrivalOrDepartDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
           stopDateTime = pair.second;
-          showDestinationSourceFragment();
+          chooChooFragmentManager.loadTripFilterFragment(stopMethod, stopDateTime, stopDestination, stopSource);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.TRIP_SELECTED)) {
           PossibleTrip possibleTrip = ((RxMessagePossibleTrip) rxMessage).getMessage();
-          showTripDetailsFragments(possibleTrip);
+          chooChooFragmentManager.loadTripDetailsFragments(possibleTrip, stopDestination, stopSource);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.STOP_SELECTED)) {
           Stop stop = ((RxMessageStop) rxMessage).getMessage();
-          showStopsFragments(stop);
+          chooChooFragmentManager.loadStopsFragments(stop);
         }
       }
     };
-  }
-
-  private void searchForSpot(int reason) {
-    searchInputFragment = new SearchInputFragment();
-    searchResultsFragment = new SearchResultsFragment();
-
-    Bundle searchResultsArgs = new Bundle();
-    ArrayList<Stop> stops = Queries.getAllStops();
-    searchResultsArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
-    searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, reason);
-    searchResultsFragment.setArguments(searchResultsArgs);
-
-    chooChooFragmentManager.updateTopAndBottomFragments(searchInputFragment, searchResultsFragment);
-    chooChooFragmentManager.commit();
-  }
-
-  private void showStopsFragments(Stop stop) {
-    Bundle stopSummaryArgs = new Bundle();
-
-    StopDetailsFragment stopDetailsFragment = new StopDetailsFragment();
-    StopCardsFragment stopCardsFragment = new StopCardsFragment();
-
-    stopSummaryArgs.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
-
-    stopDetailsFragment.setArguments(stopSummaryArgs);
-    stopCardsFragment.setArguments(stopSummaryArgs);
-
-    chooChooFragmentManager.updateTopAndBottomFragments(stopDetailsFragment, stopCardsFragment);
-    chooChooFragmentManager.commit();
-  }
-
-  private void showTripDetailsFragments(PossibleTrip possibleTrip) {
-    Bundle tripSummaryArgs = new Bundle();
-
-    TripSummaryFragment tripSummaryFragment = new TripSummaryFragment();
-    TripDetailFragment tripDetailFragment = new TripDetailFragment();
-
-    tripSummaryArgs.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
-    tripSummaryArgs.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
-    tripSummaryArgs.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
-
-    tripSummaryFragment.setArguments(tripSummaryArgs);
-    tripDetailFragment.setArguments(tripSummaryArgs);
-
-    chooChooFragmentManager.updateTopAndBottomFragments(tripSummaryFragment, tripDetailFragment);
-    chooChooFragmentManager.commit();
-  }
-
-  private void showMapSearchFragment() {
-    Bundle mapSearchArgs = new Bundle();
-    MapSearchFragment mapSearchFragment = new MapSearchFragment();
-    ArrayList<Stop> stops = Queries.getAllStops();
-    mapSearchArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
-    mapSearchFragment.setArguments(mapSearchArgs);
-
-    chooChooFragmentManager.updateTopAndBottomFragments(null, mapSearchFragment);
-    chooChooFragmentManager.commit();
-  }
-
-  private void showDestinationSourceFragment() {
-    Bundle destinationSourceArgs = new Bundle();
-
-    TripFilterFragment tripFilterFragment = new TripFilterFragment();
-    destinationSourceArgs.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
-    destinationSourceArgs.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
-    destinationSourceArgs.putInt(BundleKeys.STOP_METHOD, stopMethod);
-    destinationSourceArgs.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
-    tripFilterFragment.setArguments(destinationSourceArgs);
-
-    chooChooFragmentManager.updateTopAndBottomFragments(tripFilterFragment, new TripFilterSelectMoreFragment());
-    updateRouteFragment();
-    chooChooFragmentManager.commit();
-  }
-
-  private void updateRouteFragment() {
-    if (stopSource != null && stopDestination != null && stopDateTime != null) {
-      ArrayList<PossibleTrip> possibleTrips = Queries.findTrips(stopSource, stopDestination, stopDateTime, stopMethod == RxMessageArrivalOrDepartDateTime.ARRIVING);
-
-      Bundle routeStopsArgs = new Bundle();
-      routeStopsArgs.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTrips));
-
-      RouteStopsFragment routeStopsFragment = new RouteStopsFragment();
-      routeStopsFragment.setArguments(routeStopsArgs);
-
-      chooChooFragmentManager.updateBottomFragment(routeStopsFragment);
-    }
   }
 
   public ScheduleExplorerActivityComponent getComponent() {

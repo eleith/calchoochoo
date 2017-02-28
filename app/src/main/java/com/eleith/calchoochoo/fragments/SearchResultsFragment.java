@@ -91,6 +91,13 @@ public class SearchResultsFragment extends Fragment {
     subscription.unsubscribe();
   }
 
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    outState.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
+    outState.putInt(BundleKeys.SEARCH_REASON, searchReason);
+    super.onSaveInstanceState(outState);
+  }
+
   private void unPackBundle(Bundle bundle) {
     if (bundle != null) {
       stops = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOPS));
