@@ -1,7 +1,6 @@
 package com.eleith.calchoochoo;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 
@@ -29,7 +28,6 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.joda.time.LocalDateTime;
@@ -53,7 +51,7 @@ public class ChooChooActivity extends AppCompatActivity {
   private Subscription subscription;
 
   @Inject
-  RxBus rxbus;
+  RxBus rxBus;
   @Inject
   GoogleApiClient googleApiClient;
   @Inject
@@ -65,10 +63,13 @@ public class ChooChooActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    getComponent();
+    scheduleExplorerActivityComponent = ChooChooApplication.from(this).getAppComponent()
+        .activityComponent(new ScheduleExplorerActivityModule(this));
+    scheduleExplorerActivityComponent.inject(this);
+
     setContentView(R.layout.activity_schedule_explorer);
 
-    subscription = rxbus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
+    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
     showMapSearchFragment();
   }
 
@@ -244,12 +245,6 @@ public class ChooChooActivity extends AppCompatActivity {
   }
 
   public ScheduleExplorerActivityComponent getComponent() {
-    if (scheduleExplorerActivityComponent == null) {
-      scheduleExplorerActivityComponent = ((ChooChooApplication) getApplication()).getAppComponent()
-          .activityComponent(new ScheduleExplorerActivityModule(this));
-
-      scheduleExplorerActivityComponent.inject(this);
-    }
     return scheduleExplorerActivityComponent;
   }
 }

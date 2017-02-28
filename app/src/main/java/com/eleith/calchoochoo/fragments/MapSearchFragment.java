@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eleith.calchoochoo.ChooChooActivity;
+import com.eleith.calchoochoo.ChooChooApplication;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;

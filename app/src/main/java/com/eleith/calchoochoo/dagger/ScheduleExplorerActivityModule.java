@@ -7,8 +7,6 @@ import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
 

@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentTransaction;
 import javax.inject.Inject;
 
 public class ChooChooFragmentManager {
-
   private FragmentManager fragmentManager;
   private FragmentTransaction fragmentTransaction;
 
