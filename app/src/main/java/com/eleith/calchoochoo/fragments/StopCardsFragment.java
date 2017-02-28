@@ -16,6 +16,7 @@ import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 
 import org.parceler.Parcels;
+
 import javax.inject.Inject;
 
 public class StopCardsFragment extends Fragment {
@@ -46,6 +47,12 @@ public class StopCardsFragment extends Fragment {
     recyclerView.scrollToPosition(position);
 
     return view;
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    outState.putParcelable(BundleKeys.STOP, Parcels.wrap(currentStop));
+    super.onSaveInstanceState(outState);
   }
 
   private void unPackBundle(Bundle bundle) {

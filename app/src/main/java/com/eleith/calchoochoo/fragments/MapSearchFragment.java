@@ -67,11 +67,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
-    if (savedInstanceState == null) {
-      unWrapBundle(getArguments());
-    } else {
-      unWrapBundle(savedInstanceState);
-    }
+    unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
   @Override

@@ -7,9 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityComponent;
 import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityModule;
 import com.eleith.calchoochoo.data.PossibleTrip;
-import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
@@ -21,9 +19,6 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.joda.time.LocalDateTime;
-import org.parceler.Parcels;
-
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 

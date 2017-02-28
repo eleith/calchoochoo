@@ -5,17 +5,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
-import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.ChooChooActivity;
+import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
-
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import org.joda.time.Minutes;
 import org.parceler.Parcels;
@@ -52,7 +51,7 @@ public class TripSummaryFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
-    unWrapBundle(getArguments());
+    unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
   @Override
@@ -66,7 +65,7 @@ public class TripSummaryFragment extends Fragment {
     tripSummaryPrice.setText(String.format(Locale.getDefault(), "$%.2f", possibleTrip.getPrice()));
     tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime(), possibleTrip.getDepartureTime()).getMinutes()));
 
-    if(route != null && route.route_long_name.contains("Bullet")) {
+    if (route != null && route.route_long_name.contains("Bullet")) {
       tripSummaryTrainLocal.setVisibility(View.GONE);
       tripSummaryTrainBullet.setVisibility(View.VISIBLE);
     } else {
@@ -77,6 +76,14 @@ public class TripSummaryFragment extends Fragment {
     unWrapBundle(savedInstanceState);
 
     return view;
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    outState.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
+    outState.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
+    outState.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
+    super.onSaveInstanceState(outState);
   }
 
   private void unWrapBundle(Bundle savedInstanceState) {

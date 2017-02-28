@@ -42,7 +42,7 @@ public class TripDetailFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
-    unWrapBundle(getArguments());
+    unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
   @Override
@@ -63,8 +63,16 @@ public class TripDetailFragment extends Fragment {
     return view;
   }
 
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    outState.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
+    outState.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
+    outState.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
+    super.onSaveInstanceState(outState);
+  }
+
   private void unWrapBundle(Bundle savedInstanceState) {
-     if (savedInstanceState != null) {
+    if (savedInstanceState != null) {
       stopDestination = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP_DESTINATION));
       stopSource = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP_SOURCE));
       possibleTrip = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.POSSIBLE_TRIP));

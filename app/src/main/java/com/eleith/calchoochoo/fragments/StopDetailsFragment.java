@@ -22,7 +22,7 @@ public class StopDetailsFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
-    unWrapBundle(getArguments());
+    unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
   @Override
@@ -35,8 +35,14 @@ public class StopDetailsFragment extends Fragment {
     return view;
   }
 
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    outState.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
+    super.onSaveInstanceState(outState);
+  }
+
   private void unWrapBundle(Bundle savedInstanceState) {
-     if (savedInstanceState != null) {
+    if (savedInstanceState != null) {
       stop = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP));
     }
   }

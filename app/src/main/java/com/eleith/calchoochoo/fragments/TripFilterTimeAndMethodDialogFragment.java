@@ -15,8 +15,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.ChooChooActivity;
+import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.InfinitePager;
 import com.eleith.calchoochoo.utils.InfinitePagerDataDates;
@@ -105,11 +105,7 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
-    if (savedInstanceState == null) {
-      unWrapBundle(getArguments());
-    } else {
-      unWrapBundle(savedInstanceState);
-    }
+    unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
   @Override
@@ -133,7 +129,7 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
 
     int position = departOrArriveMethod == RxMessageArrivalOrDepartDateTime.ARRIVING ? 0 : 1;
     TabLayout.Tab tab = timeTabs.getTabAt(position);
-    if(tab != null) {
+    if (tab != null) {
       tab.select();
     }
 
@@ -147,8 +143,15 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
     });
   }
 
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    outState.putLong(BundleKeys.STOP_DATETIME, localDateTime.toDate().getTime());
+    outState.putInt(BundleKeys.STOP_METHOD, departOrArriveMethod);
+    super.onSaveInstanceState(outState);
+  }
+
   private void unWrapBundle(Bundle bundle) {
-    if(bundle != null) {
+    if (bundle != null) {
       departOrArriveMethod = bundle.getInt(BundleKeys.STOP_METHOD);
       localDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME));
     }

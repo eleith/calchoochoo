@@ -10,9 +10,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.eleith.calchoochoo.ChooChooActivity;
-import com.eleith.calchoochoo.utils.RxBus;
-
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 

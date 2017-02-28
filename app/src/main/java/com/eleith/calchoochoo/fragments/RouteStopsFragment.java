@@ -85,6 +85,12 @@ public class RouteStopsFragment extends Fragment {
     super.onDestroyView();
   }
 
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    outState.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTrips));
+    super.onSaveInstanceState(outState);
+  }
+
   private void unPackBundle(Bundle bundle) {
     if (bundle != null) {
       possibleTrips = Parcels.unwrap(bundle.getParcelable(BundleKeys.ROUTE_STOPS));

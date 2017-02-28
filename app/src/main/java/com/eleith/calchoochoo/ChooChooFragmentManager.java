@@ -54,7 +54,7 @@ public class ChooChooFragmentManager {
     return fragmentTransaction;
   }
 
-  public void setNextState(String stateID, Bundle arguments) {
+  private void setNextState(String stateID, Bundle arguments) {
     lastStateID = stateID;
     lastArguments = arguments;
 
@@ -194,13 +194,21 @@ public class ChooChooFragmentManager {
     Bundle arguments = new Bundle();
     arguments.putInt(BundleKeys.STOP_METHOD, stopMethod);
 
+    if (stopSource != null) {
+      arguments.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
+    }
+
+    if (stopDateTime != null) {
+      arguments.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
+    }
+
+    if (stopDestination != null) {
+      arguments.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
+    }
+
     if (stopSource != null && stopDestination != null && stopDateTime != null) {
       ArrayList<PossibleTrip> possibleTrips = Queries.findTrips(stopSource, stopDestination, stopDateTime, stopMethod == RxMessageArrivalOrDepartDateTime.ARRIVING);
-
       arguments.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTrips));
-      arguments.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
-      arguments.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
-      arguments.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
 
       setNextState(ChooChooFragmentManager.STATE_SHOW_TRIP_FILTER_RESULTS, arguments);
     } else {

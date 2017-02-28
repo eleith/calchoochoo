@@ -7,8 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.ChooChooActivity;
+import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -53,13 +53,7 @@ public class TripFilterFragment extends Fragment {
 
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
 
-    Bundle arguments = getArguments();
-    if (arguments != null) {
-      stopDestination = Parcels.unwrap(arguments.getParcelable(BundleKeys.STOP_DESTINATION));
-      stopSource = Parcels.unwrap(arguments.getParcelable(BundleKeys.STOP_SOURCE));
-      stopDateTime = new LocalDateTime(arguments.getLong(BundleKeys.STOP_DATETIME));
-      stopMethod = arguments.getInt(BundleKeys.STOP_METHOD);
-    }
+    unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
   @Override
@@ -77,11 +71,11 @@ public class TripFilterFragment extends Fragment {
 
   private void updateStops() {
     if (stopDestination != null) {
-      destinationEdit.setText(stopDestination.stop_name);
+      destinationEdit.setText(stopDestination.stop_name.replace(" Caltrain", ""));
     }
 
     if (stopSource != null) {
-      sourceEdit.setText(stopSource.stop_name);
+      sourceEdit.setText(stopSource.stop_name.replace(" Caltrain", ""));
     }
     updateTimeEdit();
   }
@@ -99,8 +93,8 @@ public class TripFilterFragment extends Fragment {
 
   @OnClick(R.id.trip_filter_refresh_date)
   void refreshDateClick() {
-   stopDateTime = new LocalDateTime();
-   updateTimeEdit();
+    stopDateTime = new LocalDateTime();
+    updateTimeEdit();
   }
 
   @OnClick(R.id.trip_filter_destination)
@@ -121,5 +115,23 @@ public class TripFilterFragment extends Fragment {
     bundle.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
     dialog.setArguments(bundle);
     dialog.show(getFragmentManager(), "dialog");
+  }
+
+  @Override
+  public void onSaveInstanceState(Bundle outState) {
+    outState.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
+    outState.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
+    outState.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
+    outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
+    super.onSaveInstanceState(outState);
+  }
+
+  private void unWrapBundle(Bundle bundle) {
+    if (bundle != null) {
+      stopDestination = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP_DESTINATION));
+      stopSource = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP_SOURCE));
+      stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME));
+      stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+    }
   }
 }
