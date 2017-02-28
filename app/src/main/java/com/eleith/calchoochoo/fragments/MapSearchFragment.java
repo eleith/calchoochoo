@@ -202,7 +202,9 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onDestroy() {
     super.onDestroy();
-    subscription.unsubscribe();
+    if (subscription != null) {
+      subscription.unsubscribe();
+    }
     googleMapView.onDestroy();
   }
 

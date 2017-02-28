@@ -61,11 +61,11 @@ public class ChooChooActivity extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-
     scheduleExplorerActivityComponent = ChooChooApplication.from(this).getAppComponent()
         .activityComponent(new ScheduleExplorerActivityModule(this));
     scheduleExplorerActivityComponent.inject(this);
+
+    super.onCreate(savedInstanceState);
 
     setContentView(R.layout.activity_schedule_explorer);
 
@@ -115,9 +115,9 @@ public class ChooChooActivity extends AppCompatActivity {
           }
           showDestinationSourceFragment();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DESTINATION_SELECTED)) {
-          selectDestination();
+          searchForSpot(RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SOURCE_SELECTED)) {
-          selectSource();
+          searchForSpot(RxMessagePairStopReason.SEARCH_REASON_SOURCE);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED)) {
           Stop tempStop = stopDestination;
           stopDestination = stopSource;
@@ -144,28 +144,14 @@ public class ChooChooActivity extends AppCompatActivity {
     };
   }
 
-  private void selectDestination() {
+  private void searchForSpot(int reason) {
     searchInputFragment = new SearchInputFragment();
     searchResultsFragment = new SearchResultsFragment();
 
     Bundle searchResultsArgs = new Bundle();
     ArrayList<Stop> stops = Queries.getAllStops();
     searchResultsArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
-    searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
-    searchResultsFragment.setArguments(searchResultsArgs);
-
-    chooChooFragmentManager.updateTopAndBottomFragments(searchInputFragment, searchResultsFragment);
-    chooChooFragmentManager.commit();
-  }
-
-  private void selectSource() {
-    searchInputFragment = new SearchInputFragment();
-    searchResultsFragment = new SearchResultsFragment();
-
-    Bundle searchResultsArgs = new Bundle();
-    ArrayList<Stop> stops = Queries.getAllStops();
-    searchResultsArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
-    searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_SOURCE);
+    searchResultsArgs.putInt(BundleKeys.SEARCH_REASON, reason);
     searchResultsFragment.setArguments(searchResultsArgs);
 
     chooChooFragmentManager.updateTopAndBottomFragments(searchInputFragment, searchResultsFragment);
