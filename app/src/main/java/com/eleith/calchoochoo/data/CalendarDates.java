@@ -13,11 +13,11 @@ import org.parceler.Parcel;
 public class CalendarDates extends BaseModel {
   @PrimaryKey
   @Column
-  String service_id;
+  public String service_id;
 
   @Column(typeConverter = LocalDateConverter.class)
-  LocalDate date;
+  public LocalDate date;
 
   @Column
-  int exception_type;
+  public int exception_type;
 }

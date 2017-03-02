@@ -13,32 +13,32 @@ import org.parceler.Parcel;
 public class Calendar extends BaseModel {
   @PrimaryKey
   @Column
-  String service_id;
+  public String service_id;
 
   @Column
-  int monday;
+  public int monday;
 
   @Column
-  int tuesday;
+  public int tuesday;
 
   @Column
-  int wednesday;
+  public int wednesday;
 
   @Column
-  int thursday;
+  public int thursday;
 
   @Column
-  int friday;
+  public int friday;
 
   @Column
-  int saturday;
+  public int saturday;
 
   @Column
-  int sunday;
+  public int sunday;
 
   @Column(typeConverter = LocalDateConverter.class)
-  LocalDate start_date;
+  public LocalDate start_date;
 
   @Column(typeConverter = LocalDateConverter.class)
-  LocalDate end_date;
+  public LocalDate end_date;
 }

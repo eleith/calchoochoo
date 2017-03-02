@@ -15,14 +15,14 @@ import java.util.ArrayList;
 
 public class Queries {
   private static final ArrayList<Stop> allStops = new ArrayList<>(SQLite.select().from(Stop.class)
-        .where(Stop_Table.stop_code.is(""))
-        .and(Stop_Table.platform_code.is(""))
-        .queryList());
+      .where(Stop_Table.stop_code.is(""))
+      .and(Stop_Table.platform_code.is(""))
+      .queryList());
 
   private static final ArrayList<Stop> allDirectionalStops = new ArrayList<>(SQLite.select().from(Stop.class)
-        .where(Stop_Table.stop_code.isNot(""))
-        .and(Stop_Table.platform_code.isNot(""))
-        .queryList());
+      .where(Stop_Table.stop_code.isNot(""))
+      .and(Stop_Table.platform_code.isNot(""))
+      .queryList());
 
   private static final ArrayList<FareAttributes> allFareAttributes = new ArrayList<>(SQLite.select().from(FareAttributes.class).queryList());
 
@@ -116,58 +116,82 @@ public class Queries {
     return null;
   }
 
+  private static boolean isExceptionDate(LocalDateTime dateTime) {
+    ArrayList<CalendarDates> exceptions = new ArrayList<>(SQLite.select().from(CalendarDates.class)
+        .where(CalendarDates_Table.date.is(dateTime.toLocalDate()))
+        .queryList());
+
+    return exceptions.size() > 0;
+  }
+
   public static ArrayList<PossibleTrip> findTrips(Stop source, Stop destination, LocalDateTime dateTime, Boolean arriving) {
     ArrayList<PossibleTrip> possibleTrips = new ArrayList<>();
-    String calendarFilter = " AND calendar.sunday = 1";
+    String calendarFilter;
+    int dayOfWeek = isExceptionDate(dateTime) ? 0 : dateTime.getDayOfWeek();
 
-    switch(dateTime.getDayOfWeek()) {
-      case 1: calendarFilter = "  AND calendar.monday = 1 "; break;
-      case 2: calendarFilter = "  AND calendar.tuesday = 1 "; break;
-      case 3: calendarFilter = "  AND calendar.wednesday = 1 "; break;
-      case 5: calendarFilter = "  AND calendar.thursday = 1 "; break;
-      case 6: calendarFilter = "  AND calendar.friday = 1 "; break;
-      case 7: calendarFilter = "  AND calendar.saturday = 1 "; break;
+    switch (dateTime.getDayOfWeek()) {
+      case 1:
+        calendarFilter = "  AND calendar.monday = 1 ";
+        break;
+      case 2:
+        calendarFilter = "  AND calendar.tuesday = 1 ";
+        break;
+      case 3:
+        calendarFilter = "  AND calendar.wednesday = 1 ";
+        break;
+      case 5:
+        calendarFilter = "  AND calendar.thursday = 1 ";
+        break;
+      case 6:
+        calendarFilter = "  AND calendar.friday = 1 ";
+        break;
+      case 7:
+        calendarFilter = "  AND calendar.saturday = 1 ";
+        break;
+      default:
+        calendarFilter = " AND calendar.sunday = 1 ";
+        break;
     }
 
     String query = "SELECT " +
-    "routes.route_id as route_id, " +
-    "fare_attributes.price as price, " +
-    "st1.platform_code as st1__platform_code, st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
-    "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, st1.pickup_time as st1__pickup_time, st1.drop_off_type as st1__drop_off_type, " +
-    "st2.platform_code as st2__platform_code, st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +
-    "st2.stop_id as st2__stop_id, st2.stop_sequence as st2__stop_sequence, st2.pickup_time as st2__pickup_time, st2.drop_off_type as st2__drop_off_type " +
-      "FROM " +
-      "    (SELECT * " +
-      "    FROM stops, stop_times " +
-      "    WHERE " +
-      "     stop_times.stop_id = stops.stop_id " +
-      "     AND stops.parent_station = ?) AS st1, " +
-      "    (Select * " +
-      "    FROM stops, stop_times " +
-      "    WHERE " +
-      "     stop_times.stop_id = stops.stop_id " +
-      "     AND stops.parent_station = ?) AS st2, " +
-      "  trips, " +
-      "  routes, " +
-      "  calendar, " +
-      "  fare_rules, " +
-      "  fare_attributes " +
-      "WHERE st1.trip_id = st2.trip_id " +
-      "  AND st1.platform_code = st2.platform_code " +
-      "  AND st1.stop_sequence < st2.stop_sequence " +
-      "  AND trips.trip_id = st1.trip_id " +
-      "  AND trips.route_id = routes.route_id " +
-      "  AND calendar.service_id = trips.service_id " +
-      "  AND fare_rules.origin_id = st1.zone_id " +
-      "  AND fare_rules.destination_id = st2.zone_id " +
-      "  AND fare_rules.route_id = routes.route_id " +
-      "  AND fare_rules.fare_id = fare_attributes.fare_id " +
-      calendarFilter; // AND calendar.sunday = 1
+        "routes.route_id as route_id, " +
+        "fare_attributes.price as price, " +
+        "st1.platform_code as st1__platform_code, st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
+        "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, st1.pickup_time as st1__pickup_time, st1.drop_off_type as st1__drop_off_type, " +
+        "st2.platform_code as st2__platform_code, st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +
+        "st2.stop_id as st2__stop_id, st2.stop_sequence as st2__stop_sequence, st2.pickup_time as st2__pickup_time, st2.drop_off_type as st2__drop_off_type " +
+        "FROM " +
+        "    (SELECT * " +
+        "    FROM stops, stop_times " +
+        "    WHERE " +
+        "     stop_times.stop_id = stops.stop_id " +
+        "     AND stops.parent_station = ?) AS st1, " +
+        "    (Select * " +
+        "    FROM stops, stop_times " +
+        "    WHERE " +
+        "     stop_times.stop_id = stops.stop_id " +
+        "     AND stops.parent_station = ?) AS st2, " +
+        "  trips, " +
+        "  routes, " +
+        "  calendar, " +
+        "  fare_rules, " +
+        "  fare_attributes " +
+        "WHERE st1.trip_id = st2.trip_id " +
+        "  AND st1.platform_code = st2.platform_code " +
+        "  AND st1.stop_sequence < st2.stop_sequence " +
+        "  AND trips.trip_id = st1.trip_id " +
+        "  AND trips.route_id = routes.route_id " +
+        "  AND calendar.service_id = trips.service_id " +
+        "  AND fare_rules.origin_id = st1.zone_id " +
+        "  AND fare_rules.destination_id = st2.zone_id " +
+        "  AND fare_rules.route_id = routes.route_id " +
+        "  AND fare_rules.fare_id = fare_attributes.fare_id " +
+        calendarFilter; // AND calendar.sunday = 1
 
     String[] args = {source.stop_id, destination.stop_id};
     Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);
 
-    while(cursor.moveToNext()) {
+    while (cursor.moveToNext()) {
       Float price = cursor.getFloat(cursor.getColumnIndex("price"));
 
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
@@ -213,21 +237,21 @@ public class Queries {
     Integer direction = first_stop_sequence > second_stop_sequence ? 0 : 1;
 
     String query = "SELECT " +
-      "  st.trip_id as st__trip_id, st.arrival_time as st__arrival_time, st.departure_time as st__departure_time, " +
-      "  st.stop_id as st__stop_id, st.stop_sequence as st__stop_sequence, st.pickup_time as st__pickup_time, st.drop_off_type as st__drop_off_type, " +
-      "  s.stop_id as s__stop_id, s.zone_id as s__zone_id, s.stop_name as s__stop_name, s.stop_lat as s__stop_lat, s.stop_lon as s__stop_lon, " +
-      "  s.parent_station as s__parent_station, s.stop_url as s__stop_url, s.platform_code as s__platform_code, s.stop_code as s__stop_code " +
-      "FROM stops as s, stop_times as st " +
-      "WHERE st.trip_id = ? " +
-      "  AND s.stop_id = st.stop_id " +
-      "  AND st.stop_sequence >= ? " +
-      "  AND st.stop_sequence <= ? " +
-      "  ORDER BY st.stop_sequence " + ((direction == 1) ? "ASC" : "DESC");
+        "  st.trip_id as st__trip_id, st.arrival_time as st__arrival_time, st.departure_time as st__departure_time, " +
+        "  st.stop_id as st__stop_id, st.stop_sequence as st__stop_sequence, st.pickup_time as st__pickup_time, st.drop_off_type as st__drop_off_type, " +
+        "  s.stop_id as s__stop_id, s.zone_id as s__zone_id, s.stop_name as s__stop_name, s.stop_lat as s__stop_lat, s.stop_lon as s__stop_lon, " +
+        "  s.parent_station as s__parent_station, s.stop_url as s__stop_url, s.platform_code as s__platform_code, s.stop_code as s__stop_code " +
+        "FROM stops as s, stop_times as st " +
+        "WHERE st.trip_id = ? " +
+        "  AND s.stop_id = st.stop_id " +
+        "  AND st.stop_sequence >= ? " +
+        "  AND st.stop_sequence <= ? " +
+        "  ORDER BY st.stop_sequence " + ((direction == 1) ? "ASC" : "DESC");
 
     String[] args = {trip_id, Integer.toString(lower_stop_sequence), Integer.toString(higher_stop_sequence)};
     Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);
 
-    while(cursor.moveToNext()) {
+    while (cursor.moveToNext()) {
       StopTimes stopTimes = new StopTimes();
       Stop stop = new Stop();
 
