@@ -1,6 +1,5 @@
 package com.eleith.calchoochoo.adapters;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.util.Pair;
@@ -11,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityScope;
+import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -27,7 +26,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-@ScheduleExplorerActivityScope
+@ChooChooScope
 public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCardHolder> {
   private ArrayList<Stop> stops;
   private RxBus rxBus;

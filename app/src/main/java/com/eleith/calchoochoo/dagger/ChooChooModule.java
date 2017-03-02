@@ -11,26 +11,26 @@ import dagger.Module;
 import dagger.Provides;
 
 @Module
-public class ScheduleExplorerActivityModule {
+public class ChooChooModule {
   private ChooChooActivity chooChooActivity;
 
-  public ScheduleExplorerActivityModule(ChooChooActivity chooChooActivity) {
+  public ChooChooModule(ChooChooActivity chooChooActivity) {
     this.chooChooActivity = chooChooActivity;
   }
 
-  @ScheduleExplorerActivityScope
+  @ChooChooScope
   @Provides
   public ChooChooActivity providesActivity() {
     return chooChooActivity;
   }
 
-  @ScheduleExplorerActivityScope
+  @ChooChooScope
   @Provides
   public FragmentManager provideFragmentManager() {
     return chooChooActivity.getSupportFragmentManager();
   }
 
-  @ScheduleExplorerActivityScope
+  @ChooChooScope
   @Provides
   DeviceLocation providesDeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient) {
     return new DeviceLocation(rxBus, googleApiClient, chooChooActivity);

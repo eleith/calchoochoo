@@ -1,6 +1,5 @@
 package com.eleith.calchoochoo.adapters;
 
-import android.location.LocationManager;
 import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityScope;
+import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.StopTimes;
@@ -27,7 +26,7 @@ import javax.inject.Inject;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-@ScheduleExplorerActivityScope
+@ChooChooScope
 public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneTripStopHolder> {
   private ArrayList<Pair<Stop, StopTimes>> tripStops;
   private RxBus rxBus;

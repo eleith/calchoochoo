@@ -14,9 +14,9 @@ import com.eleith.calchoochoo.fragments.TripSummaryFragment;
 
 import dagger.Subcomponent;
 
-@ScheduleExplorerActivityScope
-@Subcomponent(modules = ScheduleExplorerActivityModule.class)
-public interface ScheduleExplorerActivityComponent {
+@ChooChooScope
+@Subcomponent(modules = ChooChooModule.class)
+public interface ChooChooComponent {
   // injection for activity
   void inject(ChooChooActivity chooChooActivity);
 

@@ -30,14 +30,14 @@ public class DeviceLocation
   private RxBus rxBus;
   private GoogleApiClient googleApiClient;
   //private Activity activity;
-  private ChooChooActivity activity;
+  private Activity activity;
   private Boolean googleApiClientReady = false;
   private Boolean requestingLocation = false;
   private Boolean getRequestingLocationUpdates = false;
   private int requestedUpdates = 0;
 
   @Inject
-  public DeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient, ChooChooActivity activity) {
+  public DeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient, Activity activity) {
     this.rxBus = rxBus;
     this.googleApiClient = googleApiClient;
     this.activity = activity;

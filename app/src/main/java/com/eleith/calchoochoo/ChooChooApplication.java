@@ -3,13 +3,10 @@ package com.eleith.calchoochoo;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.eleith.calchoochoo.dagger.AppComponent;
 import com.eleith.calchoochoo.dagger.AppModule;
 import com.eleith.calchoochoo.dagger.DaggerAppComponent;
-import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityComponent;
-import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityModule;
 import com.raizlabs.android.dbflow.config.FlowConfig;
 import com.raizlabs.android.dbflow.config.FlowManager;
 

@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 
-import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityComponent;
-import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityModule;
+import com.eleith.calchoochoo.dagger.ChooChooComponent;
+import com.eleith.calchoochoo.dagger.ChooChooModule;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.DeviceLocation;
@@ -30,7 +30,7 @@ public class ChooChooActivity extends AppCompatActivity {
   private Stop stopSource;
   private Integer stopMethod = RxMessageArrivalOrDepartDateTime.DEPARTING;
   private LocalDateTime stopDateTime = new LocalDateTime();
-  private ScheduleExplorerActivityComponent scheduleExplorerActivityComponent;
+  private ChooChooComponent chooChooComponent;
   private Subscription subscription;
 
   @Inject
@@ -44,9 +44,9 @@ public class ChooChooActivity extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    scheduleExplorerActivityComponent = ChooChooApplication.from(this).getAppComponent()
-        .activityComponent(new ScheduleExplorerActivityModule(this));
-    scheduleExplorerActivityComponent.inject(this);
+    chooChooComponent = ChooChooApplication.from(this).getAppComponent()
+        .activityComponent(new ChooChooModule(this));
+    chooChooComponent.inject(this);
 
     super.onCreate(savedInstanceState);
 
@@ -130,7 +130,7 @@ public class ChooChooActivity extends AppCompatActivity {
     };
   }
 
-  public ScheduleExplorerActivityComponent getComponent() {
-    return scheduleExplorerActivityComponent;
+  public ChooChooComponent getComponent() {
+    return chooChooComponent;
   }
 }

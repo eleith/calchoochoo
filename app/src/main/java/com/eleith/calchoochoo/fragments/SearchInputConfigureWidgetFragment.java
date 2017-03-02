@@ -23,7 +23,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnTextChanged;
 
-public class SearchInputFragment extends Fragment {
+public class SearchInputConfigureWidgetFragment extends Fragment {
   @Inject
   RxBus rxBus;
   @BindView(R.id.searchInput)
@@ -39,8 +39,8 @@ public class SearchInputFragment extends Fragment {
     Activity activity = getActivity();
     super.onCreate(savedInstanceState);
 
-    if (activity instanceof ChooChooActivity) {
-      ((ChooChooActivity) activity).getComponent().inject(this);
+    if(activity instanceof ChooChooWidgetConfigure) {
+       ((ChooChooWidgetConfigure) activity).getComponent().inject(this);
     }
   }
 

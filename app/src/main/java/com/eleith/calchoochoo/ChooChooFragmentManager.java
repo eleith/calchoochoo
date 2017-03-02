@@ -10,7 +10,9 @@ import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.fragments.MapSearchFragment;
 import com.eleith.calchoochoo.fragments.RouteStopsFragment;
+import com.eleith.calchoochoo.fragments.SearchInputConfigureWidgetFragment;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
+import com.eleith.calchoochoo.fragments.SearchResultsConfigureWidgetFragment;
 import com.eleith.calchoochoo.fragments.SearchResultsFragment;
 import com.eleith.calchoochoo.fragments.StopCardsFragment;
 import com.eleith.calchoochoo.fragments.StopDetailsFragment;
@@ -21,7 +23,6 @@ import com.eleith.calchoochoo.fragments.TripSummaryFragment;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageArrivalOrDepartDateTime;
 
-import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.parceler.Parcels;
 
@@ -35,6 +36,7 @@ public class ChooChooFragmentManager {
   private String lastStateID;
   private Bundle lastArguments;
 
+  public static final String STATE_CONFIGURE_WIDGET = "configure_widget";
   public static final String STATE_SEARCH_FOR_STOPS = "search_for_stops";
   public static final String STATE_SHOW_ALL_STOPS = "show_all_stops";
   public static final String STATE_SHOW_TRIP = "show_trip";
@@ -67,6 +69,15 @@ public class ChooChooFragmentManager {
         searchInputFragment.setArguments(arguments);
 
         updateTopAndBottomFragments(searchInputFragment, searchResultsFragment);
+        break;
+      case STATE_CONFIGURE_WIDGET:
+        SearchInputConfigureWidgetFragment searchInputConfigureWidgetFragment = new SearchInputConfigureWidgetFragment();
+        SearchResultsConfigureWidgetFragment searchResultsConfigureWidgetFragment = new SearchResultsConfigureWidgetFragment();
+
+        searchInputConfigureWidgetFragment.setArguments(arguments);
+        searchResultsConfigureWidgetFragment.setArguments(arguments);
+
+        updateTopAndBottomFragments(searchInputConfigureWidgetFragment, searchResultsConfigureWidgetFragment);
         break;
       case STATE_SHOW_ALL_STOPS:
         StopDetailsFragment stopDetailsFragment = new StopDetailsFragment();
@@ -214,5 +225,12 @@ public class ChooChooFragmentManager {
     } else {
       setNextState(ChooChooFragmentManager.STATE_SHOW_TRIP_FILTER_EMPTY, arguments);
     }
+  }
+
+  public void loadSearchWidgetConfigureFragment() {
+    Bundle arguments = new Bundle();
+    ArrayList<Stop> stops = Queries.getAllStops();
+    arguments.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
+    setNextState(ChooChooFragmentManager.STATE_CONFIGURE_WIDGET, arguments);
   }
 }

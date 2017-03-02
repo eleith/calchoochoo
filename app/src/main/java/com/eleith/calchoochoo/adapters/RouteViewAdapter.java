@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.dagger.ScheduleExplorerActivityScope;
+import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Routes;
@@ -28,7 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-@ScheduleExplorerActivityScope
+@ChooChooScope
 public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.RouteViewHolder> {
   private ArrayList<PossibleTrip> possibleTrips;
   private RxBus rxBus;
