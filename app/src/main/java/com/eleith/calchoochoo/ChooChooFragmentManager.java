@@ -204,7 +204,7 @@ public class ChooChooFragmentManager {
 
   public void loadMapSearchFragment() {
     Bundle mapSearchArgs = new Bundle();
-    ArrayList<Stop> stops = Queries.getAllStops();
+    ArrayList<Stop> stops = Queries.getAllParentStops();
     mapSearchArgs.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
 
     setNextState(ChooChooFragmentManager.STATE_SHOW_MAP, mapSearchArgs);
@@ -238,7 +238,7 @@ public class ChooChooFragmentManager {
 
   public void loadSearchWidgetConfigureFragment() {
     Bundle arguments = new Bundle();
-    ArrayList<Stop> stops = Queries.getAllStops();
+    ArrayList<Stop> stops = Queries.getAllParentStops();
     arguments.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
     setNextState(ChooChooFragmentManager.STATE_CONFIGURE_WIDGET, arguments);
   }

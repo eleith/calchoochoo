@@ -36,7 +36,7 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
 
   @Inject
   public StopCardAdapter(RxBus rxBus) {
-    stops = Queries.getAllStops();
+    stops = Queries.getAllParentStops();
     this.rxBus = rxBus;
   }
 

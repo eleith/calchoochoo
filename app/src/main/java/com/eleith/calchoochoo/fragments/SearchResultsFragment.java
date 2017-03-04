@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooFragmentManager;
-import com.eleith.calchoochoo.ChooChooWidgetConfigure;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.adapters.SearchResultsViewAdapter;
 import com.eleith.calchoochoo.data.PossibleTrip;
@@ -28,7 +27,6 @@ import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.LocalDateTime;
@@ -74,13 +72,13 @@ public class SearchResultsFragment extends Fragment {
     if (activity instanceof ChooChooActivity) {
       ((ChooChooActivity) activity).getComponent().inject(this);
     }
-    stops = Queries.getAllStops();
-    unPackBundle(savedInstanceState != null ? savedInstanceState : getArguments());
+    stops = Queries.getAllParentStops();
+    unWrapBundle(savedInstanceState != null ? savedInstanceState : getArguments());
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    unPackBundle(savedInstanceState);
+    unWrapBundle(savedInstanceState);
     View view = inflater.inflate(R.layout.fragment_search_results, container, false);
     ButterKnife.bind(this, view);
 
@@ -113,12 +111,16 @@ public class SearchResultsFragment extends Fragment {
     super.onSaveInstanceState(outState);
   }
 
-  private void unPackBundle(Bundle bundle) {
+  private void unWrapBundle(Bundle bundle) {
     if (bundle != null) {
       localDateTime = bundle.getLong(BundleKeys.STOP_DATETIME);
       otherStop = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP));
       trip = Parcels.unwrap(bundle.getParcelable(BundleKeys.TRIP));
       searchReason = bundle.getInt(BundleKeys.SEARCH_REASON);
+
+      if (trip != null) {
+        stops = Queries.findStopsOnTrip(trip.trip_id);
+      }
     }
   }
 

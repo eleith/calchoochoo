@@ -14,9 +14,6 @@ import com.eleith.calchoochoo.dagger.ChooChooWidgetConfigureModule;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 
 import javax.inject.Inject;
 
@@ -112,7 +109,7 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
   static Stop getStopFromPreferences(Context context, int appWidgetId) {
     SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
     String stopId = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-    return Queries.getStopById(stopId);
+    return Queries.getParentStopById(stopId);
   }
 
   public ChooChooWidgetConfigureComponent getComponent() {

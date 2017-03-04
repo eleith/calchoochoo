@@ -2,21 +2,21 @@ package com.eleith.calchoochoo.data;
 
 import android.database.Cursor;
 import android.location.Location;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
 import java.util.ArrayList;
 
 public class Queries {
-  private static final ArrayList<Stop> allStops = new ArrayList<>(SQLite.select().from(Stop.class)
+  private static final ArrayList<Stop> allStops = new ArrayList<>(SQLite.select().from(Stop.class).queryList());
+
+  private static final ArrayList<Stop> allParentStops = new ArrayList<>(SQLite.select().from(Stop.class)
       .where(Stop_Table.stop_code.is(""))
       .and(Stop_Table.platform_code.is(""))
       .queryList());
@@ -34,8 +34,8 @@ public class Queries {
 
   private static final ArrayList<Trips> allTrips = new ArrayList<>(SQLite.select().from(Trips.class).queryList());
 
-  public static ArrayList<Stop> getAllStops() {
-    return allStops;
+  public static ArrayList<Stop> getAllParentStops() {
+    return allParentStops;
   }
 
   public static ArrayList<Routes> getAllRoutes() {
@@ -55,8 +55,18 @@ public class Queries {
   }
 
   @Nullable
-  public static Stop getStopById(String stop_id) {
-    for (Stop stop : allStops) {
+  public static Stop getParentStopById(String stop_id) {
+    for (Stop stop : allParentStops) {
+      if (stop.stop_id.equals(stop_id)) {
+        return stop;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public static Stop getDirectionalStopById(String stop_id) {
+    for (Stop stop : allDirectionalStops) {
       if (stop.stop_id.equals(stop_id)) {
         return stop;
       }
@@ -89,7 +99,7 @@ public class Queries {
     Float smallestDistance = null;
     Stop nearestStop = null;
 
-    for (Stop stop : allStops) {
+    for (Stop stop : allParentStops) {
       Float distance = Math.abs(location.distanceTo(stop.getLocation()));
       if (smallestDistance == null || distance < smallestDistance) {
         smallestDistance = distance;
@@ -172,7 +182,7 @@ public class Queries {
     String calendarFilter = getCalendarFilter(dateTime);
     String query = "SELECT " +
         "routes.route_id as route_id, " +
-        "st1.platform_code as st1__platform_code, st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
+        "st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
         "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence " +
         "FROM " +
         "    (SELECT * " +
@@ -214,33 +224,34 @@ public class Queries {
 
     return possibleTrains;
   }
-  
+
   @Nullable
   public static PossibleTrip findPossibleTrip(Stop source, Stop destination, String trip_id) {
     PossibleTrip possibleTrip = new PossibleTrip();
     String query = "SELECT " +
         "routes.route_id as route_id, " +
         "fare_attributes.price as price, " +
-        "st1.platform_code as st1__platform_code, st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
+        "st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
         "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, " +
-        "st2.platform_code as st2__platform_code, st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +
+        "st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +
         "st2.stop_id as st2__stop_id, st2.stop_sequence as st2__stop_sequence " +
         "FROM " +
         "    (SELECT * " +
-        "    FROM stop_times " +
+        "    FROM stops, stop_times " +
         "    WHERE " +
-        "     stop_times.stop_id = ?) AS st1, " +
+        "     stops.stop_id = stop_times.stop_id " +
+        "     AND stops.parent_station = ?) AS st1, " +
         "    (Select * " +
-        "    FROM stop_times " +
+        "    FROM stops, stop_times " +
         "    WHERE " +
-        "     stop_times.stop_id = ?) AS st2, " +
+        "     stops.stop_id = stop_times.stop_id " +
+        "     AND stops.parent_station = ?) AS st2, " +
         "  trips, " +
         "  routes, " +
         "  calendar, " +
         "  fare_rules, " +
         "  fare_attributes " +
         "WHERE st1.trip_id = st2.trip_id " +
-        "  AND st1.platform_code = st2.platform_code " +
         "  AND trips.trip_id = ? " +
         "  AND trips.route_id = routes.route_id " +
         "  AND calendar.service_id = trips.service_id " +
@@ -358,6 +369,20 @@ public class Queries {
     }
 
     return possibleTrips;
+  }
+
+  public static ArrayList<Stop> findStopsOnTrip(String trip_id) {
+    ArrayList<StopTimes> stopTimes = new ArrayList<StopTimes>(SQLite.select().from(StopTimes.class).where(StopTimes_Table.trip_id.eq(trip_id)).queryList());
+    ArrayList<Stop> stops = new ArrayList<>();
+
+    for (StopTimes stopTime : stopTimes) {
+      Stop stop = Queries.getDirectionalStopById(stopTime.stop_id);
+      if (stop != null) {
+        stops.add(Queries.getParentStopById(stop.parent_station));
+      }
+    }
+
+    return stops;
   }
 
   public static ArrayList<Pair<Stop, StopTimes>> findTripDetails(String trip_id, Integer first_stop_sequence, Integer second_stop_sequence) {

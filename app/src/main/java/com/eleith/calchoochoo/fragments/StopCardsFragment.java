@@ -37,7 +37,7 @@ public class StopCardsFragment extends Fragment {
     unPackBundle(savedInstanceState);
 
     View view = inflater.inflate(R.layout.fragment_stop_cards, container, false);
-    int position = Queries.getAllStops().indexOf(currentStop);
+    int position = Queries.getAllParentStops().indexOf(currentStop);
 
     stopCardAdapter.setHighlightedStop(position);
 

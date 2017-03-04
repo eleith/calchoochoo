@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eleith.calchoochoo.ChooChooActivity;
-import com.eleith.calchoochoo.ChooChooApplication;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
@@ -122,7 +121,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
       @Override
       public boolean onMarkerClick(Marker marker) {
         String stopId = (String) marker.getTag();
-        Stop touchedStop = Queries.getStopById(stopId);
+        Stop touchedStop = Queries.getParentStopById(stopId);
         if (touchedStop != null) {
           rxBus.send(new RxMessageStop(RxMessageKeys.STOP_SELECTED, touchedStop));
         }
