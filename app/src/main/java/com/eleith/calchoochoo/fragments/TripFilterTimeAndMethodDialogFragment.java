@@ -74,7 +74,7 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
 
   @OnClick(R.id.departOrArriveSelect)
   public void selectClick() {
-    LocalDate departOrArriveDate = (LocalDate) infinitePagerDataDates.getData(infinitePager.getCurrentItem());
+    LocalDate departOrArriveDate = infinitePagerDataDates.getData(infinitePager.getCurrentItem());
     LocalTime departOrArriveTime = new LocalTime(timePicker.getHour(), timePicker.getMinute());
     LocalDateTime departOrArriveDateTime = departOrArriveDate.toLocalDateTime(departOrArriveTime);
 

@@ -28,7 +28,7 @@ public class RxMessageKeys {
     map.put(DESTINATION_SELECTED, RxMessageStopsAndDetails.class);
     map.put(SOURCE_SELECTED, RxMessageStopsAndDetails.class);
     map.put(SWITCH_SOURCE_DESTINATION_SELECTED, RxMessage.class);
-    map.put(DATE_TIME_SELECTED, RxMessageStopsAndDetails.class);
+    map.put(DATE_TIME_SELECTED, RxMessageStopMethodAndDateTime.class);
     map.put(TRIP_SELECTED, RxMessagePossibleTrip.class);
     map.put(STOP_SELECTED, RxMessageStop.class);
     map.put(MY_LOCATION, RxMessageLocation.class);
