@@ -2,12 +2,14 @@ package com.eleith.calchoochoo.data;
 
 import android.database.Cursor;
 import android.location.Location;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
@@ -57,6 +59,16 @@ public class Queries {
     for (Stop stop : allStops) {
       if (stop.stop_id.equals(stop_id)) {
         return stop;
+      }
+    }
+    return null;
+  }
+
+  @Nullable
+  public static Trips getTripById(String trip_id) {
+    for (Trips trip : allTrips) {
+      if (trip.trip_id.equals(trip_id)) {
+        return trip;
       }
     }
     return null;
@@ -124,8 +136,7 @@ public class Queries {
     return exceptions.size() > 0;
   }
 
-  public static ArrayList<PossibleTrip> findTrips(Stop source, Stop destination, LocalDateTime dateTime, Boolean arriving) {
-    ArrayList<PossibleTrip> possibleTrips = new ArrayList<>();
+  private static String getCalendarFilter(LocalDateTime dateTime) {
     String calendarFilter;
     int dayOfWeek = isExceptionDate(dateTime) ? 0 : dateTime.getDayOfWeek();
 
@@ -153,6 +164,126 @@ public class Queries {
         break;
     }
 
+    return calendarFilter;
+  }
+
+  public static ArrayList<PossibleTrain> findNextTrain(Stop stop, LocalDateTime dateTime) {
+    ArrayList<PossibleTrain> possibleTrains = new ArrayList<>();
+    String calendarFilter = getCalendarFilter(dateTime);
+    String query = "SELECT " +
+        "routes.route_id as route_id, " +
+        "st1.platform_code as st1__platform_code, st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
+        "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence " +
+        "FROM " +
+        "    (SELECT * " +
+        "    FROM stops, stop_times " +
+        "    WHERE " +
+        "     stop_times.stop_id = stops.stop_id " +
+        "     AND stops.parent_station = ?) AS st1, " +
+        "  trips, " +
+        "  routes, " +
+        "  calendar " +
+        "WHERE trips.trip_id = st1.trip_id " +
+        "  AND trips.route_id = routes.route_id " +
+        "  AND calendar.service_id = trips.service_id " +
+        calendarFilter +
+        "ORDER BY st1__departure_time DESC ";
+
+    String[] args = {stop.stop_id};
+    Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);
+
+    while (cursor.moveToNext()) {
+      PossibleTrain possibleTrain = new PossibleTrain();
+
+      String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
+      String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
+      String stopId = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
+      LocalTime departureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__departure_time")).replaceFirst("^24:", "01:"));
+      LocalTime arrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__arrival_time")).replaceFirst("^24:", "01:"));
+
+      if (departureTime.isBefore(dateTime.toLocalTime()) && departureTime.plusHours(3).isAfter(dateTime.toLocalTime())) {
+        possibleTrain.setRouteId(routeId);
+        possibleTrain.setTripId(tripId);
+        possibleTrain.setStopId(stopId);
+        possibleTrain.setDepartureTime(departureTime);
+        possibleTrain.setArrivalTime(arrivalTime);
+
+        possibleTrains.add(possibleTrain);
+      }
+    }
+
+    return possibleTrains;
+  }
+  
+  @Nullable
+  public static PossibleTrip findPossibleTrip(Stop source, Stop destination, String trip_id) {
+    PossibleTrip possibleTrip = new PossibleTrip();
+    String query = "SELECT " +
+        "routes.route_id as route_id, " +
+        "fare_attributes.price as price, " +
+        "st1.platform_code as st1__platform_code, st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
+        "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, " +
+        "st2.platform_code as st2__platform_code, st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +
+        "st2.stop_id as st2__stop_id, st2.stop_sequence as st2__stop_sequence " +
+        "FROM " +
+        "    (SELECT * " +
+        "    FROM stop_times " +
+        "    WHERE " +
+        "     stop_times.stop_id = ?) AS st1, " +
+        "    (Select * " +
+        "    FROM stop_times " +
+        "    WHERE " +
+        "     stop_times.stop_id = ?) AS st2, " +
+        "  trips, " +
+        "  routes, " +
+        "  calendar, " +
+        "  fare_rules, " +
+        "  fare_attributes " +
+        "WHERE st1.trip_id = st2.trip_id " +
+        "  AND st1.platform_code = st2.platform_code " +
+        "  AND trips.trip_id = ? " +
+        "  AND trips.route_id = routes.route_id " +
+        "  AND calendar.service_id = trips.service_id " +
+        "  AND fare_rules.origin_id = st1.zone_id " +
+        "  AND fare_rules.destination_id = st2.zone_id " +
+        "  AND fare_rules.route_id = routes.route_id " +
+        "  AND fare_rules.fare_id = fare_attributes.fare_id ";
+
+    String[] args = {source.stop_id, destination.stop_id, trip_id};
+    Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);
+
+    if (cursor.moveToFirst()) {
+      Float price = cursor.getFloat(cursor.getColumnIndex("price"));
+
+      String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
+      String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
+      String firstStopId = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
+      String lastStopId = cursor.getString(cursor.getColumnIndex("st2__stop_id"));
+      Integer firstStopSequence = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence"));
+      Integer secondStopSequence = cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
+
+      LocalTime arrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__departure_time")).replaceFirst("^24:", "01:"));
+      LocalTime departureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__arrival_time")).replaceFirst("^24:", "01:"));
+
+      possibleTrip.setArrivalTime(arrivalTime);
+      possibleTrip.setDepartureTime(departureTime);
+      possibleTrip.setPrice(price);
+      possibleTrip.setFirstStopId(firstStopId);
+      possibleTrip.setLastStopId(lastStopId);
+      possibleTrip.setFirstStopSequence(firstStopSequence);
+      possibleTrip.setLastStopSequence(secondStopSequence);
+      possibleTrip.setTripId(tripId);
+      possibleTrip.setRouteId(routeId);
+
+      return possibleTrip;
+    }
+
+    return null;
+  }
+
+  public static ArrayList<PossibleTrip> findPossibleTrips(Stop source, Stop destination, LocalDateTime dateTime, Boolean arriving) {
+    ArrayList<PossibleTrip> possibleTrips = new ArrayList<>();
+    String calendarFilter = getCalendarFilter(dateTime);
     String query = "SELECT " +
         "routes.route_id as route_id, " +
         "fare_attributes.price as price, " +
@@ -186,7 +317,7 @@ public class Queries {
         "  AND fare_rules.destination_id = st2.zone_id " +
         "  AND fare_rules.route_id = routes.route_id " +
         "  AND fare_rules.fare_id = fare_attributes.fare_id " +
-        calendarFilter; // AND calendar.sunday = 1
+        calendarFilter;
 
     String[] args = {source.stop_id, destination.stop_id};
     Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);

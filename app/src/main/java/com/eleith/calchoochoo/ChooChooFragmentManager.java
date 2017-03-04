@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
+import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.fragments.MapSearchFragment;
 import com.eleith.calchoochoo.fragments.RouteStopsFragment;
 import com.eleith.calchoochoo.fragments.SearchInputConfigureWidgetFragment;
@@ -169,10 +170,18 @@ public class ChooChooFragmentManager {
     }
   }
 
-  public void loadSearchForSpotFragment(int reason) {
+  public void loadSearchForSpotFragment(int reason, Stop stop, LocalDateTime localDateTime) {
     Bundle arguments = new Bundle();
-    ArrayList<Stop> stops = Queries.getAllStops();
-    arguments.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
+    arguments.putInt(BundleKeys.SEARCH_REASON, reason);
+    arguments.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
+    arguments.putLong(BundleKeys.STOP_DATETIME, localDateTime.toDate().getTime());
+    setNextState(ChooChooFragmentManager.STATE_SEARCH_FOR_STOPS, arguments);
+  }
+
+  public void loadSearchForSpotFragment(int reason, Stop stop, Trips trip) {
+    Bundle arguments = new Bundle();
+    arguments.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
+    arguments.putParcelable(BundleKeys.TRIP, Parcels.wrap(trip));
     arguments.putInt(BundleKeys.SEARCH_REASON, reason);
     setNextState(ChooChooFragmentManager.STATE_SEARCH_FOR_STOPS, arguments);
   }
@@ -218,7 +227,7 @@ public class ChooChooFragmentManager {
     }
 
     if (stopSource != null && stopDestination != null && stopDateTime != null) {
-      ArrayList<PossibleTrip> possibleTrips = Queries.findTrips(stopSource, stopDestination, stopDateTime, stopMethod == RxMessageArrivalOrDepartDateTime.ARRIVING);
+      ArrayList<PossibleTrip> possibleTrips = Queries.findPossibleTrips(stopSource, stopDestination, stopDateTime, stopMethod == RxMessageArrivalOrDepartDateTime.ARRIVING);
       arguments.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTrips));
 
       setNextState(ChooChooFragmentManager.STATE_SHOW_TRIP_FILTER_RESULTS, arguments);

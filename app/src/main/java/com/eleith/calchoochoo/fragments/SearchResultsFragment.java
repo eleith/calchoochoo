@@ -14,18 +14,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.ChooChooActivity;
+import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.ChooChooWidgetConfigure;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.adapters.SearchResultsViewAdapter;
+import com.eleith.calchoochoo.data.PossibleTrip;
+import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
+import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
+import org.joda.time.LocalDateTime;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -41,6 +47,9 @@ import static com.eleith.calchoochoo.utils.StopUtils.filterByFuzzySearch;
 
 public class SearchResultsFragment extends Fragment {
   private ArrayList<Stop> stops;
+  private Stop otherStop;
+  private Long localDateTime;
+  private Trips trip;
   private Subscription subscription;
   private int searchReason;
 
@@ -55,6 +64,8 @@ public class SearchResultsFragment extends Fragment {
   SearchResultsViewAdapter searchResultsViewAdapter;
   @Inject
   DeviceLocation deviceLocation;
+  @Inject
+  ChooChooFragmentManager chooChooFragmentManager;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +74,7 @@ public class SearchResultsFragment extends Fragment {
     if (activity instanceof ChooChooActivity) {
       ((ChooChooActivity) activity).getComponent().inject(this);
     }
+    stops = Queries.getAllStops();
     unPackBundle(savedInstanceState != null ? savedInstanceState : getArguments());
   }
 
@@ -103,7 +115,9 @@ public class SearchResultsFragment extends Fragment {
 
   private void unPackBundle(Bundle bundle) {
     if (bundle != null) {
-      stops = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOPS));
+      localDateTime = bundle.getLong(BundleKeys.STOP_DATETIME);
+      otherStop = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP));
+      trip = Parcels.unwrap(bundle.getParcelable(BundleKeys.TRIP));
       searchReason = bundle.getInt(BundleKeys.SEARCH_REASON);
     }
   }
@@ -115,7 +129,22 @@ public class SearchResultsFragment extends Fragment {
         if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_STOP)) {
           Stop stop = (Stop) rxMessage.getMessage();
           Pair<Stop, Integer> pair = new Pair<>(stop, searchReason);
-          rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+          if (trip != null) {
+            if (searchReason == RxMessagePairStopReason.SEARCH_REASON_DESTINATION) {
+              PossibleTrip possibleTrip = Queries.findPossibleTrip(otherStop, stop, trip.trip_id);
+              chooChooFragmentManager.loadTripDetailsFragments(possibleTrip, stop, otherStop);
+            } else {
+              PossibleTrip possibleTrip = Queries.findPossibleTrip(stop, otherStop, trip.trip_id);
+              chooChooFragmentManager.loadTripDetailsFragments(possibleTrip, otherStop, stop);
+            }
+          } else {
+            //rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+            if (searchReason == RxMessagePairStopReason.SEARCH_REASON_DESTINATION) {
+              chooChooFragmentManager.loadTripFilterFragment(searchReason, new LocalDateTime(localDateTime), stop, otherStop);
+            } else {
+              chooChooFragmentManager.loadTripFilterFragment(searchReason, new LocalDateTime(localDateTime), otherStop, stop);
+            }
+          }
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_INPUT_STRING)) {
           String filterString = ((RxMessageString) rxMessage).getMessage();
           filterResultsBy(filterString);
