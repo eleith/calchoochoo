@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.Queries;
@@ -16,6 +17,8 @@ import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
+
+import org.joda.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -30,14 +33,16 @@ import butterknife.OnClick;
 public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCardHolder> {
   private ArrayList<Stop> stops;
   private RxBus rxBus;
+  private ChooChooFragmentManager chooChooFragmentManager;
   private int highlightedStopPosition;
   private static final int TYPE_NORMAL_STOP = 0;
   private static final int TYPE_HIGHLIGHTED_STOP = 1;
 
   @Inject
-  public StopCardAdapter(RxBus rxBus) {
+  public StopCardAdapter(RxBus rxBus, ChooChooFragmentManager chooChooFragmentManager) {
     stops = Queries.getAllParentStops();
     this.rxBus = rxBus;
+    this.chooChooFragmentManager = chooChooFragmentManager;
   }
 
   @Override
@@ -109,15 +114,13 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
     @OnClick(R.id.stop_card_leave_from)
     void onClickLeaveFrom() {
       Stop stop = stops.get(getAdapterPosition());
-      //Pair<Stop, Integer> pair = new Pair<>(stop, RxMessageStopsAndDetails.SEARCH_REASON_SOURCE);
-      //rxBus.send(new RxMessageStopsAndDetails(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+      chooChooFragmentManager.loadSearchForSpotFragment(stop, null, RxMessageStopsAndDetails.DETAIL_DEPARTING, new LocalDateTime());
     }
 
     @OnClick(R.id.stop_card_go_to)
     void onClickGoTo() {
       Stop stop = stops.get(getAdapterPosition());
-      //Pair<Stop, Integer> pair = new Pair<>(stop, RxMessageStopsAndDetails.SEARCH_REASON_DESTINATION);
-      //rxBus.send(new RxMessageStopsAndDetails(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+      chooChooFragmentManager.loadSearchForSpotFragment(null, stop, RxMessageStopsAndDetails.DETAIL_ARRIVING, new LocalDateTime());
     }
 
     private StopCardHolder(View view) {
