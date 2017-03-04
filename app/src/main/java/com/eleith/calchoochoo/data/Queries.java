@@ -347,8 +347,6 @@ public class Queries {
 
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
       String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
-      String firstStopId = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
-      String lastStopId = cursor.getString(cursor.getColumnIndex("st2__stop_id"));
       Integer firstStopSequence = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence"));
       Integer secondStopSequence = cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
 
