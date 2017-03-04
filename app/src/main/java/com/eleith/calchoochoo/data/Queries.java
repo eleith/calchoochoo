@@ -226,7 +226,7 @@ public class Queries {
   }
 
   @Nullable
-  public static PossibleTrip findPossibleTrip(Stop source, Stop destination, String trip_id) {
+  public static PossibleTrip findPossibleTrip(Stop stop1, Stop stop2, String trip_id) {
     PossibleTrip possibleTrip = new PossibleTrip();
     String query = "SELECT " +
         "routes.route_id as route_id, " +
@@ -260,30 +260,39 @@ public class Queries {
         "  AND fare_rules.route_id = routes.route_id " +
         "  AND fare_rules.fare_id = fare_attributes.fare_id ";
 
-    String[] args = {source.stop_id, destination.stop_id, trip_id};
+    String[] args = {stop1.stop_id, stop2.stop_id, trip_id};
     Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);
 
     if (cursor.moveToFirst()) {
       Float price = cursor.getFloat(cursor.getColumnIndex("price"));
 
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
-      String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
-      String firstStopId = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
-      String lastStopId = cursor.getString(cursor.getColumnIndex("st2__stop_id"));
-      Integer firstStopSequence = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence"));
-      Integer secondStopSequence = cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
+      Integer stopOneSequence = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence"));
+      Integer stopTwoSequence = cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
 
-      LocalTime arrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__departure_time")).replaceFirst("^24:", "01:"));
-      LocalTime departureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__arrival_time")).replaceFirst("^24:", "01:"));
+      LocalTime stopOneDepartureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__departure_time")).replaceFirst("^24:", "01:"));
+      LocalTime stopOneArrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__arrival_time")).replaceFirst("^24:", "01:"));
+      LocalTime stopTwoDepartureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__departure_time")).replaceFirst("^24:", "01:"));
+      LocalTime stopTwoArrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__arrival_time")).replaceFirst("^24:", "01:"));
 
-      possibleTrip.setArrivalTime(arrivalTime);
-      possibleTrip.setDepartureTime(departureTime);
+      if (stopOneSequence < stopTwoSequence) {
+        possibleTrip.setArrivalTime(stopTwoArrivalTime);
+        possibleTrip.setDepartureTime(stopOneDepartureTime);
+        possibleTrip.setFirstStopSequence(stopOneSequence);
+        possibleTrip.setLastStopSequence(stopTwoSequence);
+        possibleTrip.setFirstStopId(stop1.stop_id);
+        possibleTrip.setLastStopId(stop2.stop_id);
+      } else {
+        possibleTrip.setArrivalTime(stopOneArrivalTime);
+        possibleTrip.setDepartureTime(stopTwoDepartureTime);
+        possibleTrip.setFirstStopSequence(stopTwoSequence);
+        possibleTrip.setLastStopSequence(stopOneSequence);
+        possibleTrip.setFirstStopId(stop2.stop_id);
+        possibleTrip.setLastStopId(stop1.stop_id);
+      }
+
       possibleTrip.setPrice(price);
-      possibleTrip.setFirstStopId(firstStopId);
-      possibleTrip.setLastStopId(lastStopId);
-      possibleTrip.setFirstStopSequence(firstStopSequence);
-      possibleTrip.setLastStopSequence(secondStopSequence);
-      possibleTrip.setTripId(tripId);
+      possibleTrip.setTripId(trip_id);
       possibleTrip.setRouteId(routeId);
 
       return possibleTrip;
@@ -350,8 +359,8 @@ public class Queries {
       possibleTrip.setArrivalTime(arrivalTime);
       possibleTrip.setDepartureTime(departureTime);
       possibleTrip.setPrice(price);
-      possibleTrip.setFirstStopId(firstStopId);
-      possibleTrip.setLastStopId(lastStopId);
+      possibleTrip.setFirstStopId(source.stop_id);
+      possibleTrip.setLastStopId(destination.stop_id);
       possibleTrip.setFirstStopSequence(firstStopSequence);
       possibleTrip.setLastStopSequence(secondStopSequence);
       possibleTrip.setTripId(tripId);

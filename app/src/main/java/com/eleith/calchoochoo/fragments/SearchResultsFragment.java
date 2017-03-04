@@ -26,7 +26,7 @@ import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.LocalDateTime;
@@ -45,11 +45,13 @@ import static com.eleith.calchoochoo.utils.StopUtils.filterByFuzzySearch;
 
 public class SearchResultsFragment extends Fragment {
   private ArrayList<Stop> stops;
-  private Stop otherStop;
-  private Long localDateTime;
+  private Stop stopSource;
+  private int stopMethod;
+  private Stop stopDestination;
+  private Long stopDateTime;
+  private Stop stopUnknown;
   private Trips trip;
   private Subscription subscription;
-  private int searchReason;
 
   @BindView(R.id.search_results_empty_state)
   TextView searchResultsEmptyState;
@@ -106,19 +108,30 @@ public class SearchResultsFragment extends Fragment {
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
-    outState.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
-    outState.putInt(BundleKeys.SEARCH_REASON, searchReason);
+    if (stopSource != null) {
+      outState.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
+    }
+    if (stopDestination != null) {
+      outState.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
+    }
+    if (trip != null) {
+      outState.putParcelable(BundleKeys.TRIP, Parcels.wrap(trip));
+    }
+    outState.putLong(BundleKeys.STOP_DATETIME, stopDateTime);
+    outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
     super.onSaveInstanceState(outState);
   }
 
   private void unWrapBundle(Bundle bundle) {
     if (bundle != null) {
-      localDateTime = bundle.getLong(BundleKeys.STOP_DATETIME);
-      otherStop = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP));
+      stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME);
+      stopDestination = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP_DESTINATION));
+      stopSource = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP_SOURCE));
+      stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+      stopUnknown = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP));
       trip = Parcels.unwrap(bundle.getParcelable(BundleKeys.TRIP));
-      searchReason = bundle.getInt(BundleKeys.SEARCH_REASON);
 
-      if (trip != null) {
+      if (trip != null && stopUnknown != null) {
         stops = Queries.findStopsOnTrip(trip.trip_id);
       }
     }
@@ -130,22 +143,20 @@ public class SearchResultsFragment extends Fragment {
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_STOP)) {
           Stop stop = (Stop) rxMessage.getMessage();
-          Pair<Stop, Integer> pair = new Pair<>(stop, searchReason);
           if (trip != null) {
-            if (searchReason == RxMessagePairStopReason.SEARCH_REASON_DESTINATION) {
-              PossibleTrip possibleTrip = Queries.findPossibleTrip(otherStop, stop, trip.trip_id);
-              chooChooFragmentManager.loadTripDetailsFragments(possibleTrip, stop, otherStop);
+            PossibleTrip possibleTrip = Queries.findPossibleTrip(stopUnknown, stop, trip.trip_id);
+            if (possibleTrip != null) {
+              chooChooFragmentManager.loadTripDetailsFragments(possibleTrip);
             } else {
-              PossibleTrip possibleTrip = Queries.findPossibleTrip(stop, otherStop, trip.trip_id);
-              chooChooFragmentManager.loadTripDetailsFragments(possibleTrip, otherStop, stop);
+              chooChooFragmentManager.loadTripFilterFragment(stopMethod, new LocalDateTime(stopDateTime), stopSource, stopDestination);
             }
           } else {
-            //rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
-            if (searchReason == RxMessagePairStopReason.SEARCH_REASON_DESTINATION) {
-              chooChooFragmentManager.loadTripFilterFragment(searchReason, new LocalDateTime(localDateTime), stop, otherStop);
+            if (stopDestination == null) {
+              stopDestination = stop;
             } else {
-              chooChooFragmentManager.loadTripFilterFragment(searchReason, new LocalDateTime(localDateTime), otherStop, stop);
+              stopSource = stop;
             }
+            chooChooFragmentManager.loadTripFilterFragment(stopMethod, new LocalDateTime(stopDateTime), stopSource, stopDestination);
           }
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_INPUT_STRING)) {
           String filterString = ((RxMessageString) rxMessage).getMessage();

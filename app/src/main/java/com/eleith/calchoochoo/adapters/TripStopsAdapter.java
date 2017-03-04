@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.Queries;
@@ -30,13 +31,15 @@ import butterknife.OnClick;
 public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneTripStopHolder> {
   private ArrayList<Pair<Stop, StopTimes>> tripStops;
   private RxBus rxBus;
+  private ChooChooFragmentManager chooChooFragmentManager;
   private final static int ITEM_TYPE_SOURCE = 0 ;
   private final static int ITEM_TYPE_DESTINATION = 1;
   private final static int ITEM_TYPE_MIDDLE = 2;
 
   @Inject
-  public TripStopsAdapter(RxBus rxBus) {
+  public TripStopsAdapter(RxBus rxBus, ChooChooFragmentManager chooChooFragmentManager) {
     this.rxBus = rxBus;
+    this.chooChooFragmentManager = chooChooFragmentManager;
   }
 
   public void setTripStops(ArrayList<Pair<Stop, StopTimes>> tripStops) {
@@ -95,7 +98,7 @@ public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneT
     void onClickTripSummary() {
       Stop directionalStop = tripStops.get(getAdapterPosition()).first;
       Stop stop = Queries.getParentStopById(directionalStop.parent_station);
-      rxBus.send(new RxMessageStop(RxMessageKeys.STOP_SELECTED, stop));
+      chooChooFragmentManager.loadStopsFragments(stop);
     }
 
     private OneTripStopHolder(View v) {

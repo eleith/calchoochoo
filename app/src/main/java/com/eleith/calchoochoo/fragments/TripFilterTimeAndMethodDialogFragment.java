@@ -21,8 +21,9 @@ import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.InfinitePager;
 import com.eleith.calchoochoo.utils.InfinitePagerDataDates;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageArrivalOrDepartDateTime;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
@@ -46,13 +47,13 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
   @BindView(R.id.leftDateButton)
   ImageButton leftDateButton;
   @BindView(R.id.departOrArriveCancel)
-  TextView departOrArriveCancelText;
+  TextView methodCancelText;
   @BindView(R.id.departOrArriveSelect)
-  TextView getDepartOrArriveSelectText;
+  TextView methodSelectText;
   @BindView(R.id.timeTabs)
   TabLayout timeTabs;
 
-  private int departOrArriveMethod = RxMessageArrivalOrDepartDateTime.ARRIVING;
+  private int stopMethod = RxMessageStopsAndDetails.DETAIL_ARRIVING;
   private LocalDateTime localDateTime = new LocalDateTime();
   private InfinitePagerDataDates infinitePagerDataDates;
 
@@ -78,14 +79,14 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
     LocalDateTime departOrArriveDateTime = departOrArriveDate.toLocalDateTime(departOrArriveTime);
 
     if (timeTabs.getSelectedTabPosition() == 0) {
-      departOrArriveMethod = RxMessageArrivalOrDepartDateTime.ARRIVING;
+      stopMethod = RxMessageStopMethodAndDateTime.ARRIVING;
     } else {
-      departOrArriveMethod = RxMessageArrivalOrDepartDateTime.DEPARTING;
+      stopMethod = RxMessageStopMethodAndDateTime.DEPARTING;
     }
 
-    Pair<Integer, LocalDateTime> pair = new Pair<>(departOrArriveMethod, departOrArriveDateTime);
+    Pair<Integer, LocalDateTime> pair = new Pair<>(stopMethod, departOrArriveDateTime);
 
-    rxBus.send(new RxMessageArrivalOrDepartDateTime(RxMessageKeys.DATE_TIME_SELECTED, pair));
+    rxBus.send(new RxMessageStopMethodAndDateTime(RxMessageKeys.DATE_TIME_SELECTED, pair));
     getDialog().dismiss();
   }
 
@@ -127,7 +128,7 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
     timePicker.setHour(localDateTime.getHourOfDay());
     timePicker.setMinute(localDateTime.getMinuteOfHour());
 
-    int position = departOrArriveMethod == RxMessageArrivalOrDepartDateTime.ARRIVING ? 0 : 1;
+    int position = stopMethod == RxMessageStopsAndDetails.DETAIL_ARRIVING ? 0 : 1;
     TabLayout.Tab tab = timeTabs.getTabAt(position);
     if (tab != null) {
       tab.select();
@@ -146,13 +147,13 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
   @Override
   public void onSaveInstanceState(Bundle outState) {
     outState.putLong(BundleKeys.STOP_DATETIME, localDateTime.toDate().getTime());
-    outState.putInt(BundleKeys.STOP_METHOD, departOrArriveMethod);
+    outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
     super.onSaveInstanceState(outState);
   }
 
   private void unWrapBundle(Bundle bundle) {
     if (bundle != null) {
-      departOrArriveMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+      stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
       localDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME));
     }
   }

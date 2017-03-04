@@ -23,12 +23,12 @@ public class RxMessageKeys {
     Map<String, Class> map = new HashMap<>();
 
     map.put(SEARCH_INPUT_STRING, RxMessageString.class);
-    map.put(SEARCH_RESULT_PAIR, RxMessagePairStopReason.class);
+    map.put(SEARCH_RESULT_PAIR, RxMessageStopsAndDetails.class);
     map.put(SEARCH_RESULT_STOP, RxMessageStop.class);
-    map.put(DESTINATION_SELECTED, RxMessage.class);
-    map.put(SOURCE_SELECTED, RxMessage.class);
+    map.put(DESTINATION_SELECTED, RxMessageStopsAndDetails.class);
+    map.put(SOURCE_SELECTED, RxMessageStopsAndDetails.class);
     map.put(SWITCH_SOURCE_DESTINATION_SELECTED, RxMessage.class);
-    map.put(DATE_TIME_SELECTED, RxMessageArrivalOrDepartDateTime.class);
+    map.put(DATE_TIME_SELECTED, RxMessageStopsAndDetails.class);
     map.put(TRIP_SELECTED, RxMessagePossibleTrip.class);
     map.put(STOP_SELECTED, RxMessageStop.class);
     map.put(MY_LOCATION, RxMessageLocation.class);

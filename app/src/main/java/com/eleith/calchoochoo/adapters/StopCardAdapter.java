@@ -15,7 +15,7 @@ import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -109,15 +109,15 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
     @OnClick(R.id.stop_card_leave_from)
     void onClickLeaveFrom() {
       Stop stop = stops.get(getAdapterPosition());
-      Pair<Stop, Integer> pair = new Pair<>(stop, RxMessagePairStopReason.SEARCH_REASON_SOURCE);
-      rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+      //Pair<Stop, Integer> pair = new Pair<>(stop, RxMessageStopsAndDetails.SEARCH_REASON_SOURCE);
+      //rxBus.send(new RxMessageStopsAndDetails(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
     }
 
     @OnClick(R.id.stop_card_go_to)
     void onClickGoTo() {
       Stop stop = stops.get(getAdapterPosition());
-      Pair<Stop, Integer> pair = new Pair<>(stop, RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
-      rxBus.send(new RxMessagePairStopReason(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
+      //Pair<Stop, Integer> pair = new Pair<>(stop, RxMessageStopsAndDetails.SEARCH_REASON_DESTINATION);
+      //rxBus.send(new RxMessageStopsAndDetails(RxMessageKeys.SEARCH_RESULT_PAIR, pair));
     }
 
     private StopCardHolder(View view) {

@@ -5,8 +5,8 @@ import org.parceler.Parcel;
 
 @Parcel
 public class PossibleTrip {
-  private String firstStopId;
-  private String lastStopId;
+  private String firstStopId = "";
+  private String lastStopId = "";
   private LocalTime arrivalTime;
   private LocalTime departureTime;
   private String routeId;

@@ -14,7 +14,7 @@ import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePairStopReason;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -72,7 +72,6 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
         Bundle bundle = new Bundle();
         bundle.putParcelable(BundleKeys.TRIP, Parcels.wrap(trip));
         bundle.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
-        bundle.putInt(BundleKeys.SEARCH_REASON, RxMessagePairStopReason.SEARCH_REASON_DESTINATION);
 
         intent.setAction(Intent.ACTION_VIEW);
         intent.putExtras(bundle);

@@ -6,11 +6,13 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.eleith.calchoochoo.ChooChooActivity;
+import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
@@ -22,6 +24,7 @@ import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -32,6 +35,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.joda.time.LocalDateTime;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -61,6 +65,8 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   RxBus rxBus;
   @Inject
   DeviceLocation deviceLocation;
+  @Inject
+  ChooChooFragmentManager chooChooFragmentManager;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -85,7 +91,10 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
 
   @OnClick(R.id.map_search_input)
   void onClickSearchInput() {
-    rxBus.send(new RxMessage(RxMessageKeys.DESTINATION_SELECTED));
+    Stop stop = Queries.findStopClosestTo(lastLocation);
+    LocalDateTime stopDateTime = new LocalDateTime();
+    int stopMethod = RxMessageStopsAndDetails.DETAIL_DEPARTING;
+    chooChooFragmentManager.loadSearchForSpotFragment(stop, null, stopMethod, stopDateTime);
   }
 
   @OnClick(R.id.map_action_button)
@@ -123,7 +132,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
         String stopId = (String) marker.getTag();
         Stop touchedStop = Queries.getParentStopById(stopId);
         if (touchedStop != null) {
-          rxBus.send(new RxMessageStop(RxMessageKeys.STOP_SELECTED, touchedStop));
+          chooChooFragmentManager.loadStopsFragments(touchedStop);
         }
         return true;
       }
