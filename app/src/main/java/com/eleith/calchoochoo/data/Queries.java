@@ -276,15 +276,15 @@ public class Queries {
       LocalTime stopTwoArrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__arrival_time")).replaceFirst("^24:", "01:"));
 
       if (stopOneSequence < stopTwoSequence) {
-        possibleTrip.setArrivalTime(stopTwoArrivalTime);
-        possibleTrip.setDepartureTime(stopOneDepartureTime);
+        possibleTrip.setArrivalTime(stopOneDepartureTime);
+        possibleTrip.setDepartureTime(stopTwoArrivalTime);
         possibleTrip.setFirstStopSequence(stopOneSequence);
         possibleTrip.setLastStopSequence(stopTwoSequence);
         possibleTrip.setFirstStopId(stop1.stop_id);
         possibleTrip.setLastStopId(stop2.stop_id);
       } else {
-        possibleTrip.setArrivalTime(stopOneArrivalTime);
-        possibleTrip.setDepartureTime(stopTwoDepartureTime);
+        possibleTrip.setArrivalTime(stopTwoDepartureTime);
+        possibleTrip.setDepartureTime(stopOneArrivalTime);
         possibleTrip.setFirstStopSequence(stopTwoSequence);
         possibleTrip.setLastStopSequence(stopOneSequence);
         possibleTrip.setFirstStopId(stop2.stop_id);
