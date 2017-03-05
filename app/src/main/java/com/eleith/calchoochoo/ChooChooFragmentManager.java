@@ -64,7 +64,7 @@ public class ChooChooFragmentManager {
         searchResultsFragment.setArguments(arguments);
         searchInputFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(searchInputFragment, searchResultsFragment);
+        updateTopAndBottomFragments(searchInputFragment, searchResultsFragment, false);
         break;
       case STATE_CONFIGURE_WIDGET:
         SearchInputConfigureWidgetFragment searchInputConfigureWidgetFragment = new SearchInputConfigureWidgetFragment();
@@ -73,7 +73,7 @@ public class ChooChooFragmentManager {
         searchInputConfigureWidgetFragment.setArguments(arguments);
         searchResultsConfigureWidgetFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(searchInputConfigureWidgetFragment, searchResultsConfigureWidgetFragment);
+        updateTopAndBottomFragments(searchInputConfigureWidgetFragment, searchResultsConfigureWidgetFragment, false);
         break;
       case STATE_SHOW_ALL_STOPS:
         StopDetailsFragment stopDetailsFragment = new StopDetailsFragment();
@@ -82,7 +82,7 @@ public class ChooChooFragmentManager {
         stopDetailsFragment.setArguments(arguments);
         stopCardsFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(stopDetailsFragment, stopCardsFragment);
+        updateTopAndBottomFragments(stopDetailsFragment, stopCardsFragment, true);
         break;
       case STATE_SHOW_TRIP:
         TripSummaryFragment tripSummaryFragment = new TripSummaryFragment();
@@ -91,14 +91,14 @@ public class ChooChooFragmentManager {
         tripSummaryFragment.setArguments(arguments);
         tripDetailFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(tripSummaryFragment, tripDetailFragment);
+        updateTopAndBottomFragments(tripSummaryFragment, tripDetailFragment, true);
         break;
       case STATE_SHOW_MAP:
         MapSearchFragment mapSearchFragment = new MapSearchFragment();
 
         mapSearchFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(null, mapSearchFragment);
+        updateTopAndBottomFragments(null, mapSearchFragment, false);
         break;
       case STATE_SHOW_TRIP_FILTER_EMPTY:
         TripFilterFragment tripFilterFragmentResults = new TripFilterFragment();
@@ -107,7 +107,7 @@ public class ChooChooFragmentManager {
         tripFilterFragmentResults.setArguments(arguments);
         tripFilterSelectMoreFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(tripFilterFragmentResults, tripFilterSelectMoreFragment);
+        updateTopAndBottomFragments(tripFilterFragmentResults, tripFilterSelectMoreFragment, true);
         break;
       case STATE_SHOW_TRIP_FILTER_RESULTS:
         RouteStopsFragment routeStopsFragment = new RouteStopsFragment();
@@ -116,45 +116,79 @@ public class ChooChooFragmentManager {
         routeStopsFragment.setArguments(arguments);
         tripFilterFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(tripFilterFragment, routeStopsFragment);
+        updateTopAndBottomFragments(tripFilterFragment, routeStopsFragment, true);
         break;
     }
 
     commit(stateID);
   }
 
-  private void updateTopAndBottomFragments(Fragment f1, Fragment f2) {
-    updateTopFragment(f1);
-    updateBottomFragment(f2);
+  private void updateTopAndBottomFragments(Fragment f1, Fragment f2, Boolean useCoordinatorLayout) {
+    updateTopFragment(f1, useCoordinatorLayout);
+    updateBottomFragment(f2, useCoordinatorLayout);
   }
 
-  private void updateTopFragment(Fragment fragment) {
-    Fragment header = fragmentManager.findFragmentById(R.id.homeTopFragmentContainer);
+  private void updateTopFragment(Fragment fragment, Boolean useCoordinator) {
+    Fragment header;
+    int headerId;
     FragmentTransaction ft = getTransaction();
 
-    if (header != null) {
-      if (fragment == null) {
-        ft.remove(header);
-      } else {
-        ft.replace(R.id.homeTopFragmentContainer, fragment);
+    if (useCoordinator) {
+      Fragment linearLayoutTop = fragmentManager.findFragmentById(R.id.activityLinearLayoutTop);
+      headerId = R.id.activityAppBarLayoutFragment;
+      header = fragmentManager.findFragmentById(headerId);
+
+      if (linearLayoutTop != null) {
+        ft.hide(linearLayoutTop);
       }
-    } else if (fragment != null) {
-      ft.add(R.id.homeTopFragmentContainer, fragment);
+    } else {
+      Fragment appBar = fragmentManager.findFragmentById(R.id.activityAppBarLayout);
+      headerId = R.id.activityLinearLayoutTop;
+      header = fragmentManager.findFragmentById(headerId);
+
+      if (appBar != null) {
+        ft.hide(appBar);
+      }
+    }
+
+    if (fragment == null) {
+      if (header != null) {
+        ft.hide(header);
+      }
+    } else {
+      ft.replace(headerId, fragment);
     }
   }
 
-  private void updateBottomFragment(Fragment fragment) {
-    Fragment main = fragmentManager.findFragmentById(R.id.homeFragmentContainer);
-    FragmentTransaction ft = getTransaction();
+  private void updateBottomFragment(Fragment fragment, Boolean useCoordinator) {
+    Fragment main;
+    int mainId;
+        FragmentTransaction ft = getTransaction();
 
-    if (main != null) {
-      if (fragment == null) {
-        ft.remove(main);
-      } else {
-        ft.replace(R.id.homeFragmentContainer, fragment);
+    if (useCoordinator) {
+      Fragment linearLayoutBottom = fragmentManager.findFragmentById(R.id.activityLinearLayoutBottom);
+      mainId = R.id.activityNestedScrollView;
+      main = fragmentManager.findFragmentById(mainId);
+
+      if (linearLayoutBottom != null) {
+        ft.hide(linearLayoutBottom);
       }
-    } else if (fragment != null) {
-      ft.add(R.id.homeFragmentContainer, fragment);
+    } else {
+      Fragment nestedScrollView = fragmentManager.findFragmentById(R.id.activityNestedScrollView);
+      mainId = R.id.activityLinearLayoutBottom;
+      main = fragmentManager.findFragmentById(mainId);
+
+      if (nestedScrollView != null) {
+        ft.hide(nestedScrollView);
+      }
+    }
+
+    if (fragment == null) {
+      if (main != null) {
+        ft.hide(main);
+      }
+    } else {
+      ft.replace(mainId, fragment);
     }
   }
 

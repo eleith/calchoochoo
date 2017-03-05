@@ -38,7 +38,7 @@ public class ChooChooActivity extends AppCompatActivity {
 
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_schedule_explorer);
+    setContentView(R.layout.activity_choochoo);
 
     if (intent != null) {
       String action = intent.getAction();

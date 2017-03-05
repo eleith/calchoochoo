@@ -55,7 +55,7 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
       chooChooWidgetConfigureComponent.inject(this);
 
       super.onCreate(savedInstanceState);
-      setContentView(R.layout.activity_schedule_explorer);
+      setContentView(R.layout.activity_choochoo);
 
       chooChooFragmentManager.loadSearchWidgetConfigureFragment();
     }
