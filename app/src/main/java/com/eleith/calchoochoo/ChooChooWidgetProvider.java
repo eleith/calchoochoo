@@ -60,6 +60,7 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
     if (stop != null) {
       views.setTextViewText(R.id.stop_card_stop_name, stop.stop_name);
       ArrayList<PossibleTrain> possibleTrains = Queries.findNextTrain(stop, new LocalDateTime());
+      views.removeAllViews(R.id.stop_card_widget_train_items);
 
       if (possibleTrains.size() > 0) {
         for (int i = 0; i < 3 && i < possibleTrains.size(); i++) {
@@ -68,6 +69,7 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
           Routes route = Queries.getRouteById(possibleTrain.getRouteId());
           DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
           RemoteViews item = new RemoteViews(context.getPackageName(), R.layout.fragment_stop_card_widget_trainitem);
+
           Intent intent = new Intent(context, ChooChooActivity.class);
 
           Bundle bundle = new Bundle();
@@ -76,7 +78,7 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
 
           intent.setAction(Intent.ACTION_VIEW);
           intent.putExtras(bundle);
-          PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+          PendingIntent pendingIntent = PendingIntent.getActivity(context, i, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
           if (trip != null) {
             item.setTextViewText(R.id.stop_card_widget_trainitem_number, trip.trip_id);

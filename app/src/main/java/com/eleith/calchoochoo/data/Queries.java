@@ -240,11 +240,13 @@ public class Queries {
         "    FROM stops, stop_times " +
         "    WHERE " +
         "     stops.stop_id = stop_times.stop_id " +
+        "     AND stop_times.trip_id = ? " +
         "     AND stops.parent_station = ?) AS st1, " +
         "    (Select * " +
         "    FROM stops, stop_times " +
         "    WHERE " +
         "     stops.stop_id = stop_times.stop_id " +
+        "     AND stop_times.trip_id = ? " +
         "     AND stops.parent_station = ?) AS st2, " +
         "  trips, " +
         "  routes, " +
@@ -252,7 +254,6 @@ public class Queries {
         "  fare_rules, " +
         "  fare_attributes " +
         "WHERE st1.trip_id = st2.trip_id " +
-        "  AND trips.trip_id = ? " +
         "  AND trips.route_id = routes.route_id " +
         "  AND calendar.service_id = trips.service_id " +
         "  AND fare_rules.origin_id = st1.zone_id " +
@@ -260,7 +261,7 @@ public class Queries {
         "  AND fare_rules.route_id = routes.route_id " +
         "  AND fare_rules.fare_id = fare_attributes.fare_id ";
 
-    String[] args = {stop1.stop_id, stop2.stop_id, trip_id};
+    String[] args = {trip_id, stop1.stop_id, trip_id, stop2.stop_id};
     Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);
 
     if (cursor.moveToFirst()) {
