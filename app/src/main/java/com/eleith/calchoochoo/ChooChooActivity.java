@@ -90,4 +90,10 @@ public class ChooChooActivity extends AppCompatActivity {
   public ChooChooComponent getComponent() {
     return chooChooComponent;
   }
+
+  @Override
+  public void onBackPressed() {
+    super.onBackPressed();
+    chooChooFragmentManager.handleBackPressed();
+  }
 }

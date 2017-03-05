@@ -46,7 +46,6 @@ public class ChooChooFragmentManager {
   @Inject
   public ChooChooFragmentManager(FragmentManager fragmentManager) {
     this.fragmentManager = fragmentManager;
-    fragmentManager.addOnBackStackChangedListener(new OnBackStageListener());
   }
 
   private FragmentTransaction getTransaction() {
@@ -65,7 +64,7 @@ public class ChooChooFragmentManager {
         searchResultsFragment.setArguments(arguments);
         searchInputFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(searchInputFragment, searchResultsFragment, false);
+        updateTopAndBottomFragments(searchInputFragment, searchResultsFragment, false, stateID);
         break;
       case STATE_CONFIGURE_WIDGET:
         SearchInputConfigureWidgetFragment searchInputConfigureWidgetFragment = new SearchInputConfigureWidgetFragment();
@@ -74,7 +73,7 @@ public class ChooChooFragmentManager {
         searchInputConfigureWidgetFragment.setArguments(arguments);
         searchResultsConfigureWidgetFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(searchInputConfigureWidgetFragment, searchResultsConfigureWidgetFragment, false);
+        updateTopAndBottomFragments(searchInputConfigureWidgetFragment, searchResultsConfigureWidgetFragment, false, stateID);
         break;
       case STATE_SHOW_ALL_STOPS:
         StopDetailsFragment stopDetailsFragment = new StopDetailsFragment();
@@ -83,7 +82,7 @@ public class ChooChooFragmentManager {
         stopDetailsFragment.setArguments(arguments);
         stopCardsFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(stopDetailsFragment, stopCardsFragment, true);
+        updateTopAndBottomFragments(stopDetailsFragment, stopCardsFragment, true, stateID);
         break;
       case STATE_SHOW_TRIP:
         TripSummaryFragment tripSummaryFragment = new TripSummaryFragment();
@@ -92,14 +91,14 @@ public class ChooChooFragmentManager {
         tripSummaryFragment.setArguments(arguments);
         tripDetailFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(tripSummaryFragment, tripDetailFragment, true);
+        updateTopAndBottomFragments(tripSummaryFragment, tripDetailFragment, true, stateID);
         break;
       case STATE_SHOW_MAP:
         MapSearchFragment mapSearchFragment = new MapSearchFragment();
 
         mapSearchFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(null, mapSearchFragment, false);
+        updateTopAndBottomFragments(null, mapSearchFragment, false, stateID);
         break;
       case STATE_SHOW_TRIP_FILTER_EMPTY:
         TripFilterFragment tripFilterFragmentResults = new TripFilterFragment();
@@ -108,7 +107,7 @@ public class ChooChooFragmentManager {
         tripFilterFragmentResults.setArguments(arguments);
         tripFilterSelectMoreFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(tripFilterFragmentResults, tripFilterSelectMoreFragment, true);
+        updateTopAndBottomFragments(tripFilterFragmentResults, tripFilterSelectMoreFragment, true, stateID);
         break;
       case STATE_SHOW_TRIP_FILTER_RESULTS:
         RouteStopsFragment routeStopsFragment = new RouteStopsFragment();
@@ -117,19 +116,19 @@ public class ChooChooFragmentManager {
         routeStopsFragment.setArguments(arguments);
         tripFilterFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(tripFilterFragment, routeStopsFragment, true);
+        updateTopAndBottomFragments(tripFilterFragment, routeStopsFragment, true, stateID);
         break;
     }
 
     commit(stateID);
   }
 
-  private void updateTopAndBottomFragments(Fragment f1, Fragment f2, Boolean useCoordinatorLayout) {
-    updateTopFragment(f1, useCoordinatorLayout);
-    updateBottomFragment(f2, useCoordinatorLayout);
+  private void updateTopAndBottomFragments(Fragment f1, Fragment f2, Boolean useCoordinatorLayout, String stateId) {
+    updateTopFragment(f1, useCoordinatorLayout, stateId + "top");
+    updateBottomFragment(f2, useCoordinatorLayout, stateId + "bottom");
   }
 
-  private void updateTopFragment(Fragment fragment, Boolean useCoordinator) {
+  private void updateTopFragment(Fragment fragment, Boolean useCoordinator, String tag) {
     Fragment linearLayoutTop = fragmentManager.findFragmentById(R.id.activityLinearLayoutTop);
     Fragment appBar = fragmentManager.findFragmentById(R.id.activityAppBarLayoutFragment);
     FragmentTransaction ft = getTransaction();
@@ -142,9 +141,9 @@ public class ChooChooFragmentManager {
         ft.remove(appBar);
       } else {
         if (appBar != null) {
-          ft.replace(R.id.activityAppBarLayoutFragment, fragment);
+          ft.replace(R.id.activityAppBarLayoutFragment, fragment, tag);
         } else {
-          ft.add(R.id.activityAppBarLayoutFragment, fragment);
+          ft.add(R.id.activityAppBarLayoutFragment, fragment, tag);
         }
       }
     } else {
@@ -157,15 +156,15 @@ public class ChooChooFragmentManager {
         }
       } else {
         if (linearLayoutTop != null) {
-          ft.replace(R.id.activityLinearLayoutTop, fragment);
+          ft.replace(R.id.activityLinearLayoutTop, fragment, tag);
         } else {
-          ft.add(R.id.activityLinearLayoutTop, fragment);
+          ft.add(R.id.activityLinearLayoutTop, fragment, tag);
         }
       }
     }
   }
 
-  private void updateBottomFragment(Fragment fragment, Boolean useCoordinator) {
+  private void updateBottomFragment(Fragment fragment, Boolean useCoordinator, String tag) {
     Fragment nestedScrollView = fragmentManager.findFragmentById(R.id.activityNestedScrollView);
     Fragment linearLayoutBottom = fragmentManager.findFragmentById(R.id.activityLinearLayoutBottom);
     FragmentTransaction ft = getTransaction();
@@ -181,9 +180,9 @@ public class ChooChooFragmentManager {
         ft.hide(nestedScrollView);
       }
       if (linearLayoutBottom == null) {
-        ft.add(R.id.activityLinearLayoutBottom, fragment);
+        ft.add(R.id.activityLinearLayoutBottom, fragment, tag);
       } else {
-        ft.replace(R.id.activityLinearLayoutBottom, fragment);
+        ft.replace(R.id.activityLinearLayoutBottom, fragment, tag);
       }
     }
   }
@@ -266,10 +265,17 @@ public class ChooChooFragmentManager {
     setNextState(ChooChooFragmentManager.STATE_CONFIGURE_WIDGET, arguments);
   }
 
-  private class OnBackStageListener implements FragmentManager.OnBackStackChangedListener {
-    @Override
-    public void onBackStackChanged() {
-
+  public void handleBackPressed() {
+    int backStackEntryCount = fragmentManager.getBackStackEntryCount();
+    FragmentManager.BackStackEntry last = fragmentManager.getBackStackEntryAt(backStackEntryCount - 1);
+    String name = last.getName();
+    if (name != null) {
+      if (name.equals(STATE_SEARCH_FOR_STOPS)) {
+        fragmentManager.popBackStackImmediate();
+      } else if (name.equals(STATE_SHOW_TRIP_FILTER_EMPTY) || name.equals(STATE_SHOW_TRIP_FILTER_RESULTS)) {
+        fragmentManager.popBackStackImmediate(name, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        handleBackPressed();
+      }
     }
   }
 }
