@@ -35,23 +35,23 @@ public class Queries {
   private static final ArrayList<Trips> allTrips = new ArrayList<>(SQLite.select().from(Trips.class).queryList());
 
   public static ArrayList<Stop> getAllParentStops() {
-    return allParentStops;
+    return new ArrayList<>(allParentStops);
   }
 
   public static ArrayList<Routes> getAllRoutes() {
-    return allRoutes;
+    return new ArrayList<>(allRoutes);
   }
 
   public static ArrayList<Trips> getAllTrips() {
-    return allTrips;
+    return new ArrayList<>(allTrips);
   }
 
   public static ArrayList<FareRules> getAllRules() {
-    return allFareRules;
+    return new ArrayList<>(allFareRules);
   }
 
   public static ArrayList<FareAttributes> getAllFareAttributes() {
-    return allFareAttributes;
+    return new ArrayList<>(allFareAttributes);
   }
 
   @Nullable

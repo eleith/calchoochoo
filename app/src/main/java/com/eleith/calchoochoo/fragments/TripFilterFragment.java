@@ -118,12 +118,12 @@ public class TripFilterFragment extends Fragment {
 
   @OnClick(R.id.trip_filter_destination)
   void destinationClick() {
-    chooChooFragmentManager.loadSearchForSpotFragment(stopSource, stopDestination, stopMethod, stopDateTime);
+    chooChooFragmentManager.loadSearchForSpotFragment(stopSource, null, stopMethod, stopDateTime);
   }
 
   @OnClick(R.id.trip_filter_source)
   void sourceClick() {
-    chooChooFragmentManager.loadSearchForSpotFragment(stopSource, stopDestination, stopMethod, stopDateTime);
+    chooChooFragmentManager.loadSearchForSpotFragment(null, stopDestination, stopMethod, stopDateTime);
   }
 
   @OnClick(R.id.trip_filter_datetime)

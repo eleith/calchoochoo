@@ -20,7 +20,7 @@
         android:background="?android:colorBackground"
         android:elevation="4dp"
         android:focusable="false"
-        android:hint="@string/search_for_stop"
+        android:hint="@string/where_to_go"
         android:padding="10dp"/>
 
 

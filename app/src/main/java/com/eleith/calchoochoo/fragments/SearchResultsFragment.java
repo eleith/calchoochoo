@@ -78,12 +78,11 @@ public class SearchResultsFragment extends Fragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    unWrapBundle(savedInstanceState);
     View view = inflater.inflate(R.layout.fragment_search_results, container, false);
     ButterKnife.bind(this, view);
+    unWrapBundle(savedInstanceState);
 
     searchResultsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-
     searchResultsViewAdapter.setStops(stops);
     deviceLocation.requestLocation(new DeviceLocation.LocationGetListener() {
       @Override
@@ -132,6 +131,18 @@ public class SearchResultsFragment extends Fragment {
       if (trip != null && stopUnknown != null) {
         stops = Queries.findStopsOnTrip(trip.trip_id);
       }
+    }
+
+    if (stopDestination != null) {
+      stops.remove(stopDestination);
+    }
+
+    if (stopSource != null) {
+      stops.remove(stopSource);
+    }
+
+    if (stopUnknown != null) {
+      stops.remove(stopUnknown);
     }
   }
 
