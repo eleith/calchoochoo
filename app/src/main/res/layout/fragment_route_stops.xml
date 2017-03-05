@@ -12,7 +12,6 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/route_stops_recyclerview"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:name="com.eleith.calchoochoo.fragments.RouteStopsFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

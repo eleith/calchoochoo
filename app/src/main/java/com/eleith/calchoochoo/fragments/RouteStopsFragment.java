@@ -67,6 +67,7 @@ public class RouteStopsFragment extends Fragment {
       tripsPossibleRecyclerView.setVisibility(View.VISIBLE);
       RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.trips_possible_recyclerview);
       recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+      recyclerView.setNestedScrollingEnabled(false);
 
       routeViewAdapter.setPossibleTrips(possibleTrips);
 

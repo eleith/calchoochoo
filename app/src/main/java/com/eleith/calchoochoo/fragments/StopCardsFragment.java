@@ -42,6 +42,7 @@ public class StopCardsFragment extends Fragment {
     stopCardAdapter.setHighlightedStop(position);
 
     RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.stop_cards_recycler_view);
+    recyclerView.setNestedScrollingEnabled(false);
     recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     recyclerView.setAdapter(stopCardAdapter);
     recyclerView.scrollToPosition(position);

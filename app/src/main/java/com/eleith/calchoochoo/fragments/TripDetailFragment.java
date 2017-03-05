@@ -52,14 +52,12 @@ public class TripDetailFragment extends Fragment {
 
     unWrapBundle(savedInstanceState);
     RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.trip_stop_times);
+    recyclerView.setNestedScrollingEnabled(false);
 
-    if (recyclerView != null) {
-      tripStopsAdapter.setTripStops(tripStops);
+    tripStopsAdapter.setTripStops(tripStops);
 
-      recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-      recyclerView.setAdapter(tripStopsAdapter);
-    }
-
+    recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+    recyclerView.setAdapter(tripStopsAdapter);
     return view;
   }
 
