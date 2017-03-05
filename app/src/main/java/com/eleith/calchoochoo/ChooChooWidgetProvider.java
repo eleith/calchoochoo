@@ -61,39 +61,44 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
       views.setTextViewText(R.id.stop_card_stop_name, stop.stop_name);
       ArrayList<PossibleTrain> possibleTrains = Queries.findNextTrain(stop, new LocalDateTime());
 
-      for (int i = 0; i < 3 && i < possibleTrains.size(); i++) {
-        PossibleTrain possibleTrain = possibleTrains.get(i);
-        Trips trip = Queries.getTripById(possibleTrain.getTripId());
-        Routes route = Queries.getRouteById(possibleTrain.getRouteId());
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
-        RemoteViews item = new RemoteViews(context.getPackageName(), R.layout.fragment_stop_card_widget_trainitem);
-        Intent intent = new Intent(context, ChooChooActivity.class);
+      if (possibleTrains.size() > 0) {
+        for (int i = 0; i < 3 && i < possibleTrains.size(); i++) {
+          PossibleTrain possibleTrain = possibleTrains.get(i);
+          Trips trip = Queries.getTripById(possibleTrain.getTripId());
+          Routes route = Queries.getRouteById(possibleTrain.getRouteId());
+          DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
+          RemoteViews item = new RemoteViews(context.getPackageName(), R.layout.fragment_stop_card_widget_trainitem);
+          Intent intent = new Intent(context, ChooChooActivity.class);
 
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(BundleKeys.TRIP, Parcels.wrap(trip));
-        bundle.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
+          Bundle bundle = new Bundle();
+          bundle.putParcelable(BundleKeys.TRIP, Parcels.wrap(trip));
+          bundle.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
 
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.putExtras(bundle);
-        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+          intent.setAction(Intent.ACTION_VIEW);
+          intent.putExtras(bundle);
+          PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        if (trip != null) {
-          item.setTextViewText(R.id.stop_card_widget_trainitem_number, trip.trip_id);
-          if (trip.direction_id == 1) {
-            item.setTextViewText(R.id.stop_card_widget_direction, context.getString(R.string.south_bound));
-          } else {
-            item.setTextViewText(R.id.stop_card_widget_direction, context.getString(R.string.north_bound));
+          if (trip != null) {
+            item.setTextViewText(R.id.stop_card_widget_trainitem_number, trip.trip_id);
+            if (trip.direction_id == 1) {
+              item.setTextViewText(R.id.stop_card_widget_direction, context.getString(R.string.south_bound));
+            } else {
+              item.setTextViewText(R.id.stop_card_widget_direction, context.getString(R.string.north_bound));
+            }
           }
-        }
 
-        if (route != null && route.route_long_name.contains("Bullet")) {
-          item.setImageViewResource(R.id.stop_card_widget_trainitem_image, R.drawable.ic_train_bullet);
-        } else {
-          item.setImageViewResource(R.id.stop_card_widget_trainitem_image, R.drawable.ic_train_local);
-        }
+          if (route != null && route.route_long_name.contains("Bullet")) {
+            item.setImageViewResource(R.id.stop_card_widget_trainitem_image, R.drawable.ic_train_bullet);
+          } else {
+            item.setImageViewResource(R.id.stop_card_widget_trainitem_image, R.drawable.ic_train_local);
+          }
 
-        item.setOnClickPendingIntent(R.id.stop_card_widget_train_item, pendingIntent);
-        item.setTextViewText(R.id.stop_card_widget_trainitem_time, dateTimeFormatter.print(possibleTrain.getDepartureTime()));
+          item.setOnClickPendingIntent(R.id.stop_card_widget_train_item, pendingIntent);
+          item.setTextViewText(R.id.stop_card_widget_trainitem_time, dateTimeFormatter.print(possibleTrain.getDepartureTime()));
+          views.addView(R.id.stop_card_widget_train_items, item);
+        }
+      } else {
+        RemoteViews item = new RemoteViews(context.getPackageName(), R.layout.fragment_stop_card_widget_train_nomore);
         views.addView(R.id.stop_card_widget_train_items, item);
       }
     }

@@ -32,6 +32,9 @@ public class TripSummaryFragment extends Fragment {
   @BindView(R.id.trip_summary_from)
   TextView tripSummaryFrom;
 
+  @BindView(R.id.trip_summary_number)
+  TextView tripSummaryNumber;
+
   @BindView(R.id.trip_summary_to)
   TextView tripSummaryTo;
 
@@ -64,6 +67,7 @@ public class TripSummaryFragment extends Fragment {
     tripSummaryTo.setText(stopDestination.stop_name.replace(" Caltrain", ""));
     tripSummaryPrice.setText(String.format(Locale.getDefault(), "$%.2f", possibleTrip.getPrice()));
     tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime(), possibleTrip.getDepartureTime()).getMinutes()));
+    tripSummaryNumber.setText(possibleTrip.getTripId());
 
     if (route != null && route.route_long_name.contains("Bullet")) {
       tripSummaryTrainLocal.setVisibility(View.GONE);

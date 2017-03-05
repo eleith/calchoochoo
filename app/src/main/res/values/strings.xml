@@ -17,6 +17,7 @@
     <string name="leave_from">Leave From</string>
     <string name="from">From</string>
     <string name="to">To</string>
+    <string name="to_lower">to</string>
     <string name="arriving">Arriving</string>
     <string name="departing">Departing</string>
     <string name="reset_to_today">Reset to today</string>

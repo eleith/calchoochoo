@@ -53,10 +53,16 @@
                 />
         </LinearLayout>
 
-        <View
+         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@android:drawable/divider_horizontal_bright"/>
+
+        <LinearLayout
+            android:id="@+id/stop_card_trains"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <RelativeLayout
             android:layout_width="match_parent"

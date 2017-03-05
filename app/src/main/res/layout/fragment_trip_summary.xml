@@ -43,13 +43,19 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/trip_summary_from"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/train_number"
+                android:textColor="?android:colorBackground"
+                android:textSize="25sp"/>
+
+            <TextView
+                android:id="@+id/trip_summary_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="?android:colorBackground"
                 android:textSize="25sp"
-                tools:text="Milbrae"/>
-
+                tools:text="143"/>
         </LinearLayout>
 
         <LinearLayout
@@ -57,11 +63,19 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/trip_summary_from"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="4dp"
                 android:textColor="?android:colorBackground"
-                android:text="@string/to"/>
+                tools:text="Milbrae"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="4dp"
+                android:text="@string/to_lower"
+                android:textColor="?android:colorBackground"/>
 
             <TextView
                 android:id="@+id/trip_summary_to"

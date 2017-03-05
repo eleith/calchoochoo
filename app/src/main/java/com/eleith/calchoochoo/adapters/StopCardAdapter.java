@@ -7,18 +7,26 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
+import com.eleith.calchoochoo.data.PossibleTrain;
 import com.eleith.calchoochoo.data.Queries;
+import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.data.Stop;
+import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
 import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -53,7 +61,7 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
     } else {
       view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_stop_card_highlighted, parent, false);
     }
-    return new StopCardHolder(view);
+    return new StopCardHolder(view, parent);
   }
 
   @Override
@@ -64,6 +72,55 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
 
     if (zone != null) {
       holder.stopZone.setText(String.format(Locale.getDefault(), "%d", zone));
+    }
+
+    addRecentTrains(holder, stop);
+  }
+
+  private void addRecentTrains(StopCardHolder holder, final Stop stop) {
+    holder.recentTrains.removeAllViews();
+    ArrayList<PossibleTrain> possibleTrains = Queries.findNextTrain(stop, new LocalDateTime());
+
+    if (possibleTrains.size() > 0) {
+      for (int i = 0; i < 3 && i < possibleTrains.size(); i++) {
+        PossibleTrain possibleTrain = possibleTrains.get(i);
+        final Trips trip = Queries.getTripById(possibleTrain.getTripId());
+        Routes route = Queries.getRouteById(possibleTrain.getRouteId());
+        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
+
+        View recentTrains = LayoutInflater.from(holder.viewGroup.getContext()).inflate(R.layout.fragment_stop_card_widget_trainitem, holder.viewGroup, false);
+        TextView recentTrainNumber = (TextView) recentTrains.findViewById(R.id.stop_card_widget_trainitem_number);
+        TextView recentTrainDirection = (TextView) recentTrains.findViewById(R.id.stop_card_widget_direction);
+        ImageView recentTrainImage = (ImageView) recentTrains.findViewById(R.id.stop_card_widget_trainitem_image);
+        TextView recentTrainTime = (TextView) recentTrains.findViewById(R.id.stop_card_widget_trainitem_time);
+
+        if (trip != null) {
+          recentTrainNumber.setText(trip.trip_id);
+          if (trip.direction_id == 1) {
+            recentTrainDirection.setText(holder.viewGroup.getContext().getString(R.string.south_bound));
+          } else {
+            recentTrainDirection.setText(holder.viewGroup.getContext().getString(R.string.north_bound));
+          }
+        }
+
+        if (route != null && route.route_long_name.contains("Bullet")) {
+          recentTrainImage.setImageDrawable(holder.viewGroup.getContext().getDrawable(R.drawable.ic_train_bullet));
+        } else {
+          recentTrainImage.setImageDrawable(holder.viewGroup.getContext().getDrawable(R.drawable.ic_train_local));
+        }
+
+        recentTrains.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            chooChooFragmentManager.loadSearchForSpotFragment(stop, trip);
+          }
+        });
+        recentTrainTime.setText(dateTimeFormatter.print(possibleTrain.getDepartureTime()));
+        holder.recentTrains.addView(recentTrains);
+      }
+    } else {
+      View noMoreTrains = LayoutInflater.from(holder.viewGroup.getContext()).inflate(R.layout.fragment_stop_card_widget_train_nomore, holder.viewGroup, false);
+      holder.recentTrains.addView(noMoreTrains);
     }
   }
 
@@ -86,10 +143,12 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
   }
 
   class StopCardHolder extends RecyclerView.ViewHolder {
-    private Stop stop;
+    private ViewGroup viewGroup;
 
     @BindView(R.id.stop_card_stop_name)
     TextView stopName;
+    @BindView(R.id.stop_card_trains)
+    LinearLayout recentTrains;
 
     @BindView(R.id.stop_card_zone)
     TextView stopZone;
@@ -123,8 +182,9 @@ public class StopCardAdapter extends RecyclerView.Adapter<StopCardAdapter.StopCa
       chooChooFragmentManager.loadSearchForSpotFragment(null, stop, RxMessageStopsAndDetails.DETAIL_ARRIVING, new LocalDateTime());
     }
 
-    private StopCardHolder(View view) {
+    private StopCardHolder(View view, ViewGroup viewGroup) {
       super(view);
+      this.viewGroup = viewGroup;
       ButterKnife.bind(this, view);
     }
 
