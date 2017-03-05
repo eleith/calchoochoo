@@ -34,8 +34,6 @@ import javax.inject.Inject;
 public class ChooChooFragmentManager {
   private FragmentManager fragmentManager;
   private FragmentTransaction fragmentTransaction;
-  private String lastStateID;
-  private Bundle lastArguments;
 
   public static final String STATE_CONFIGURE_WIDGET = "configure_widget";
   public static final String STATE_SEARCH_FOR_STOPS = "search_for_stops";
@@ -58,9 +56,6 @@ public class ChooChooFragmentManager {
   }
 
   private void setNextState(String stateID, Bundle arguments) {
-    lastStateID = stateID;
-    lastArguments = arguments;
-
     switch (stateID) {
       case STATE_SEARCH_FOR_STOPS:
         SearchInputFragment searchInputFragment = new SearchInputFragment();
@@ -124,7 +119,8 @@ public class ChooChooFragmentManager {
         updateTopAndBottomFragments(tripFilterFragment, routeStopsFragment);
         break;
     }
-    commit();
+
+    commit(stateID);
   }
 
   private void updateTopAndBottomFragments(Fragment f1, Fragment f2) {
@@ -162,9 +158,9 @@ public class ChooChooFragmentManager {
     }
   }
 
-  public void commit() {
+  public void commit(String stateId) {
     if (fragmentTransaction != null) {
-      fragmentTransaction.addToBackStack(null);
+      fragmentTransaction.addToBackStack(stateId);
       fragmentTransaction.commit();
       fragmentTransaction = null;
     }

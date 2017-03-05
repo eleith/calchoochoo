@@ -74,7 +74,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
   }
 
   class ViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.search_result_description)
+    @BindView(R.id.search_result_distance)
     TextView mContentView;
     @BindView(R.id.search_result_name)
     TextView mIdView;

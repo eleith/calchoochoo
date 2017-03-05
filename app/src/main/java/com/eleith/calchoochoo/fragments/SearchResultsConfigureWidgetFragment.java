@@ -1,7 +1,6 @@
 package com.eleith.calchoochoo.fragments;
 
 import android.app.Activity;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -17,7 +16,6 @@ import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.adapters.SearchResultsConfigureWidgetAdapter;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
@@ -50,8 +48,6 @@ public class SearchResultsConfigureWidgetFragment extends Fragment {
   RxBus rxBus;
   @Inject
   SearchResultsConfigureWidgetAdapter searchResultsConfigureWidgetAdapter;
-  @Inject
-  DeviceLocation deviceLocation;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -72,13 +68,7 @@ public class SearchResultsConfigureWidgetFragment extends Fragment {
     searchResultsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
     searchResultsConfigureWidgetAdapter.setStops(stops);
-    deviceLocation.requestLocation(new DeviceLocation.LocationGetListener() {
-      @Override
-      public void onLocationGet(Location location) {
-        searchResultsConfigureWidgetAdapter.setLocation(location);
-      }
-    });
-    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
+    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     searchResultsRecyclerView.setAdapter(searchResultsConfigureWidgetAdapter);
 
@@ -103,7 +93,7 @@ public class SearchResultsConfigureWidgetFragment extends Fragment {
     }
   }
 
-  private Action1<RxMessage> handleScheduleExplorerRxMessages() {
+  private Action1<RxMessage> handleRxMessages() {
     return new Action1<RxMessage>() {
       @Override
       public void call(RxMessage rxMessage) {

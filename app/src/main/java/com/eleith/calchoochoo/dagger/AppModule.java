@@ -2,9 +2,7 @@ package com.eleith.calchoochoo.dagger;
 
 import android.content.Context;
 
-import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooApplication;
-import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
