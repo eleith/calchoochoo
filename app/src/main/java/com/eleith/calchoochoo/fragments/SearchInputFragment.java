@@ -2,6 +2,7 @@ package com.eleith.calchoochoo.fragments;
 
 import android.app.Activity;
 import android.content.Context;
+import android.hardware.input.InputManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -99,6 +100,6 @@ public class SearchInputFragment extends Fragment {
 
   private void showKeyboard() {
     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+    imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
   }
 }

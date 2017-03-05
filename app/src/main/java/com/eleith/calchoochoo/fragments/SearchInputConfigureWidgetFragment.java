@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooWidgetConfigure;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -39,8 +38,8 @@ public class SearchInputConfigureWidgetFragment extends Fragment {
     Activity activity = getActivity();
     super.onCreate(savedInstanceState);
 
-    if(activity instanceof ChooChooWidgetConfigure) {
-       ((ChooChooWidgetConfigure) activity).getComponent().inject(this);
+    if (activity instanceof ChooChooWidgetConfigure) {
+      ((ChooChooWidgetConfigure) activity).getComponent().inject(this);
     }
   }
 
@@ -49,17 +48,34 @@ public class SearchInputConfigureWidgetFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_search_input, container, false);
     ButterKnife.bind(this, view);
     searchInput.requestFocus();
-    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
+    searchInput.setHint(getString(R.string.search_for_stop));
+    showKeyboard();
     return view;
+  }
+
+  @Override
+  public void onHiddenChanged(boolean hidden) {
+    super.onHiddenChanged(hidden);
+    if (hidden) {
+      hideKeyboard();
+    }
   }
 
   @Override
   public void onDestroyView() {
     super.onDestroyView();
+    hideKeyboard();
+  }
+
+  private void hideKeyboard() {
     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-    if (imm.isActive()){
+    if (imm.isActive()) {
       imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0); // hide
     }
+  }
+
+  private void showKeyboard() {
+    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+    imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
   }
 }
