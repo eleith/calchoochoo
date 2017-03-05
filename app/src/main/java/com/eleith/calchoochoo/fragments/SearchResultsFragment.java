@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -26,7 +25,6 @@ import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.LocalDateTime;
@@ -93,7 +91,7 @@ public class SearchResultsFragment extends Fragment {
         searchResultsViewAdapter.setLocation(location);
       }
     });
-    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleScheduleExplorerRxMessages());
+    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     searchResultsRecyclerView.setAdapter(searchResultsViewAdapter);
 
@@ -137,7 +135,7 @@ public class SearchResultsFragment extends Fragment {
     }
   }
 
-  private Action1<RxMessage> handleScheduleExplorerRxMessages() {
+  private Action1<RxMessage> handleRxMessages() {
     return new Action1<RxMessage>() {
       @Override
       public void call(RxMessage rxMessage) {

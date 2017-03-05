@@ -46,6 +46,7 @@ public class ChooChooFragmentManager {
   @Inject
   public ChooChooFragmentManager(FragmentManager fragmentManager) {
     this.fragmentManager = fragmentManager;
+    fragmentManager.addOnBackStackChangedListener(new OnBackStageListener());
   }
 
   private FragmentTransaction getTransaction() {
@@ -129,66 +130,61 @@ public class ChooChooFragmentManager {
   }
 
   private void updateTopFragment(Fragment fragment, Boolean useCoordinator) {
-    Fragment header;
-    int headerId;
+    Fragment linearLayoutTop = fragmentManager.findFragmentById(R.id.activityLinearLayoutTop);
+    Fragment appBar = fragmentManager.findFragmentById(R.id.activityAppBarLayoutFragment);
     FragmentTransaction ft = getTransaction();
 
     if (useCoordinator) {
-      Fragment linearLayoutTop = fragmentManager.findFragmentById(R.id.activityLinearLayoutTop);
-      headerId = R.id.activityAppBarLayoutFragment;
-      header = fragmentManager.findFragmentById(headerId);
-
       if (linearLayoutTop != null) {
-        ft.hide(linearLayoutTop);
+        ft.remove(linearLayoutTop);
+      }
+      if (fragment == null) {
+        ft.remove(appBar);
+      } else {
+        if (appBar != null) {
+          ft.replace(R.id.activityAppBarLayoutFragment, fragment);
+        } else {
+          ft.add(R.id.activityAppBarLayoutFragment, fragment);
+        }
       }
     } else {
-      Fragment appBar = fragmentManager.findFragmentById(R.id.activityAppBarLayout);
-      headerId = R.id.activityLinearLayoutTop;
-      header = fragmentManager.findFragmentById(headerId);
-
       if (appBar != null) {
-        ft.hide(appBar);
+        ft.remove(appBar);
       }
-    }
-
-    if (fragment == null) {
-      if (header != null) {
-        ft.hide(header);
+      if (fragment == null) {
+        if (linearLayoutTop != null) {
+          ft.remove(linearLayoutTop);
+        }
+      } else {
+        if (linearLayoutTop != null) {
+          ft.replace(R.id.activityLinearLayoutTop, fragment);
+        } else {
+          ft.add(R.id.activityLinearLayoutTop, fragment);
+        }
       }
-    } else {
-      ft.replace(headerId, fragment);
     }
   }
 
   private void updateBottomFragment(Fragment fragment, Boolean useCoordinator) {
-    Fragment main;
-    int mainId;
-        FragmentTransaction ft = getTransaction();
+    Fragment nestedScrollView = fragmentManager.findFragmentById(R.id.activityNestedScrollView);
+    Fragment linearLayoutBottom = fragmentManager.findFragmentById(R.id.activityLinearLayoutBottom);
+    FragmentTransaction ft = getTransaction();
 
     if (useCoordinator) {
-      Fragment linearLayoutBottom = fragmentManager.findFragmentById(R.id.activityLinearLayoutBottom);
-      mainId = R.id.activityNestedScrollView;
-      main = fragmentManager.findFragmentById(mainId);
-
       if (linearLayoutBottom != null) {
-        ft.hide(linearLayoutBottom);
+        ft.remove(linearLayoutBottom);
       }
-    } else {
-      Fragment nestedScrollView = fragmentManager.findFragmentById(R.id.activityNestedScrollView);
-      mainId = R.id.activityLinearLayoutBottom;
-      main = fragmentManager.findFragmentById(mainId);
 
+      ft.replace(R.id.activityNestedScrollView, fragment);
+    } else {
       if (nestedScrollView != null) {
         ft.hide(nestedScrollView);
       }
-    }
-
-    if (fragment == null) {
-      if (main != null) {
-        ft.hide(main);
+      if (linearLayoutBottom == null) {
+        ft.add(R.id.activityLinearLayoutBottom, fragment);
+      } else {
+        ft.replace(R.id.activityLinearLayoutBottom, fragment);
       }
-    } else {
-      ft.replace(mainId, fragment);
     }
   }
 
@@ -268,5 +264,12 @@ public class ChooChooFragmentManager {
     ArrayList<Stop> stops = Queries.getAllParentStops();
     arguments.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
     setNextState(ChooChooFragmentManager.STATE_CONFIGURE_WIDGET, arguments);
+  }
+
+  private class OnBackStageListener implements FragmentManager.OnBackStackChangedListener {
+    @Override
+    public void onBackStackChanged() {
+
+    }
   }
 }
