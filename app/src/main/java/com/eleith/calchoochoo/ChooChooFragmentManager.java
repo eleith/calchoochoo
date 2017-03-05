@@ -135,7 +135,7 @@ public class ChooChooFragmentManager {
     FragmentTransaction ft = getTransaction();
 
     if (useCoordinator) {
-      if (linearLayoutTop != null) {
+      if (linearLayoutTop != null && linearLayoutTop.isVisible()) {
         ft.remove(linearLayoutTop);
       }
       if (fragment == null) {
@@ -148,11 +148,11 @@ public class ChooChooFragmentManager {
         }
       }
     } else {
-      if (appBar != null) {
+      if (appBar != null && appBar.isVisible()) {
         ft.remove(appBar);
       }
       if (fragment == null) {
-        if (linearLayoutTop != null) {
+        if (linearLayoutTop != null && linearLayoutTop.isVisible()) {
           ft.remove(linearLayoutTop);
         }
       } else {
@@ -171,13 +171,13 @@ public class ChooChooFragmentManager {
     FragmentTransaction ft = getTransaction();
 
     if (useCoordinator) {
-      if (linearLayoutBottom != null) {
+      if (linearLayoutBottom != null && linearLayoutBottom.isVisible()) {
         ft.remove(linearLayoutBottom);
       }
 
       ft.replace(R.id.activityNestedScrollView, fragment);
     } else {
-      if (nestedScrollView != null) {
+      if (nestedScrollView != null && nestedScrollView.isVisible()) {
         ft.hide(nestedScrollView);
       }
       if (linearLayoutBottom == null) {
