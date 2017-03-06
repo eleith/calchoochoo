@@ -17,8 +17,8 @@ import com.eleith.calchoochoo.fragments.SearchInputConfigureWidgetFragment;
 import com.eleith.calchoochoo.fragments.SearchInputFragment;
 import com.eleith.calchoochoo.fragments.SearchResultsConfigureWidgetFragment;
 import com.eleith.calchoochoo.fragments.SearchResultsFragment;
-import com.eleith.calchoochoo.fragments.StopCardsFragment;
 import com.eleith.calchoochoo.fragments.StopDetailsFragment;
+import com.eleith.calchoochoo.fragments.StopSummaryFragment;
 import com.eleith.calchoochoo.fragments.TripDetailFragment;
 import com.eleith.calchoochoo.fragments.TripFilterFragment;
 import com.eleith.calchoochoo.fragments.TripFilterSelectMoreFragment;
@@ -77,13 +77,13 @@ public class ChooChooFragmentManager {
         updateTopAndBottomFragments(searchInputConfigureWidgetFragment, searchResultsConfigureWidgetFragment, false, stateID);
         break;
       case STATE_SHOW_ALL_STOPS:
+        StopSummaryFragment stopSummaryFragment = new StopSummaryFragment();
         StopDetailsFragment stopDetailsFragment = new StopDetailsFragment();
-        StopCardsFragment stopCardsFragment = new StopCardsFragment();
 
+        stopSummaryFragment.setArguments(arguments);
         stopDetailsFragment.setArguments(arguments);
-        stopCardsFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(stopDetailsFragment, stopCardsFragment, true, stateID);
+        updateTopAndBottomFragments(stopSummaryFragment, stopDetailsFragment, true, stateID);
         break;
       case STATE_SHOW_TRIP:
         TripSummaryFragment tripSummaryFragment = new TripSummaryFragment();

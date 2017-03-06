@@ -31,5 +31,7 @@
     <string name="south_bound">(South)</string>
     <string name="north_bound">(North)</string>
     <string name="number_sign">#</string>
+    <string name="trains_seen">Trains seen after</string>
+
     <string name="transition_train_image">transition-train-image</string>
 </resources>

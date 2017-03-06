@@ -197,7 +197,7 @@ public class Queries {
         "  AND trips.route_id = routes.route_id " +
         "  AND calendar.service_id = trips.service_id " +
         calendarFilter +
-        "ORDER BY st1__departure_time DESC ";
+        "ORDER BY st1__departure_time ASC ";
 
     String[] args = {stop.stop_id};
     Cursor cursor = FlowManager.getDatabase(CaltrainDatabase.class).getWritableDatabase().rawQuery(query, args);
@@ -211,7 +211,7 @@ public class Queries {
       LocalTime departureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__departure_time")).replaceFirst("^24:", "01:"));
       LocalTime arrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__arrival_time")).replaceFirst("^24:", "01:"));
 
-      if (departureTime.isBefore(dateTime.toLocalTime()) && departureTime.plusHours(3).isAfter(dateTime.toLocalTime())) {
+      if (departureTime.isAfter(dateTime.toLocalTime())) {
         possibleTrain.setRouteId(routeId);
         possibleTrain.setTripId(tripId);
         possibleTrain.setStopId(stopId);
