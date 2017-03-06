@@ -16,12 +16,14 @@ public class RxMessageKeys {
   public static final String SWITCH_SOURCE_DESTINATION_SELECTED = "switchSourceDestinationSelected";
   public static final String MY_LOCATION = "myLocation";
   public static final String MY_LOCATION_UPDATE = "myLocationUpdate";
+  public static final String FAB_CLICKED = "fab_clicked";
 
   private static final Map<String, Class> keyToClassMap = createKeyMap();
 
   private static Map<String, Class> createKeyMap() {
     Map<String, Class> map = new HashMap<>();
 
+    map.put(FAB_CLICKED, RxMessage.class);
     map.put(SEARCH_INPUT_STRING, RxMessageString.class);
     map.put(SEARCH_RESULT_PAIR, RxMessageStopsAndDetails.class);
     map.put(SEARCH_RESULT_STOP, RxMessageStop.class);

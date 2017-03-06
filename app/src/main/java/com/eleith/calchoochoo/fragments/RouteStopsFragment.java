@@ -9,12 +9,11 @@ import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.adapters.RouteViewAdapter;
-import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -22,7 +21,6 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 
 import org.parceler.Parcels;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -31,9 +29,13 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import rx.Subscription;
+import rx.functions.Action1;
 
 public class RouteStopsFragment extends Fragment {
   private ArrayList<PossibleTrip> possibleTrips;
+  private Subscription subscription;
+  private ChooChooActivity chooChooActivity;
 
   @Inject
   RxBus rxBus;
@@ -45,15 +47,11 @@ public class RouteStopsFragment extends Fragment {
   @BindView(R.id.trips_possible_recyclerview)
   RecyclerView tripsPossibleRecyclerView;
 
-  @OnClick(R.id.trips_possible_switch)
-  void switchRoutesClick() {
-    rxBus.send(new RxMessage(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED));
-  }
-
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ((ChooChooActivity) getActivity()).getComponent().inject(this);
+    chooChooActivity = (ChooChooActivity) getActivity();
+    chooChooActivity.getComponent().inject(this);
     unPackBundle(savedInstanceState != null ? savedInstanceState : getArguments());
     setSharedElementReturnTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.image_transform));
     setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.image_transform));
@@ -80,13 +78,16 @@ public class RouteStopsFragment extends Fragment {
       tripsPossibleRecyclerView.setVisibility(View.GONE);
       tripsPossibleEmptyState.setVisibility(View.VISIBLE);
     }
-
+    chooChooActivity.fabEnable(R.drawable.ic_swap_vert_black_24dp);
+    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     return view;
   }
 
   @Override
   public void onDestroyView() {
     super.onDestroyView();
+    subscription.unsubscribe();
+    chooChooActivity.fabDisable();
   }
 
   @Override
@@ -99,5 +100,16 @@ public class RouteStopsFragment extends Fragment {
     if (bundle != null) {
       possibleTrips = Parcels.unwrap(bundle.getParcelable(BundleKeys.ROUTE_STOPS));
     }
+  }
+
+  private Action1<RxMessage> handleRxMessages() {
+    return new Action1<RxMessage>() {
+      @Override
+      public void call(RxMessage rxMessage) {
+        if (rxMessage.isMessageValidFor(RxMessageKeys.FAB_CLICKED)) {
+          rxBus.send(new RxMessage(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED));
+        }
+      }
+    };
   }
 }

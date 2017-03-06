@@ -46,6 +46,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
+import rx.functions.Action1;
 
 import static com.eleith.calchoochoo.utils.DrawableUtils.getBitmapCircle;
 
@@ -56,10 +57,9 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   private Location lastLocation;
   private Marker locationMarker;
   private LatLng myDefaultLatLng = new LatLng(37.30, -122.06);
-  private Subscription subscription;
-
-  @BindView(R.id.map_action_button)
-  FloatingActionButton mapActionButton;
+  private Subscription subscriptionLocation;
+  private Subscription subscriptionRxBus;
+  private ChooChooActivity chooChooActivity;
 
   @Inject
   RxBus rxBus;
@@ -71,7 +71,8 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ((ChooChooActivity) getActivity()).getComponent().inject(this);
+    chooChooActivity = (ChooChooActivity) getActivity();
+    chooChooActivity.getComponent().inject(this);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
@@ -81,6 +82,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     ButterKnife.bind(this, view);
 
     unWrapBundle(savedInstanceState);
+    chooChooActivity.fabEnable(R.drawable.ic_gps_not_fixed_black_24dp);
 
     // initialize the map!
     googleMapView = ((MapView) view.findViewById(R.id.search_google_maps));
@@ -95,13 +97,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     LocalDateTime stopDateTime = new LocalDateTime();
     int stopMethod = RxMessageStopsAndDetails.DETAIL_DEPARTING;
     chooChooFragmentManager.loadSearchForSpotFragment(stop, null, stopMethod, stopDateTime);
-  }
-
-  @OnClick(R.id.map_action_button)
-  void onClickActionButton() {
-    LatLng myLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
-    CameraPosition cameraPosition = new CameraPosition.Builder().zoom(13).target(myLatLng).build();
-    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
   }
 
   @Override
@@ -146,7 +141,8 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
       }
     });
 
-    subscription = deviceLocation.subscribeToLocationUpdates(new DeviceLocation.LocationGetListener() {
+    subscriptionRxBus = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
+    subscriptionLocation = deviceLocation.subscribeToLocationUpdates(new DeviceLocation.LocationGetListener() {
       @Override
       public void onLocationGet(Location location) {
         setMyLocationMarker(location);
@@ -188,7 +184,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
       locationMarker = googleMap.addMarker(markerOptions);
     }
     lastLocation = location;
-    mapActionButton.setVisibility(View.VISIBLE);
+    //mapActionButton.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -204,11 +200,20 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   }
 
   @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    if (subscriptionLocation != null) {
+      subscriptionLocation.unsubscribe();
+    }
+    if (subscriptionRxBus != null) {
+      subscriptionRxBus.unsubscribe();
+    }
+    ((ChooChooActivity) getActivity()).fabDisable();
+  }
+
+  @Override
   public void onDestroy() {
     super.onDestroy();
-    if (subscription != null) {
-      subscription.unsubscribe();
-    }
     googleMapView.onDestroy();
   }
 
@@ -223,5 +228,18 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   public void onLowMemory() {
     super.onLowMemory();
     googleMapView.onLowMemory();
+  }
+
+  private Action1<RxMessage> handleRxMessages() {
+    return new Action1<RxMessage>() {
+      @Override
+      public void call(RxMessage rxMessage) {
+        if (rxMessage.isMessageValidFor(RxMessageKeys.FAB_CLICKED)) {
+          LatLng myLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+          CameraPosition cameraPosition = new CameraPosition.Builder().zoom(13).target(myLatLng).build();
+          googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
+      }
+    };
   }
 }

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context="com.eleith.calchoochoo.fragments.SearchResultsFragment">
 
@@ -30,13 +31,5 @@
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
         tools:listitem="@layout/fragment_trip_possible"/>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/trips_possible_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_swap_vert_black_24dp"/>
 
 </FrameLayout>

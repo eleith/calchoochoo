@@ -23,13 +23,4 @@
         android:hint="@string/where_to_go"
         android:padding="10dp"/>
 
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/map_action_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_gps_not_fixed_black_24dp"
-        android:visibility="visible"/>
 </FrameLayout>
