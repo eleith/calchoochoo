@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.Stop;
@@ -30,10 +31,12 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
   private ArrayList<Stop> stops = new ArrayList<Stop>();
   private Location location;
   private RxBus rxBus;
+  private ChooChooFragmentManager chooChooFragmentManager;
 
   @Inject
-  public SearchResultsViewAdapter(RxBus rxBus) {
+  public SearchResultsViewAdapter(RxBus rxBus, ChooChooFragmentManager chooChooFragmentManager) {
     this.rxBus = rxBus;
+    this.chooChooFragmentManager = chooChooFragmentManager;
   }
 
   public void setStops(ArrayList<Stop> stops) {

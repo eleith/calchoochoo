@@ -31,8 +31,6 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
   RecyclerView searchResultsRecyclerView;
 
   @Inject
-  RxBus rxBus;
-  @Inject
   ChooChooFragmentManager chooChooFragmentManager;
 
   @Override

@@ -15,19 +15,11 @@
         android:layout_weight="1">
 
         <ImageView
-            android:id="@+id/trip_possible_train_bullet"
+            android:id="@+id/trip_possible_train_image"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:contentDescription="@string/bullet_train"
             android:src="@drawable/ic_train_bullet"/>
-
-        <ImageView
-            android:id="@+id/trip_possible_train_local"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:contentDescription="@string/local_train"
-            android:src="@drawable/ic_train_local"
-            android:visibility="gone"/>
     </LinearLayout>
 
     <LinearLayout

@@ -165,9 +165,6 @@ public class TripFilterFragment extends Fragment {
           stopMethod = pair.first;
           stopDateTime = pair.second;
           chooChooFragmentManager.loadTripFilterFragment(stopMethod, stopDateTime, stopSource, stopDestination);
-        } else if (rxMessage.isMessageValidFor(RxMessageKeys.TRIP_SELECTED)) {
-          PossibleTrip possibleTrip = ((RxMessagePossibleTrip) rxMessage).getMessage();
-          chooChooFragmentManager.loadTripDetailsFragments(possibleTrip);
         }
       }
     };

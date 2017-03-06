@@ -3,9 +3,12 @@ package com.eleith.calchoochoo.dagger;
 import android.support.v4.app.FragmentManager;
 
 import com.eleith.calchoochoo.ChooChooActivity;
+import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
@@ -26,8 +29,8 @@ public class ChooChooModule {
 
   @ChooChooScope
   @Provides
-  public FragmentManager provideFragmentManager() {
-    return chooChooActivity.getSupportFragmentManager();
+  public ChooChooFragmentManager providesChooChooFragmentManager() {
+    return new ChooChooFragmentManager(chooChooActivity.getSupportFragmentManager());
   }
 
   @ChooChooScope

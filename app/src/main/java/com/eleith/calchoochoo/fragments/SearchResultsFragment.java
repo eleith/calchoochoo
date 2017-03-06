@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,8 @@ public class SearchResultsFragment extends Fragment {
     }
     stops = Queries.getAllParentStops();
     unWrapBundle(savedInstanceState != null ? savedInstanceState : getArguments());
+    setEnterTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_up));
+    setExitTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_down));
   }
 
   @Override

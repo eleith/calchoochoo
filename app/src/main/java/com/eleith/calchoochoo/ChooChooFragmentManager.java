@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.View;
 
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Queries;
@@ -30,11 +31,10 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
-import javax.inject.Inject;
-
 public class ChooChooFragmentManager {
   private FragmentManager fragmentManager;
   private FragmentTransaction fragmentTransaction;
+  private ArrayList<View> sharedTransitions;
 
   public static final String STATE_CONFIGURE_WIDGET = "configure_widget";
   public static final String STATE_SEARCH_FOR_STOPS = "search_for_stops";
@@ -43,7 +43,6 @@ public class ChooChooFragmentManager {
   public static final String STATE_SHOW_MAP = "show_map";
   public static final String STATE_SHOW_TRIP_FILTER = "show_trip_filter";
 
-  @Inject
   public ChooChooFragmentManager(FragmentManager fragmentManager) {
     this.fragmentManager = fragmentManager;
   }
@@ -56,6 +55,8 @@ public class ChooChooFragmentManager {
   }
 
   private void setNextState(String stateID, Bundle arguments) {
+    fragmentTransaction = getTransaction();
+
     switch (stateID) {
       case STATE_SEARCH_FOR_STOPS:
         SearchInputFragment searchInputFragment = new SearchInputFragment();
@@ -121,8 +122,8 @@ public class ChooChooFragmentManager {
   }
 
   private void updateTopAndBottomFragments(Fragment f1, Fragment f2, Boolean useCoordinatorLayout, String stateId) {
-    updateTopFragment(f1, useCoordinatorLayout, stateId + "top");
     updateBottomFragment(f2, useCoordinatorLayout, stateId + "bottom");
+    updateTopFragment(f1, useCoordinatorLayout, stateId + "top");
   }
 
   private void updateTopFragment(Fragment fragment, Boolean useCoordinator, String tag) {
@@ -187,8 +188,16 @@ public class ChooChooFragmentManager {
   public void commit(String stateId) {
     if (fragmentTransaction != null) {
       fragmentTransaction.addToBackStack(stateId);
+
+      if (sharedTransitions != null) {
+        for (View view : sharedTransitions) {
+          fragmentTransaction.addSharedElement(view, view.getTransitionName());
+        }
+      }
+
       fragmentTransaction.commit();
       fragmentTransaction = null;
+      sharedTransitions = null;
     }
   }
 
@@ -216,6 +225,11 @@ public class ChooChooFragmentManager {
   }
 
   public void loadTripDetailsFragments(PossibleTrip possibleTrip) {
+    loadTripDetailsFragments(possibleTrip, null);
+  }
+
+  public void loadTripDetailsFragments(PossibleTrip possibleTrip, ArrayList<View> views) {
+    this.sharedTransitions = views;
     Bundle arguments = new Bundle();
     arguments.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
     setNextState(ChooChooFragmentManager.STATE_SHOW_TRIP, arguments);

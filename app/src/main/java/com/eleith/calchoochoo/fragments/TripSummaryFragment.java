@@ -2,6 +2,7 @@ package com.eleith.calchoochoo.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,24 +45,25 @@ public class TripSummaryFragment extends Fragment {
   @BindView(R.id.trip_summary_total_time)
   TextView tripSummaryTotalTime;
 
-  @BindView(R.id.trip_summary_train_bullet)
-  ImageView tripSummaryTrainBullet;
-
-  @BindView(R.id.trip_summary_train_local)
-  ImageView tripSummaryTrainLocal;
+  @BindView(R.id.trip_summary_train_image)
+  ImageView tripSummaryImage;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
+    setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.image_transform));
+    setSharedElementReturnTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.image_transform));
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_trip_summary, container, false);
-    Routes route = Queries.getRouteById(possibleTrip.getRouteId());
+    unWrapBundle(savedInstanceState);
     ButterKnife.bind(this, view);
+
+    Routes route = Queries.getRouteById(possibleTrip.getRouteId());
 
     tripSummaryFrom.setText(stopSource.stop_name.replace(" Caltrain", ""));
     tripSummaryTo.setText(stopDestination.stop_name.replace(" Caltrain", ""));
@@ -70,15 +72,14 @@ public class TripSummaryFragment extends Fragment {
     tripSummaryNumber.setText(possibleTrip.getTripId());
 
     if (route != null && route.route_long_name.contains("Bullet")) {
-      tripSummaryTrainLocal.setVisibility(View.GONE);
-      tripSummaryTrainBullet.setVisibility(View.VISIBLE);
+      tripSummaryImage.setImageDrawable(getActivity().getDrawable(R.drawable.ic_train_bullet));
+      tripSummaryImage.setContentDescription(getString(R.string.bullet_train));
     } else {
-      tripSummaryTrainBullet.setVisibility(View.GONE);
-      tripSummaryTrainLocal.setVisibility(View.VISIBLE);
+      tripSummaryImage.setImageDrawable(getActivity().getDrawable(R.drawable.ic_train_local));
+      tripSummaryImage.setContentDescription(getString(R.string.local_train));
     }
 
-    unWrapBundle(savedInstanceState);
-
+    tripSummaryImage.setTransitionName(getString(R.string.transition_train_image) + possibleTrip.getTripId());
     return view;
   }
 
