@@ -93,7 +93,6 @@ public class ChooChooActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
-    super.onBackPressed();
-    chooChooFragmentManager.handleBackPressed();
+    chooChooFragmentManager.handleBackPressed(true);
   }
 }

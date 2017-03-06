@@ -1,6 +1,7 @@
 package com.eleith.calchoochoo;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -40,8 +41,7 @@ public class ChooChooFragmentManager {
   public static final String STATE_SHOW_ALL_STOPS = "show_all_stops";
   public static final String STATE_SHOW_TRIP = "show_trip";
   public static final String STATE_SHOW_MAP = "show_map";
-  public static final String STATE_SHOW_TRIP_FILTER_EMPTY = "show_trip_filter_empty";
-  public static final String STATE_SHOW_TRIP_FILTER_RESULTS = "show_trip_filter_results";
+  public static final String STATE_SHOW_TRIP_FILTER = "show_trip_filter";
 
   @Inject
   public ChooChooFragmentManager(FragmentManager fragmentManager) {
@@ -100,23 +100,20 @@ public class ChooChooFragmentManager {
 
         updateTopAndBottomFragments(null, mapSearchFragment, false, stateID);
         break;
-      case STATE_SHOW_TRIP_FILTER_EMPTY:
+      case STATE_SHOW_TRIP_FILTER:
         TripFilterFragment tripFilterFragmentResults = new TripFilterFragment();
         TripFilterSelectMoreFragment tripFilterSelectMoreFragment = new TripFilterSelectMoreFragment();
+        RouteStopsFragment routeStopsFragment = new RouteStopsFragment();
 
         tripFilterFragmentResults.setArguments(arguments);
         tripFilterSelectMoreFragment.setArguments(arguments);
-
-        updateTopAndBottomFragments(tripFilterFragmentResults, tripFilterSelectMoreFragment, true, stateID);
-        break;
-      case STATE_SHOW_TRIP_FILTER_RESULTS:
-        RouteStopsFragment routeStopsFragment = new RouteStopsFragment();
-        TripFilterFragment tripFilterFragment = new TripFilterFragment();
-
         routeStopsFragment.setArguments(arguments);
-        tripFilterFragment.setArguments(arguments);
 
-        updateTopAndBottomFragments(tripFilterFragment, routeStopsFragment, true, stateID);
+        if (arguments.getParcelable(BundleKeys.ROUTE_STOPS) != null) {
+          updateTopAndBottomFragments(tripFilterFragmentResults, routeStopsFragment, true, stateID);
+        } else {
+          updateTopAndBottomFragments(tripFilterFragmentResults, tripFilterSelectMoreFragment, true, stateID);
+        }
         break;
     }
 
@@ -251,11 +248,9 @@ public class ChooChooFragmentManager {
     if (stopSource != null && stopDestination != null && stopDateTime != null) {
       ArrayList<PossibleTrip> possibleTrips = Queries.findPossibleTrips(stopSource, stopDestination, stopDateTime, stopMethod == RxMessageStopsAndDetails.DETAIL_ARRIVING);
       arguments.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTrips));
-
-      setNextState(ChooChooFragmentManager.STATE_SHOW_TRIP_FILTER_RESULTS, arguments);
-    } else {
-      setNextState(ChooChooFragmentManager.STATE_SHOW_TRIP_FILTER_EMPTY, arguments);
     }
+
+    setNextState(ChooChooFragmentManager.STATE_SHOW_TRIP_FILTER, arguments);
   }
 
   public void loadSearchWidgetConfigureFragment() {
@@ -265,17 +260,44 @@ public class ChooChooFragmentManager {
     setNextState(ChooChooFragmentManager.STATE_CONFIGURE_WIDGET, arguments);
   }
 
-  public void handleBackPressed() {
-    int backStackEntryCount = fragmentManager.getBackStackEntryCount();
-    FragmentManager.BackStackEntry last = fragmentManager.getBackStackEntryAt(backStackEntryCount - 1);
-    String name = last.getName();
-    if (name != null) {
-      if (name.equals(STATE_SEARCH_FOR_STOPS)) {
-        fragmentManager.popBackStackImmediate();
-      } else if (name.equals(STATE_SHOW_TRIP_FILTER_EMPTY) || name.equals(STATE_SHOW_TRIP_FILTER_RESULTS)) {
-        fragmentManager.popBackStackImmediate(name, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        handleBackPressed();
+  public void handleBackPressed(Boolean doOneLastBack) {
+    Boolean changed;
+    changed = skipSearchFragment();
+    skipExtraFilterFragments(changed || !doOneLastBack);
+    if (doOneLastBack) {
+      fragmentManager.popBackStack();
+    }
+  }
+
+  private Boolean skipExtraFilterFragments(Boolean canBeInvisible) {
+    String name = getBackStackStateName();
+    if (name != null && name.equals(STATE_SHOW_TRIP_FILTER)) {
+      Fragment filter = fragmentManager.findFragmentByTag(STATE_SHOW_TRIP_FILTER + "top");
+      if (filter != null && (filter.isVisible() || canBeInvisible)) {
+        fragmentManager.popBackStackImmediate(STATE_SHOW_TRIP_FILTER, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        handleBackPressed(false);
+        return true;
       }
     }
+    return false;
+  }
+
+  private Boolean skipSearchFragment() {
+    String name = getBackStackStateName();
+    if (name != null && name.equals(STATE_SEARCH_FOR_STOPS)) {
+      fragmentManager.popBackStackImmediate();
+      return true;
+    }
+    return false;
+  }
+
+  @Nullable
+  private String getBackStackStateName() {
+    int backStackEntryCount = fragmentManager.getBackStackEntryCount();
+    if (backStackEntryCount > 1) {
+      FragmentManager.BackStackEntry last = fragmentManager.getBackStackEntryAt(backStackEntryCount - 2);
+      return last.getName();
+    }
+    return null;
   }
 }
