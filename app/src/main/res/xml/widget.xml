@@ -3,7 +3,7 @@
                     android:initialLayout="@layout/fragment_stop_card_widget"
                     android:minHeight="180dp"
                     android:minWidth="260dp"
-                    android:previewImage="@drawable/ic_cal_choo_choo"
+                    android:previewImage="@drawable/ic_preview_widget"
                     android:configure="com.eleith.calchoochoo.ChooChooWidgetConfigure"
                     android:resizeMode="horizontal|vertical"
                     android:widgetCategory="home_screen"

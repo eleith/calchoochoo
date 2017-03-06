@@ -75,7 +75,7 @@ public class StopDetailsFragment extends Fragment {
   }
 
   private void addRecentTrains() {
-    ArrayList<PossibleTrain> possibleTrains = Queries.findNextTrain(stop, new LocalDateTime(2017, 3, 7, 10, 10));
+    ArrayList<PossibleTrain> possibleTrains = Queries.findNextTrain(stop, new LocalDateTime());
 
     if (possibleTrains.size() > 0) {
       for (int i = 0; i < possibleTrains.size(); i++) {
