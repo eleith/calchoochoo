@@ -117,7 +117,7 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
 
     SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
     String stopId = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-    return StopUtils.getParentStopById(stops, stopId);
+    return StopUtils.getStopById(stops, stopId);
   }
 
   public ChooChooWidgetConfigureComponent getComponent() {

@@ -78,8 +78,8 @@ public class StopUtils {
   }
 
   @Nullable
-  public static Stop getParentStopById(ArrayList<Stop> allParentStops, String stop_id) {
-    for (Stop stop : allParentStops) {
+  public static Stop getStopById(ArrayList<Stop> allStops, String stop_id) {
+    for (Stop stop : allStops) {
       if (stop.stop_id.equals(stop_id)) {
         return stop;
       }

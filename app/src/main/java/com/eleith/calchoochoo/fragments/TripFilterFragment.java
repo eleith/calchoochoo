@@ -68,7 +68,6 @@ public class TripFilterFragment extends Fragment {
     super.onCreate(savedInstanceState);
 
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
-    chooChooLoader.loadParentStops();
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
@@ -77,6 +76,7 @@ public class TripFilterFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
+    chooChooLoader.loadParentStops();
   }
 
   @Override

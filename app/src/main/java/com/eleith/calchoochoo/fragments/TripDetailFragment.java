@@ -14,7 +14,6 @@ import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.adapters.TripStopsAdapter;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
-import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.StopTimes;
 import com.eleith.calchoochoo.utils.BundleKeys;
@@ -22,7 +21,6 @@ import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTripStops;
-import com.eleith.calchoochoo.utils.StopUtils;
 
 import org.parceler.Parcels;
 
@@ -35,12 +33,8 @@ import rx.Subscription;
 import rx.functions.Action1;
 
 public class TripDetailFragment extends Fragment {
-  private Stop stopDestination;
-  private Stop stopSource;
   private PossibleTrip possibleTrip;
   private ArrayList<Pair<Stop, StopTimes>> tripStops;
-  private ArrayList<Stop> stops = null;
-  private ArrayList<Routes> routes = null;
   private Subscription subscription;
 
   @Inject
@@ -88,11 +82,7 @@ public class TripDetailFragment extends Fragment {
 
   private void unWrapBundle(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
-      stops = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOPS));
-      routes = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.ROUTES));
       possibleTrip = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.POSSIBLE_TRIP));
-      stopSource = StopUtils.getParentStopById(stops, possibleTrip.getFirstStopId());
-      stopDestination = StopUtils.getParentStopById(stops, possibleTrip.getLastStopId());
     }
   }
 

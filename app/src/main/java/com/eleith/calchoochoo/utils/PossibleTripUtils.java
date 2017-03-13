@@ -23,7 +23,7 @@ public class PossibleTripUtils {
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
       String stop1Id = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
       String stop2Id = cursor.getString(cursor.getColumnIndex("st2__stop_id"));
-      String tripId = cursor.getString(cursor.getColumnIndex("st1_trip_id"));
+      String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
       Integer stopOneSequence = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence"));
       Integer stopTwoSequence = cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
 

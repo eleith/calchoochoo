@@ -100,7 +100,7 @@ public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneT
     @OnClick(R.id.one_trip_stop_details)
     void onClickTripSummary() {
       Stop directionalStop = tripStops.get(getAdapterPosition()).first;
-      Stop stop = StopUtils.getParentStopById(stops, directionalStop.parent_station);
+      Stop stop = StopUtils.getStopById(stops, directionalStop.parent_station);
       chooChooFragmentManager.loadStopsFragments(stop);
     }
 

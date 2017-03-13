@@ -128,7 +128,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
       @Override
       public boolean onMarkerClick(Marker marker) {
         String stopId = (String) marker.getTag();
-        Stop touchedStop = StopUtils.getParentStopById(stops, stopId);
+        Stop touchedStop = StopUtils.getStopById(stops, stopId);
         if (touchedStop != null) {
           chooChooFragmentManager.loadStopsFragments(touchedStop);
         }
