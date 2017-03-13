@@ -77,13 +77,13 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
   public void loadRoute(String route_id) {
     Bundle bundle = new Bundle();
     bundle.putString(BundleKeys.ROUTES, route_id);
-    chooChooActivity.getLoaderManager().initLoader(ChooChooContentProvider.URI_ROUTES_ID, bundle, this);
+    chooChooActivity.getLoaderManager().restartLoader(ChooChooContentProvider.URI_ROUTES_ID, bundle, this);
   }
 
   public void loadTrip(String trip_id) {
     Bundle bundle = new Bundle();
     bundle.putString(BundleKeys.TRIP, trip_id);
-    chooChooActivity.getLoaderManager().initLoader(ChooChooContentProvider.URI_TRIPS_ID, bundle, this);
+    chooChooActivity.getLoaderManager().restartLoader(ChooChooContentProvider.URI_TRIPS_ID, bundle, this);
   }
 
   public void loadTripStops(String trip_id, String stop1_id, String stop2_id) {
@@ -91,14 +91,14 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     bundle.putString(BundleKeys.STOP_SOURCE, stop1_id);
     bundle.putString(BundleKeys.STOP_DESTINATION, stop2_id);
     bundle.putString(BundleKeys.TRIP, trip_id);
-    chooChooActivity.getLoaderManager().initLoader(ChooChooContentProvider.URI_FIND_STOP_TIMES_TRIP, bundle, this);
+    chooChooActivity.getLoaderManager().restartLoader(ChooChooContentProvider.URI_FIND_STOP_TIMES_TRIP, bundle, this);
   }
 
   public void loadPossibleTrains(String stop_id, LocalDateTime localDateTime) {
     Bundle bundle = new Bundle();
     bundle.putString(BundleKeys.STOP_SOURCE, stop_id);
     bundle.putLong(BundleKeys.STOP_DATETIME, localDateTime.toDate().getTime());
-    chooChooActivity.getLoaderManager().initLoader(ChooChooContentProvider.URI_FIND_POSSIBLE_TRAIN, bundle, this);
+    chooChooActivity.getLoaderManager().restartLoader(ChooChooContentProvider.URI_FIND_POSSIBLE_TRAIN, bundle, this);
   }
 
   public void loadPossibleTrip(String trip_id, String stop1_id, String stop2_id) {
@@ -106,7 +106,7 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     bundle.putString(BundleKeys.TRIP, trip_id);
     bundle.putString(BundleKeys.STOP_SOURCE, stop1_id);
     bundle.putString(BundleKeys.STOP_DESTINATION, stop2_id);
-    chooChooActivity.getLoaderManager().initLoader(ChooChooContentProvider.URI_FIND_POSSIBLE_TRIP, bundle, this);
+    chooChooActivity.getLoaderManager().restartLoader(ChooChooContentProvider.URI_FIND_POSSIBLE_TRIP, bundle, this);
   }
 
   public void loadPossibleTrips(String stop1_id, String stop2_id, LocalDateTime localDateTime) {
@@ -114,13 +114,13 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     bundle.putString(BundleKeys.STOP_SOURCE, stop1_id);
     bundle.putString(BundleKeys.STOP_DESTINATION, stop2_id);
     bundle.putLong(BundleKeys.STOP_DATETIME, localDateTime.toDateTime().getMillis());
-    chooChooActivity.getLoaderManager().initLoader(ChooChooContentProvider.URI_FIND_POSSIBLE_TRIPS, bundle, this);
+    chooChooActivity.getLoaderManager().restartLoader(ChooChooContentProvider.URI_FIND_POSSIBLE_TRIPS, bundle, this);
   }
 
   public void loadStopsOnTrip(String trip_id) {
     Bundle bundle = new Bundle();
     bundle.putString(BundleKeys.TRIP, trip_id);
-    chooChooActivity.getLoaderManager().initLoader(ChooChooContentProvider.URI_FIND_TRIP_STOPS, bundle, this);
+    chooChooActivity.getLoaderManager().restartLoader(ChooChooContentProvider.URI_FIND_TRIP_STOPS, bundle, this);
   }
 
   private void notifyParentStopsLoaded() {

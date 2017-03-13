@@ -258,7 +258,7 @@ public class ChooChooFragmentManager {
       arguments.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
     }
 
-    if (stopSource != null && stopDestination != null && stopDateTime != null) {
+    if (stopSource != null && stopDestination != null && stopDateTime != null && possibleTripsFiltered.size() > 0) {
       arguments.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTripsFiltered));
     }
 
