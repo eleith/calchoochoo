@@ -18,7 +18,7 @@ public class PossibleTrainUtils {
   public static ArrayList<PossibleTrain> getPossibleTrainFromCursor(Cursor cursor) {
     ArrayList<PossibleTrain> possibleTrains = new ArrayList<>();
 
-    while (cursor.moveToNext()) {
+    while (cursor != null && cursor.moveToNext()) {
       PossibleTrain possibleTrain = new PossibleTrain();
 
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));

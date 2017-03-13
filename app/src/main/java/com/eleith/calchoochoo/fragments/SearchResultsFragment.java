@@ -208,7 +208,7 @@ public class SearchResultsFragment extends Fragment {
   }
 
   public void filterResultsBy(String searchQuery) {
-    ArrayList<Stop> filteredStops = filterByFuzzySearch(parentStops, searchQuery);
+    ArrayList<Stop> filteredStops = filterByFuzzySearch(searchStops, searchQuery);
 
     if (filteredStops.size() > 0) {
       searchResultsEmptyState.setVisibility(View.GONE);
