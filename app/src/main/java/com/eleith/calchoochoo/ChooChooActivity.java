@@ -1,11 +1,9 @@
 package com.eleith.calchoochoo;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
 import android.view.View;
 
 import com.eleith.calchoochoo.dagger.ChooChooComponent;
@@ -50,8 +48,7 @@ public class ChooChooActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     Intent intent = getIntent();
-    chooChooComponent = ChooChooApplication.from(this).getAppComponent()
-        .activityComponent(new ChooChooModule(this));
+    chooChooComponent = ChooChooApplication.from(this).getAppComponent().activityComponent(new ChooChooModule(this));
     chooChooComponent.inject(this);
 
     super.onCreate(savedInstanceState);

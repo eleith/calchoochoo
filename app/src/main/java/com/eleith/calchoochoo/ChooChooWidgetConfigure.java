@@ -4,6 +4,8 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -11,9 +13,11 @@ import android.widget.TextView;
 
 import com.eleith.calchoochoo.dagger.ChooChooWidgetConfigureComponent;
 import com.eleith.calchoochoo.dagger.ChooChooWidgetConfigureModule;
-import com.eleith.calchoochoo.data.Queries;
+import com.eleith.calchoochoo.data.ChooChooDatabase;
 import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.utils.RxBus;
+import com.eleith.calchoochoo.utils.StopUtils;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -105,9 +109,15 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
   }
 
   static Stop getStopFromPreferences(Context context, int appWidgetId) {
+    SQLiteDatabase db = new ChooChooDatabase(context).getReadableDatabase();
+
+    Cursor cursor = db.query("stops", null, "stop_code = '' AND platform_code = ''", null, null, null, null);
+    ArrayList<Stop> stops = StopUtils.getStopsFromCursor(cursor);
+    cursor.close();
+
     SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
     String stopId = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
-    return Queries.getParentStopById(stopId);
+    return StopUtils.getParentStopById(stops, stopId);
   }
 
   public ChooChooWidgetConfigureComponent getComponent() {

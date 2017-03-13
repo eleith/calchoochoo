@@ -5,16 +5,20 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
+import com.eleith.calchoochoo.data.ChooChooDatabase;
 import com.eleith.calchoochoo.data.PossibleTrain;
-import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
+import com.eleith.calchoochoo.utils.PossibleTrainUtils;
+import com.eleith.calchoochoo.utils.RouteUtils;
+import com.eleith.calchoochoo.utils.TripUtils;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -53,20 +57,36 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
   }
 
   public static void updateOneWidget(Context context, int appWidgetId, AppWidgetManager appWidgetManager) {
+    ChooChooDatabase chooChooDatabase = new ChooChooDatabase(context);
+    SQLiteDatabase db = chooChooDatabase.getReadableDatabase();
+    Cursor cursor;
+
     Stop stop = ChooChooWidgetConfigure.getStopFromPreferences(context, appWidgetId);
     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.fragment_stop_card_widget);
     appWidgetManager.updateAppWidget(appWidgetId, views);
 
     if (stop != null) {
       views.setTextViewText(R.id.stop_card_stop_name, stop.stop_name);
-      ArrayList<PossibleTrain> possibleTrains = Queries.findNextTrain(stop, new LocalDateTime());
+
+      cursor = PossibleTrainUtils.getPossibleTrainQuery(db, stop.stop_id, new LocalDateTime().toDateTime().getMillis());
+      ArrayList<PossibleTrain> possibleTrains = PossibleTrainUtils.getPossibleTrainFromCursor(cursor);
+      possibleTrains = PossibleTrainUtils.filterByDateTime(possibleTrains, new LocalDateTime());
+      cursor.close();
+
+      cursor = db.query("routes", null, null, null, null, null, null);
+      ArrayList<Routes> routes = RouteUtils.getRoutesFromCursor(cursor);
+      cursor.close();
+
+      cursor = db.query("trips", null, null, null, null, null, null);
+      ArrayList<Trips> trips = TripUtils.getTripsFromCursor(cursor);
+
       views.removeAllViews(R.id.stop_card_widget_train_items);
 
       if (possibleTrains.size() > 0) {
         for (int i = 0; i < 3 && i < possibleTrains.size(); i++) {
           PossibleTrain possibleTrain = possibleTrains.get(i);
-          Trips trip = Queries.getTripById(possibleTrain.getTripId());
-          Routes route = Queries.getRouteById(possibleTrain.getRouteId());
+          Trips trip = TripUtils.getTripById(trips, possibleTrain.getTripId());
+          Routes route = RouteUtils.getRouteById(routes, possibleTrain.getRouteId());
           DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
           RemoteViews item = new RemoteViews(context.getPackageName(), R.layout.fragment_stop_card_widget_trainitem);
 

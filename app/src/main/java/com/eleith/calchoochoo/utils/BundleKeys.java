@@ -12,4 +12,5 @@ public class BundleKeys {
   public static final String ROUTE_STOPS = "route_stops";
   public static final String POSSIBLE_TRIP = "possible_trip";
   public static final String TRIP = "trip";
+  public static final String ROUTES = "routes";
 }

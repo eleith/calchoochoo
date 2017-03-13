@@ -17,8 +17,8 @@ import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.adapters.SearchResultsViewAdapter;
+import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
-import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
@@ -26,6 +26,9 @@ import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStops;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.LocalDateTime;
@@ -43,7 +46,8 @@ import rx.functions.Action1;
 import static com.eleith.calchoochoo.utils.StopUtils.filterByFuzzySearch;
 
 public class SearchResultsFragment extends Fragment {
-  private ArrayList<Stop> stops;
+  private ArrayList<Stop> parentStops = null;
+  private ArrayList<Stop> searchStops = null;
   private Stop stopSource;
   private int stopMethod;
   private Stop stopDestination;
@@ -65,6 +69,8 @@ public class SearchResultsFragment extends Fragment {
   DeviceLocation deviceLocation;
   @Inject
   ChooChooFragmentManager chooChooFragmentManager;
+  @Inject
+  ChooChooLoader chooChooLoader;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -73,7 +79,7 @@ public class SearchResultsFragment extends Fragment {
     if (activity instanceof ChooChooActivity) {
       ((ChooChooActivity) activity).getComponent().inject(this);
     }
-    stops = Queries.getAllParentStops();
+
     unWrapBundle(savedInstanceState != null ? savedInstanceState : getArguments());
     setEnterTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_up));
     setExitTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_down));
@@ -86,16 +92,21 @@ public class SearchResultsFragment extends Fragment {
     unWrapBundle(savedInstanceState);
 
     searchResultsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-    searchResultsViewAdapter.setStops(stops);
     deviceLocation.requestLocation(new DeviceLocation.LocationGetListener() {
       @Override
       public void onLocationGet(Location location) {
         searchResultsViewAdapter.setLocation(location);
       }
     });
+
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     searchResultsRecyclerView.setAdapter(searchResultsViewAdapter);
+
+    chooChooLoader.loadParentStops();
+    if (trip != null && stopUnknown != null) {
+      chooChooLoader.loadStopsOnTrip(trip.trip_id);
+    }
 
     return view;
   }
@@ -130,22 +141,29 @@ public class SearchResultsFragment extends Fragment {
       stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
       stopUnknown = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP));
       trip = Parcels.unwrap(bundle.getParcelable(BundleKeys.TRIP));
+    }
+  }
 
-      if (trip != null && stopUnknown != null) {
-        stops = Queries.findStopsOnTrip(trip.trip_id);
+  private void filterStopsWithKnownStops() {
+    if ((trip == null || stopUnknown == null) && parentStops != null) {
+      searchStops = new ArrayList<>(parentStops);
+    }
+
+    if (searchStops != null) {
+      if (stopDestination != null) {
+        searchStops.remove(stopDestination);
       }
-    }
 
-    if (stopDestination != null) {
-      stops.remove(stopDestination);
-    }
+      if (stopSource != null) {
+        searchStops.remove(stopSource);
+      }
 
-    if (stopSource != null) {
-      stops.remove(stopSource);
-    }
+      if (stopUnknown != null) {
+        searchStops.remove(stopUnknown);
+      }
 
-    if (stopUnknown != null) {
-      stops.remove(stopUnknown);
+      searchResultsViewAdapter.setStops(searchStops);
+      searchResultsViewAdapter.notifyDataSetChanged();
     }
   }
 
@@ -156,30 +174,41 @@ public class SearchResultsFragment extends Fragment {
         if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_STOP)) {
           Stop stop = (Stop) rxMessage.getMessage();
           if (trip != null) {
-            PossibleTrip possibleTrip = Queries.findPossibleTrip(stopUnknown, stop, trip.trip_id);
-            if (possibleTrip != null) {
-              chooChooFragmentManager.loadTripDetailsFragments(possibleTrip);
-            } else {
-              chooChooFragmentManager.loadTripFilterFragment(stopMethod, new LocalDateTime(stopDateTime), stopSource, stopDestination);
-            }
+            chooChooLoader.loadPossibleTrip(trip.trip_id, stopUnknown.stop_id, stop.stop_id);
           } else {
             if (stopDestination == null) {
               stopDestination = stop;
             } else {
               stopSource = stop;
             }
-            chooChooFragmentManager.loadTripFilterFragment(stopMethod, new LocalDateTime(stopDateTime), stopSource, stopDestination);
+            chooChooLoader.loadPossibleTrips(stopSource.stop_id, stopDestination.stop_id, new LocalDateTime(stopDateTime));
           }
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_INPUT_STRING)) {
           String filterString = ((RxMessageString) rxMessage).getMessage();
           filterResultsBy(filterString);
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIP)) {
+          PossibleTrip possibleTrip = ((RxMessagePossibleTrip) rxMessage).getMessage();
+          if (possibleTrip != null) {
+            chooChooFragmentManager.loadTripDetailsFragments(possibleTrip);
+          } else {
+            chooChooLoader.loadPossibleTrips(stopSource.stop_id, stopDestination.stop_id, new LocalDateTime(stopDateTime));
+          }
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIPS)) {
+          ArrayList<PossibleTrip> possibleTrips = ((RxMessagePossibleTrips) rxMessage).getMessage();
+          chooChooFragmentManager.loadTripFilterFragment(possibleTrips, stopMethod, new LocalDateTime(stopDateTime), stopSource, stopDestination);
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOPS_ON_TRIP)) {
+          searchStops = ((RxMessageStops) rxMessage).getMessage();
+          filterStopsWithKnownStops();
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOPS)) {
+          parentStops = ((RxMessageStops) rxMessage).getMessage();
+          filterStopsWithKnownStops();
         }
       }
     };
   }
 
   public void filterResultsBy(String searchQuery) {
-    ArrayList<Stop> filteredStops = filterByFuzzySearch(stops, searchQuery);
+    ArrayList<Stop> filteredStops = filterByFuzzySearch(parentStops, searchQuery);
 
     if (filteredStops.size() > 0) {
       searchResultsEmptyState.setVisibility(View.GONE);

@@ -12,19 +12,22 @@ import android.widget.TextView;
 import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.parceler.Parcels;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -57,13 +60,15 @@ public class TripFilterFragment extends Fragment {
   RxBus rxBus;
   @Inject
   ChooChooFragmentManager chooChooFragmentManager;
+  @Inject
+  ChooChooLoader chooChooLoader;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
-
+    chooChooLoader.loadParentStops();
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
@@ -96,6 +101,10 @@ public class TripFilterFragment extends Fragment {
     if (stopSource != null) {
       sourceEdit.setText(stopSource.stop_name.replace(" Caltrain", ""));
     }
+
+    sourceEdit.setVisibility(View.VISIBLE);
+    destinationEdit.setVisibility(View.VISIBLE);
+
     updateTimeEdit();
   }
 
@@ -159,12 +168,15 @@ public class TripFilterFragment extends Fragment {
       @Override
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED)) {
-          chooChooFragmentManager.loadTripFilterFragment(stopMethod, stopDateTime, stopDestination, stopSource);
+          chooChooLoader.loadPossibleTrips(stopSource.stop_id, stopDestination.stop_id, stopDateTime);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageStopMethodAndDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
           stopDateTime = pair.second;
-          chooChooFragmentManager.loadTripFilterFragment(stopMethod, stopDateTime, stopSource, stopDestination);
+          chooChooLoader.loadPossibleTrips(stopSource.stop_id, stopDestination.stop_id, stopDateTime);
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIPS)) {
+          ArrayList<PossibleTrip> possibleTrips = ((RxMessagePossibleTrips) rxMessage).getMessage();
+          chooChooFragmentManager.loadTripFilterFragment(possibleTrips, stopMethod, new LocalDateTime(stopDateTime), stopSource, stopDestination);
         }
       }
     };

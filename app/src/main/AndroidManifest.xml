@@ -7,6 +7,7 @@
 
     <application
         android:name=".ChooChooApplication"
+        android:fullBackupContent="true"
         android:allowBackup="true"
         android:icon="@drawable/ic_cal_choo_choo"
         android:label="@string/app_name"
@@ -18,7 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
         <activity android:name=".ChooChooWidgetConfigure">
@@ -33,6 +34,11 @@
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/GOOGLE_MAPS_API_KEY"/>
+
+        <provider
+            android:exported="false"
+            android:name=".data.ChooChooContentProvider"
+            android:authorities="com.eleith.calchoochoo.data"/>
 
         <receiver
             android:name="ChooChooWidgetProvider"

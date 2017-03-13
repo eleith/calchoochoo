@@ -29,7 +29,8 @@
             android:hint="@string/search_for_stop"
             android:textColor="?android:colorBackground"
             android:textColorHint="?android:colorBackground"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:visibility="invisible"/>
 
         <View
             android:layout_width="0dp"
@@ -61,7 +62,8 @@
             android:focusable="false"
             android:hint="@string/search_for_stop"
             android:textColor="?android:colorBackground"
-            android:textColorHint="?android:colorBackground"/>
+            android:textColorHint="?android:colorBackground"
+            android:visibility="invisible"/>
 
         <View
             android:layout_width="0dp"

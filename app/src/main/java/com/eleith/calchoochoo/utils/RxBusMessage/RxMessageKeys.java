@@ -16,7 +16,17 @@ public class RxMessageKeys {
   public static final String SWITCH_SOURCE_DESTINATION_SELECTED = "switchSourceDestinationSelected";
   public static final String MY_LOCATION = "myLocation";
   public static final String MY_LOCATION_UPDATE = "myLocationUpdate";
-  public static final String FAB_CLICKED = "fab_clicked";
+  public static final String FAB_CLICKED = "fabClicked";
+  public static final String LOADED_STOPS = "loadedStops";
+  public static final String LOADED_ROUTES = "loadedRoutes";
+  public static final String LOADED_TRIP_DETAILS = "loadedTripDetails";
+  public static final String LOADED_NEXT_TRAINS = "loadedNextTrains";
+  public static final String LOADED_ROUTE = "loadedRoute";
+  public static final String LOADED_TRIP = "loadedTrip";
+  public static final String LOADED_TRIPS = "loadedTrips";
+  public static final String LOADED_POSSIBLE_TRIP = "loadedPossibleTrip";
+  public static final String LOADED_POSSIBLE_TRIPS = "loadedPossibleTrips";
+  public static final String LOADED_STOPS_ON_TRIP = "laodedStopsOnTrip";
 
   private static final Map<String, Class> keyToClassMap = createKeyMap();
 
@@ -35,6 +45,16 @@ public class RxMessageKeys {
     map.put(STOP_SELECTED, RxMessageStop.class);
     map.put(MY_LOCATION, RxMessageLocation.class);
     map.put(MY_LOCATION_UPDATE, RxMessageLocation.class);
+    map.put(LOADED_STOPS, RxMessageStops.class);
+    map.put(LOADED_ROUTES, RxMessageRoutes.class);
+    map.put(LOADED_TRIP_DETAILS, RxMessageTripStops.class);
+    map.put(LOADED_NEXT_TRAINS, RxMessageNextTrains.class);
+    map.put(LOADED_ROUTE, RxMessageRoute.class);
+    map.put(LOADED_TRIP, RxMessageTrip.class);
+    map.put(LOADED_TRIPS, RxMessageTrips.class);
+    map.put(LOADED_POSSIBLE_TRIP, RxMessagePossibleTrip.class);
+    map.put(LOADED_STOPS_ON_TRIP, RxMessageStops.class);
+    map.put(LOADED_POSSIBLE_TRIPS, RxMessagePossibleTrips.class);
 
     return Collections.unmodifiableMap(map);
   }

@@ -12,14 +12,16 @@ import android.widget.TextView;
 import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.PossibleTrip;
-import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.RouteUtils;
+import com.eleith.calchoochoo.utils.StopUtils;
 
 import org.joda.time.Minutes;
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 import butterknife.BindView;
@@ -29,6 +31,8 @@ public class TripSummaryFragment extends Fragment {
   private Stop stopDestination;
   private Stop stopSource;
   private PossibleTrip possibleTrip;
+  private ArrayList<Stop> stops;
+  private ArrayList<Routes> routes;
 
   @BindView(R.id.trip_summary_from)
   TextView tripSummaryFrom;
@@ -63,14 +67,13 @@ public class TripSummaryFragment extends Fragment {
     unWrapBundle(savedInstanceState);
     ButterKnife.bind(this, view);
 
-    Routes route = Queries.getRouteById(possibleTrip.getRouteId());
-
     tripSummaryFrom.setText(stopSource.stop_name.replace(" Caltrain", ""));
     tripSummaryTo.setText(stopDestination.stop_name.replace(" Caltrain", ""));
     tripSummaryPrice.setText(String.format(Locale.getDefault(), "$%.2f", possibleTrip.getPrice()));
     tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime(), possibleTrip.getDepartureTime()).getMinutes()));
     tripSummaryNumber.setText(possibleTrip.getTripId());
 
+    Routes route = RouteUtils.getRouteById(routes, possibleTrip.getRouteId());
     if (route != null && route.route_long_name.contains("Bullet")) {
       tripSummaryImage.setImageDrawable(getActivity().getDrawable(R.drawable.ic_train_bullet));
       tripSummaryImage.setContentDescription(getString(R.string.bullet_train));
@@ -91,9 +94,11 @@ public class TripSummaryFragment extends Fragment {
 
   private void unWrapBundle(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
+      stops = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOPS));
+      routes = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.ROUTES));
       possibleTrip = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.POSSIBLE_TRIP));
-      stopDestination = Queries.getParentStopById(possibleTrip.getLastStopId());
-      stopSource = Queries.getParentStopById(possibleTrip.getFirstStopId());
+      stopDestination = StopUtils.getParentStopById(stops, possibleTrip.getLastStopId());
+      stopSource = StopUtils.getParentStopById(stops, possibleTrip.getFirstStopId());
     }
   }
 }

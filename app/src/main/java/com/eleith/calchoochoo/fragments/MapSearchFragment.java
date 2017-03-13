@@ -4,27 +4,26 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
-import com.eleith.calchoochoo.data.Queries;
+import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.DrawableUtils;
 import com.eleith.calchoochoo.utils.MapUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStops;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
+import com.eleith.calchoochoo.utils.StopUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -36,7 +35,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.joda.time.LocalDateTime;
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -51,9 +49,9 @@ import rx.functions.Action1;
 import static com.eleith.calchoochoo.utils.DrawableUtils.getBitmapCircle;
 
 public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
-  private GoogleMap googleMap;
+  private GoogleMap googleMap = null;
   private MapView googleMapView;
-  private ArrayList<Stop> stops;
+  private ArrayList<Stop> stops = null;
   private Location lastLocation;
   private Marker locationMarker;
   private LatLng myDefaultLatLng = new LatLng(37.30, -122.06);
@@ -67,6 +65,11 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   DeviceLocation deviceLocation;
   @Inject
   ChooChooFragmentManager chooChooFragmentManager;
+  @Inject
+  ChooChooLoader chooChooLoader;
+
+  @BindView(R.id.map_search_input)
+  EditText mapSearchInput;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +96,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
 
   @OnClick(R.id.map_search_input)
   void onClickSearchInput() {
-    Stop stop = Queries.findStopClosestTo(lastLocation);
+    Stop stop = StopUtils.findStopClosestTo(stops, lastLocation);
     LocalDateTime stopDateTime = new LocalDateTime();
     int stopMethod = RxMessageStopsAndDetails.DETAIL_DEPARTING;
     chooChooFragmentManager.loadSearchForSpotFragment(stop, null, stopMethod, stopDateTime);
@@ -125,7 +128,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
       @Override
       public boolean onMarkerClick(Marker marker) {
         String stopId = (String) marker.getTag();
-        Stop touchedStop = Queries.getParentStopById(stopId);
+        Stop touchedStop = StopUtils.getParentStopById(stops, stopId);
         if (touchedStop != null) {
           chooChooFragmentManager.loadStopsFragments(touchedStop);
         }
@@ -142,6 +145,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     });
 
     subscriptionRxBus = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
+    chooChooLoader.loadParentStops();
     subscriptionLocation = deviceLocation.subscribeToLocationUpdates(new DeviceLocation.LocationGetListener() {
       @Override
       public void onLocationGet(Location location) {
@@ -151,20 +155,23 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   }
 
   private void setStopMarkers() {
-    for (Stop stop : stops) {
-      LatLng stopLatLng = new LatLng(stop.stop_lat, stop.stop_lon);
-      Bitmap trainIcon = DrawableUtils.getBitmapFromVectorDrawable(getContext(), R.drawable.ic_train_local, 0.25f);
-      MarkerOptions markerOptions = new MarkerOptions().position(stopLatLng).title(stop.stop_name);
-      markerOptions.icon(BitmapDescriptorFactory.fromBitmap(trainIcon));
+    if (googleMap != null && stops != null) {
+      mapSearchInput.setVisibility(View.VISIBLE);
 
-      Marker marker = googleMap.addMarker(markerOptions);
-      marker.setTag(stop.stop_id);
+      for (Stop stop : stops) {
+        LatLng stopLatLng = new LatLng(stop.stop_lat, stop.stop_lon);
+        Bitmap trainIcon = DrawableUtils.getBitmapFromVectorDrawable(getContext(), R.drawable.ic_train_local, 0.25f);
+        MarkerOptions markerOptions = new MarkerOptions().position(stopLatLng).title(stop.stop_name);
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(trainIcon));
+
+        Marker marker = googleMap.addMarker(markerOptions);
+        marker.setTag(stop.stop_id);
+      }
     }
   }
 
   private void unWrapBundle(Bundle bundle) {
     if (bundle != null) {
-      stops = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOPS));
       // if googleMap is set, then it never got the location!
       if (googleMap != null) {
         onMapReady(googleMap);
@@ -184,7 +191,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
       locationMarker = googleMap.addMarker(markerOptions);
     }
     lastLocation = location;
-    //mapActionButton.setVisibility(View.VISIBLE);
   }
 
   @Override
@@ -220,7 +226,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onSaveInstanceState(Bundle outState) {
     googleMapView.onSaveInstanceState(outState);
-    outState.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
     super.onSaveInstanceState(outState);
   }
 
@@ -238,6 +243,9 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
           LatLng myLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
           CameraPosition cameraPosition = new CameraPosition.Builder().zoom(13).target(myLatLng).build();
           googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOPS)) {
+          stops = ((RxMessageStops) rxMessage).getMessage();
+          setStopMarkers();
         }
       }
     };

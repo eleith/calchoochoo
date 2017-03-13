@@ -1,6 +1,5 @@
 package com.eleith.calchoochoo.adapters;
 
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +12,8 @@ import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.PossibleTrip;
-import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Routes;
-import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
+import com.eleith.calchoochoo.utils.RouteUtils;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -34,19 +30,23 @@ import butterknife.OnClick;
 @ChooChooScope
 public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.RouteViewHolder> {
   private ArrayList<PossibleTrip> possibleTrips;
-  private RxBus rxBus;
+  private ArrayList<Routes> routes;
   private ChooChooActivity chooChooActivity;
   private ChooChooFragmentManager chooChooFragmentManager;
 
   @Inject
-  public RouteViewAdapter(RxBus rxBus, ChooChooActivity chooChooActivity, ChooChooFragmentManager chooChooFragmentManager) {
-    this.rxBus = rxBus;
+  public RouteViewAdapter(ChooChooActivity chooChooActivity, ChooChooFragmentManager chooChooFragmentManager) {
     this.chooChooActivity = chooChooActivity;
     this.chooChooFragmentManager = chooChooFragmentManager;
   }
 
   public void setPossibleTrips(ArrayList<PossibleTrip> possibleTrips) {
     this.possibleTrips = possibleTrips;
+  }
+
+  public void setRoutes(ArrayList<Routes> routes) {
+    this.routes = routes;
+    notifyDataSetChanged();
   }
 
   @Override
@@ -60,19 +60,21 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
   public void onBindViewHolder(RouteViewHolder holder, int position) {
     PossibleTrip possibleTrip = possibleTrips.get(position);
     Float price = possibleTrip.getPrice();
-    Routes route = Queries.getRouteById(possibleTrip.getRouteId());
     DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
 
     holder.arrivalTime.setText(dateTimeFormatter.print(possibleTrip.getArrivalTime()));
     holder.departureTime.setText(dateTimeFormatter.print(possibleTrip.getDepartureTime()));
     holder.tripPrice.setText(String.format(Locale.getDefault(), "$%.2f", price));
 
-    if (route != null && route.route_long_name.contains("Bullet")) {
-      holder.trainImage.setImageDrawable(chooChooActivity.getDrawable(R.drawable.ic_train_bullet));
-      holder.trainImage.setContentDescription(chooChooActivity.getString(R.string.bullet_train));
-    } else {
-      holder.trainImage.setImageDrawable(chooChooActivity.getDrawable(R.drawable.ic_train_local));
-      holder.trainImage.setContentDescription(chooChooActivity.getString(R.string.local_train));
+    if (routes != null) {
+      Routes route = RouteUtils.getRouteById(routes, possibleTrip.getRouteId());
+      if (route != null && route.route_long_name.contains("Bullet")) {
+        holder.trainImage.setImageDrawable(chooChooActivity.getDrawable(R.drawable.ic_train_bullet));
+        holder.trainImage.setContentDescription(chooChooActivity.getString(R.string.bullet_train));
+      } else {
+        holder.trainImage.setImageDrawable(chooChooActivity.getDrawable(R.drawable.ic_train_local));
+        holder.trainImage.setContentDescription(chooChooActivity.getString(R.string.local_train));
+      }
     }
 
     holder.trainImage.setTransitionName(chooChooActivity.getString(R.string.transition_train_image) + possibleTrip.getTripId());

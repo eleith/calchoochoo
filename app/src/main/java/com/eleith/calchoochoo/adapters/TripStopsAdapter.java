@@ -10,12 +10,10 @@ import android.widget.TextView;
 import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
-import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.StopTimes;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
+import com.eleith.calchoochoo.utils.StopUtils;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -30,9 +28,10 @@ import butterknife.OnClick;
 @ChooChooScope
 public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneTripStopHolder> {
   private ArrayList<Pair<Stop, StopTimes>> tripStops;
+  private ArrayList<Stop> stops;
   private RxBus rxBus;
   private ChooChooFragmentManager chooChooFragmentManager;
-  private final static int ITEM_TYPE_SOURCE = 0 ;
+  private final static int ITEM_TYPE_SOURCE = 0;
   private final static int ITEM_TYPE_DESTINATION = 1;
   private final static int ITEM_TYPE_MIDDLE = 2;
 
@@ -46,6 +45,10 @@ public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneT
     this.tripStops = tripStops;
   }
 
+  public void setStops(ArrayList<Stop> stops) {
+    this.stops = stops;
+  }
+
   @Override
   public OneTripStopHolder onCreateViewHolder(ViewGroup parent, int viewType) {
     // return different view depending on viewType
@@ -53,10 +56,10 @@ public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneT
 
     switch (viewType) {
       case ITEM_TYPE_DESTINATION:
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.one_trip_stop_destination, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.one_trip_stop_destination, parent, false);
         break;
       case ITEM_TYPE_SOURCE:
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.one_trip_stop_source, parent, false);
+        view = LayoutInflater.from(parent.getContext()).inflate(R.layout.one_trip_stop_source, parent, false);
         break;
       default:
         view = LayoutInflater.from(parent.getContext()).inflate(R.layout.one_trip_stop_middle, parent, false);
@@ -97,7 +100,7 @@ public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneT
     @OnClick(R.id.one_trip_stop_details)
     void onClickTripSummary() {
       Stop directionalStop = tripStops.get(getAdapterPosition()).first;
-      Stop stop = Queries.getParentStopById(directionalStop.parent_station);
+      Stop stop = StopUtils.getParentStopById(stops, directionalStop.parent_station);
       chooChooFragmentManager.loadStopsFragments(stop);
     }
 

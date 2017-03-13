@@ -58,10 +58,8 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.4.0'
     apt 'com.jakewharton:butterknife-compiler:8.4.0'
 
-    //DBFlow
-    apt "com.github.Raizlabs.DBFlow:dbflow-processor:3.1.1"
-    compile "com.github.Raizlabs.DBFlow:dbflow-core:3.1.1"
-    compile "com.github.Raizlabs.DBFlow:dbflow:3.1.1"
+    // sqliteasset helper
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
 
     //Parceler
     compile 'org.parceler:parceler-api:1.1.1'

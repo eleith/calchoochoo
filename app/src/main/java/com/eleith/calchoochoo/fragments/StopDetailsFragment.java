@@ -12,12 +12,21 @@ import android.widget.TextView;
 import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrain;
-import com.eleith.calchoochoo.data.Queries;
 import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.PossibleTrainUtils;
+import com.eleith.calchoochoo.utils.RouteUtils;
+import com.eleith.calchoochoo.utils.RxBus;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageNextTrains;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageRoutes;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTrips;
+import com.eleith.calchoochoo.utils.TripUtils;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -30,15 +39,25 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import rx.Subscription;
+import rx.functions.Action1;
 
 public class StopDetailsFragment extends Fragment {
   private Stop stop;
+  private Subscription subscription;
+  private ArrayList<PossibleTrain> possibleTrains;
+  private ArrayList<Routes> routes;
+  private ArrayList<Trips> trips;
 
   @BindView(R.id.stop_details_trains)
   LinearLayout stopDetailsTrains;
 
   @Inject
+  RxBus rxBus;
+  @Inject
   ChooChooFragmentManager chooChooFragmentManager;
+  @Inject
+  ChooChooLoader chooChooLoader;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -53,7 +72,10 @@ public class StopDetailsFragment extends Fragment {
 
     View view = inflater.inflate(R.layout.fragment_stop_cards, container, false);
     ButterKnife.bind(this, view);
-    addRecentTrains();
+    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
+    chooChooLoader.loadPossibleTrains(stop.stop_id, new LocalDateTime());
+    chooChooLoader.loadRoutes();
+    chooChooLoader.loadTrips();
     return view;
   }
 
@@ -72,17 +94,16 @@ public class StopDetailsFragment extends Fragment {
   @Override
   public void onDestroy() {
     super.onDestroy();
+    subscription.unsubscribe();
   }
 
   private void addRecentTrains() {
-    ArrayList<PossibleTrain> possibleTrains = Queries.findNextTrain(stop, new LocalDateTime());
-
-    if (possibleTrains.size() > 0) {
+    if (possibleTrains != null && possibleTrains.size() > 0 && routes != null && trips != null) {
       for (int i = 0; i < possibleTrains.size(); i++) {
         PossibleTrain possibleTrain = possibleTrains.get(i);
-        final Trips trip = Queries.getTripById(possibleTrain.getTripId());
-        Routes route = Queries.getRouteById(possibleTrain.getRouteId());
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
+        Routes route = RouteUtils.getRouteById(routes, possibleTrain.getRouteId());
+        final Trips trip = TripUtils.getTripById(trips, possibleTrain.getTripId());
 
         View recentTrains = LayoutInflater.from(getContext()).inflate(R.layout.fragment_stop_card_widget_trainitem, stopDetailsTrains, false);
         TextView recentTrainNumber = (TextView) recentTrains.findViewById(R.id.stop_card_widget_trainitem_number);
@@ -118,5 +139,24 @@ public class StopDetailsFragment extends Fragment {
       View noMoreTrains = LayoutInflater.from(getContext()).inflate(R.layout.fragment_stop_card_widget_train_nomore, stopDetailsTrains, false);
       stopDetailsTrains.addView(noMoreTrains);
     }
+  }
+
+  private Action1<RxMessage> handleRxMessages() {
+    return new Action1<RxMessage>() {
+      @Override
+      public void call(RxMessage rxMessage) {
+        if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_NEXT_TRAINS)) {
+          possibleTrains = ((RxMessageNextTrains) rxMessage).getMessage();
+          possibleTrains = PossibleTrainUtils.filterByDateTime(possibleTrains, new LocalDateTime());
+          addRecentTrains();
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_ROUTES)) {
+          routes = ((RxMessageRoutes) rxMessage).getMessage();
+          addRecentTrains();
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_TRIP)) {
+          trips = ((RxMessageTrips) rxMessage).getMessage();
+          addRecentTrains();
+        }
+      }
+    };
   }
 }

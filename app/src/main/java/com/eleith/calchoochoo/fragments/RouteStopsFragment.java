@@ -14,12 +14,15 @@ import android.widget.TextView;
 import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.adapters.RouteViewAdapter;
+import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
+import org.joda.time.LocalDateTime;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -28,12 +31,13 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 
 public class RouteStopsFragment extends Fragment {
   private ArrayList<PossibleTrip> possibleTrips;
+  private LocalDateTime stopDateTime = new LocalDateTime();
+  private int stopMethod = RxMessageStopsAndDetails.DETAIL_ARRIVING;
   private Subscription subscription;
   private ChooChooActivity chooChooActivity;
 
@@ -41,6 +45,8 @@ public class RouteStopsFragment extends Fragment {
   RxBus rxBus;
   @Inject
   RouteViewAdapter routeViewAdapter;
+  @Inject
+  ChooChooLoader chooChooLoader;
 
   @BindView(R.id.trips_possible_empty_state)
   TextView tripsPossibleEmptyState;
@@ -74,12 +80,13 @@ public class RouteStopsFragment extends Fragment {
 
       recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
       recyclerView.setAdapter(routeViewAdapter);
+      chooChooActivity.fabEnable(R.drawable.ic_swap_vert_black_24dp);
     } else {
       tripsPossibleRecyclerView.setVisibility(View.GONE);
       tripsPossibleEmptyState.setVisibility(View.VISIBLE);
     }
-    chooChooActivity.fabEnable(R.drawable.ic_swap_vert_black_24dp);
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
+    chooChooLoader.loadRoutes();
     return view;
   }
 
@@ -93,12 +100,16 @@ public class RouteStopsFragment extends Fragment {
   @Override
   public void onSaveInstanceState(Bundle outState) {
     outState.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTrips));
+    outState.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
+    outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
     super.onSaveInstanceState(outState);
   }
 
   private void unPackBundle(Bundle bundle) {
     if (bundle != null) {
       possibleTrips = Parcels.unwrap(bundle.getParcelable(BundleKeys.ROUTE_STOPS));
+      stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME));
+      stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
     }
   }
 
