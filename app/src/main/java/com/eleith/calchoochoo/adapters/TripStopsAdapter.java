@@ -27,8 +27,8 @@ import butterknife.OnClick;
 
 @ChooChooScope
 public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneTripStopHolder> {
-  private ArrayList<Pair<Stop, StopTimes>> tripStops;
-  private ArrayList<Stop> stops;
+  private ArrayList<Pair<Stop, StopTimes>> tripStops = new ArrayList<>();
+  private ArrayList<Stop> stops = new ArrayList<>();
   private RxBus rxBus;
   private ChooChooFragmentManager chooChooFragmentManager;
   private final static int ITEM_TYPE_SOURCE = 0;

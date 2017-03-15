@@ -12,8 +12,6 @@ import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.PossibleTrip;
-import com.eleith.calchoochoo.data.Routes;
-import com.eleith.calchoochoo.utils.RouteUtils;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -30,7 +28,6 @@ import butterknife.OnClick;
 @ChooChooScope
 public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.RouteViewHolder> {
   private ArrayList<PossibleTrip> possibleTrips;
-  private ArrayList<Routes> routes;
   private ChooChooActivity chooChooActivity;
   private ChooChooFragmentManager chooChooFragmentManager;
 
@@ -42,11 +39,6 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
 
   public void setPossibleTrips(ArrayList<PossibleTrip> possibleTrips) {
     this.possibleTrips = possibleTrips;
-  }
-
-  public void setRoutes(ArrayList<Routes> routes) {
-    this.routes = routes;
-    notifyDataSetChanged();
   }
 
   @Override
@@ -66,15 +58,12 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
     holder.departureTime.setText(dateTimeFormatter.print(possibleTrip.getDepartureTime()));
     holder.tripPrice.setText(String.format(Locale.getDefault(), "$%.2f", price));
 
-    if (routes != null) {
-      Routes route = RouteUtils.getRouteById(routes, possibleTrip.getRouteId());
-      if (route != null && route.route_long_name.contains("Bullet")) {
-        holder.trainImage.setImageDrawable(chooChooActivity.getDrawable(R.drawable.ic_train_bullet));
-        holder.trainImage.setContentDescription(chooChooActivity.getString(R.string.bullet_train));
-      } else {
-        holder.trainImage.setImageDrawable(chooChooActivity.getDrawable(R.drawable.ic_train_local));
-        holder.trainImage.setContentDescription(chooChooActivity.getString(R.string.local_train));
-      }
+    if (possibleTrip.getRouteLongName().contains("Bullet")) {
+      holder.trainImage.setImageDrawable(chooChooActivity.getDrawable(R.drawable.ic_train_bullet));
+      holder.trainImage.setContentDescription(chooChooActivity.getString(R.string.bullet_train));
+    } else {
+      holder.trainImage.setImageDrawable(chooChooActivity.getDrawable(R.drawable.ic_train_local));
+      holder.trainImage.setContentDescription(chooChooActivity.getString(R.string.local_train));
     }
 
     holder.trainImage.setTransitionName(chooChooActivity.getString(R.string.transition_train_image) + possibleTrip.getTripId());

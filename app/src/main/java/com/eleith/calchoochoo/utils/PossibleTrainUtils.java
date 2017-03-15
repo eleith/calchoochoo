@@ -24,14 +24,20 @@ public class PossibleTrainUtils {
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
       String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
       String stopId = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
+      String routeLongName = cursor.getString(cursor.getColumnIndex("route_long_name"));
+      String tripShortName = cursor.getString(cursor.getColumnIndex("trip_short_name"));
+      int tripDirectionId = cursor.getInt(cursor.getColumnIndex("trip_direction_id"));
       LocalTime departureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__departure_time")).replaceFirst("^24:", "01:"));
       LocalTime arrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__arrival_time")).replaceFirst("^24:", "01:"));
 
+      possibleTrain.setRouteLongName(routeLongName);
       possibleTrain.setRouteId(routeId);
       possibleTrain.setTripId(tripId);
       possibleTrain.setStopId(stopId);
       possibleTrain.setDepartureTime(departureTime);
       possibleTrain.setArrivalTime(arrivalTime);
+      possibleTrain.setTripDirectionId(tripDirectionId);
+      possibleTrain.setTripShortName(tripShortName);
 
       possibleTrains.add(possibleTrain);
     }
@@ -41,7 +47,10 @@ public class PossibleTrainUtils {
 
   public static Cursor getPossibleTrainQuery(SQLiteDatabase db, String stop_id, Long dateTimeString) {
     String query = "SELECT " +
+        "trips.direction_id as trip_direction_id, " +
+        "trips.trip_short_name as trip_short_name, " +
         "routes.route_id as route_id, " +
+        "routes.route_long_name as route_long_name, " +
         "st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
         "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence " +
         "FROM " +

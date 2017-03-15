@@ -46,7 +46,6 @@ public class StopDetailsFragment extends Fragment {
   private Stop stop;
   private Subscription subscription;
   private ArrayList<PossibleTrain> possibleTrains;
-  private ArrayList<Routes> routes;
   private ArrayList<Trips> trips;
 
   @BindView(R.id.stop_details_trains)
@@ -98,12 +97,10 @@ public class StopDetailsFragment extends Fragment {
   }
 
   private void addRecentTrains() {
-    if (possibleTrains != null && possibleTrains.size() > 0 && routes != null && trips != null) {
+    if (possibleTrains != null && possibleTrains.size() > 0 && trips != null) {
       for (int i = 0; i < possibleTrains.size(); i++) {
-        PossibleTrain possibleTrain = possibleTrains.get(i);
+        final PossibleTrain possibleTrain = possibleTrains.get(i);
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
-        Routes route = RouteUtils.getRouteById(routes, possibleTrain.getRouteId());
-        final Trips trip = TripUtils.getTripById(trips, possibleTrain.getTripId());
 
         View recentTrains = LayoutInflater.from(getContext()).inflate(R.layout.fragment_stop_card_widget_trainitem, stopDetailsTrains, false);
         TextView recentTrainNumber = (TextView) recentTrains.findViewById(R.id.stop_card_widget_trainitem_number);
@@ -111,16 +108,14 @@ public class StopDetailsFragment extends Fragment {
         ImageView recentTrainImage = (ImageView) recentTrains.findViewById(R.id.stop_card_widget_trainitem_image);
         TextView recentTrainTime = (TextView) recentTrains.findViewById(R.id.stop_card_widget_trainitem_time);
 
-        if (trip != null) {
-          recentTrainNumber.setText(trip.trip_id);
-          if (trip.direction_id == 1) {
-            recentTrainDirection.setText(getContext().getString(R.string.south_bound));
-          } else {
-            recentTrainDirection.setText(getContext().getString(R.string.north_bound));
-          }
+        recentTrainNumber.setText(possibleTrain.getTripId());
+        if (possibleTrain.getTripDirectionId() == 1) {
+          recentTrainDirection.setText(getContext().getString(R.string.south_bound));
+        } else {
+          recentTrainDirection.setText(getContext().getString(R.string.north_bound));
         }
 
-        if (route != null && route.route_long_name.contains("Bullet")) {
+        if (possibleTrain.getRouteLongName().contains("Bullet")) {
           recentTrainImage.setImageDrawable(getContext().getDrawable(R.drawable.ic_train_bullet));
         } else {
           recentTrainImage.setImageDrawable(getContext().getDrawable(R.drawable.ic_train_local));
@@ -129,15 +124,12 @@ public class StopDetailsFragment extends Fragment {
         recentTrains.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View v) {
-            chooChooFragmentManager.loadSearchForSpotFragment(stop, trip);
+            chooChooFragmentManager.loadSearchForSpotFragment(stop, TripUtils.getTripById(trips, possibleTrain.getTripId()));
           }
         });
         recentTrainTime.setText(dateTimeFormatter.print(possibleTrain.getDepartureTime()));
         stopDetailsTrains.addView(recentTrains);
       }
-    } else {
-      View noMoreTrains = LayoutInflater.from(getContext()).inflate(R.layout.fragment_stop_card_widget_train_nomore, stopDetailsTrains, false);
-      stopDetailsTrains.addView(noMoreTrains);
     }
   }
 
@@ -149,10 +141,7 @@ public class StopDetailsFragment extends Fragment {
           possibleTrains = ((RxMessageNextTrains) rxMessage).getMessage();
           possibleTrains = PossibleTrainUtils.filterByDateTime(possibleTrains, new LocalDateTime());
           addRecentTrains();
-        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_ROUTES)) {
-          routes = ((RxMessageRoutes) rxMessage).getMessage();
-          addRecentTrains();
-        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_TRIP)) {
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_TRIPS)) {
           trips = ((RxMessageTrips) rxMessage).getMessage();
           addRecentTrains();
         }

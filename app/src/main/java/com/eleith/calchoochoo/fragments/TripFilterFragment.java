@@ -123,6 +123,7 @@ public class TripFilterFragment extends Fragment {
   void refreshDateClick() {
     stopDateTime = new LocalDateTime();
     updateTimeEdit();
+    chooChooLoader.loadPossibleTrips(stopSource.stop_id, stopDestination.stop_id, stopDateTime);
   }
 
   @OnClick(R.id.trip_filter_destination)
@@ -168,6 +169,9 @@ public class TripFilterFragment extends Fragment {
       @Override
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED)) {
+          Stop stopTemp = stopDestination;
+          stopDestination = stopSource;
+          stopSource = stopTemp;
           chooChooLoader.loadPossibleTrips(stopSource.stop_id, stopDestination.stop_id, stopDateTime);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageStopMethodAndDateTime) rxMessage).getMessage();

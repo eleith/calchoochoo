@@ -6,6 +6,8 @@ import org.parceler.Parcel;
 @Parcel
 public class PossibleTrip {
   private String firstStopId = "";
+  private String firstStopName = "";
+  private String lastStopName = "";
   private String lastStopId = "";
   private LocalTime arrivalTime;
   private LocalTime departureTime;
@@ -13,6 +15,31 @@ public class PossibleTrip {
   private String tripId;
   private float price;
   private Integer firstStopSequence;
+  private String routeLongName = "";
+
+  public String getFirstStopName() {
+    return firstStopName;
+  }
+
+  public String getLastStopName() {
+    return lastStopName;
+  }
+
+  public void setFirstStopName(String firstStopName) {
+    this.firstStopName = firstStopName;
+  }
+
+  public void setLastStopName(String lastStopName) {
+    this.lastStopName = lastStopName;
+  }
+
+  public String getRouteLongName() {
+    return routeLongName;
+  }
+
+  public void setRouteLongName(String routeLongName) {
+    this.routeLongName = routeLongName;
+  }
 
   public Integer getLastStopSequence() {
     return lastStopSequence;

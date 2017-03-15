@@ -20,6 +20,7 @@ import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStops;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTripStops;
 
 import org.parceler.Parcels;
@@ -35,6 +36,7 @@ import rx.functions.Action1;
 public class TripDetailFragment extends Fragment {
   private PossibleTrip possibleTrip;
   private ArrayList<Pair<Stop, StopTimes>> tripStops;
+  private ArrayList<Stop> parentStops;
   private Subscription subscription;
 
   @Inject
@@ -93,7 +95,15 @@ public class TripDetailFragment extends Fragment {
         if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_TRIP_DETAILS)) {
           tripStops = ((RxMessageTripStops) rxMessage).getMessage();
           tripStopsAdapter.setTripStops(tripStops);
-          tripStopsAdapter.notifyDataSetChanged();
+          if (tripStops != null && parentStops != null) {
+            tripStopsAdapter.notifyDataSetChanged();
+          }
+        } else if(rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOPS)) {
+          parentStops = ((RxMessageStops) rxMessage).getMessage();
+          tripStopsAdapter.setStops(parentStops);
+          if (tripStops != null && parentStops != null) {
+            tripStopsAdapter.notifyDataSetChanged();
+          }
         }
       }
     };

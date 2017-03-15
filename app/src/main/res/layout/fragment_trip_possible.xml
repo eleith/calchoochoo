@@ -64,7 +64,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="1.5"
         android:orientation="vertical">
 
         <TextView
@@ -80,7 +80,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="5dp"
-                    android:background="?attr/colorAccent"/>
+            android:background="?attr/colorAccent"/>
 
         <TextView
             android:id="@+id/trip_possible_trip_stop_end_time"

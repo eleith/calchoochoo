@@ -176,7 +176,7 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
         break;
       case ChooChooContentProvider.URI_TRIPS:
         trips = TripUtils.getTripsFromCursor(data);
-        notifyRoutesLoaded();
+        notifyTripsLoaded();
         break;
       case ChooChooContentProvider.URI_FIND_TRIP_STOPS:
         ArrayList<Stop> stops = StopUtils.getStopsFromCursor(data);

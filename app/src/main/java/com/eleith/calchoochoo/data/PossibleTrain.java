@@ -10,6 +10,33 @@ public class PossibleTrain {
   private LocalTime departureTime;
   private String routeId;
   private String tripId;
+  private String routeLongName = "";
+  private int tripDirectionId;
+  private String tripShortName = "";
+
+  public String getTripShortName() {
+    return tripShortName;
+  }
+
+  public void setTripShortName(String tripShortName) {
+    this.tripShortName = tripShortName;
+  }
+
+  public int getTripDirectionId() {
+    return tripDirectionId;
+  }
+
+  public void setTripDirectionId(int tripDirectionId) {
+    this.tripDirectionId = tripDirectionId;
+  }
+
+  public String getRouteLongName() {
+    return routeLongName;
+  }
+
+  public void setRouteLongName(String routeLongName) {
+    this.routeLongName = routeLongName;
+  }
 
   public String getTripId() {
     return tripId;

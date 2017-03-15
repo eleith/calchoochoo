@@ -63,7 +63,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
     }
 
     holder.mItem = stop;
-    holder.mIdView.setText(stop.stop_name);
+    holder.mIdView.setText(stop.stop_name.replace(" Caltrain", ""));
   }
 
   @Override

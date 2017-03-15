@@ -58,7 +58,7 @@ public class ChooChooContentProvider extends ContentProvider {
     uriMatcher.addURI(AUTHORITY, "trips/#", URI_TRIPS_ID);
     uriMatcher.addURI(AUTHORITY, "routes/#", URI_ROUTES_ID);
     uriMatcher.addURI(AUTHORITY, "fareAttributes/id", URI_FAREATTRIBUTES_ID);
-    uriMatcher.addURI(AUTHORITY, "possibleTrain/*/#", URI_FIND_POSSIBLE_TRAIN);
+    uriMatcher.addURI(AUTHORITY, "possibleTrains/*/#", URI_FIND_POSSIBLE_TRAIN);
     uriMatcher.addURI(AUTHORITY, "possibleTrips/trip/*/*/*", URI_FIND_POSSIBLE_TRIP);
     uriMatcher.addURI(AUTHORITY, "possibleTrips/on/#/*/*", URI_FIND_POSSIBLE_TRIPS);
     uriMatcher.addURI(AUTHORITY, "stop_times/trip/*", URI_FIND_TRIP_STOPS);

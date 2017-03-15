@@ -39,9 +39,6 @@ import rx.functions.Action1;
 
 public class TripSummaryFragment extends Fragment {
   private PossibleTrip possibleTrip;
-  private ArrayList<Routes> routes;
-  private ArrayList<Stop> stops;
-  private Subscription subscription;
 
   @Inject
   ChooChooLoader chooChooLoader;
@@ -82,7 +79,6 @@ public class TripSummaryFragment extends Fragment {
     unWrapBundle(savedInstanceState);
     ButterKnife.bind(this, view);
 
-    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     chooChooLoader.loadParentStops();
     chooChooLoader.loadRoutes();
 
@@ -96,6 +92,11 @@ public class TripSummaryFragment extends Fragment {
     super.onSaveInstanceState(outState);
   }
 
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+  }
+
   private void unWrapBundle(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
       possibleTrip = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.POSSIBLE_TRIP));
@@ -103,44 +104,21 @@ public class TripSummaryFragment extends Fragment {
   }
 
   private void updateSummaryBar() {
-    if (routes != null && stops != null) {
-      Stop stopDestination = StopUtils.getStopById(stops, possibleTrip.getLastStopId());
-      Stop stopSource = StopUtils.getStopById(stops, possibleTrip.getFirstStopId());
+    tripSummaryFrom.setText(possibleTrip.getFirstStopName().replace(" Caltrain", ""));
+    tripSummaryTo.setText(possibleTrip.getLastStopName().replace(" Caltrain", ""));
 
-      if (stopDestination != null && stopSource != null) {
-        tripSummaryFrom.setText(stopSource.stop_name.replace(" Caltrain", ""));
-        tripSummaryTo.setText(stopDestination.stop_name.replace(" Caltrain", ""));
-      }
+    tripSummaryPrice.setText(String.format(Locale.getDefault(), "$%.2f", possibleTrip.getPrice()));
+    tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime(), possibleTrip.getDepartureTime()).getMinutes()));
+    tripSummaryNumber.setText(possibleTrip.getTripId());
 
-      tripSummaryPrice.setText(String.format(Locale.getDefault(), "$%.2f", possibleTrip.getPrice()));
-      tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime(), possibleTrip.getDepartureTime()).getMinutes()));
-      tripSummaryNumber.setText(possibleTrip.getTripId());
-
-      Routes route = RouteUtils.getRouteById(routes, possibleTrip.getRouteId());
-      if (route != null && route.route_long_name.contains("Bullet")) {
-        tripSummaryImage.setImageDrawable(getActivity().getDrawable(R.drawable.ic_train_bullet));
-        tripSummaryImage.setContentDescription(getString(R.string.bullet_train));
-      } else {
-        tripSummaryImage.setImageDrawable(getActivity().getDrawable(R.drawable.ic_train_local));
-        tripSummaryImage.setContentDescription(getString(R.string.local_train));
-      }
-
-      tripSummaryImage.setTransitionName(getString(R.string.transition_train_image) + possibleTrip.getTripId());
+    if (possibleTrip.getRouteLongName().contains("Bullet")) {
+      tripSummaryImage.setImageDrawable(getActivity().getDrawable(R.drawable.ic_train_bullet));
+      tripSummaryImage.setContentDescription(getString(R.string.bullet_train));
+    } else {
+      tripSummaryImage.setImageDrawable(getActivity().getDrawable(R.drawable.ic_train_local));
+      tripSummaryImage.setContentDescription(getString(R.string.local_train));
     }
-  }
 
-  private Action1<RxMessage> handleRxMessages() {
-    return new Action1<RxMessage>() {
-      @Override
-      public void call(RxMessage rxMessage) {
-        if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOPS)) {
-          stops = ((RxMessageStops) rxMessage).getMessage();
-          updateSummaryBar();
-        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_ROUTES)) {
-          routes = ((RxMessageRoutes) rxMessage).getMessage();
-          updateSummaryBar();
-        }
-      }
-    };
+    tripSummaryImage.setTransitionName(getString(R.string.transition_train_image) + possibleTrip.getTripId());
   }
 }
