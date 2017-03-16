@@ -1,7 +1,6 @@
 package com.eleith.calchoochoo.utils;
 
 import rx.Observable;
-import rx.functions.Func1;
 import rx.subjects.PublishSubject;
 import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;

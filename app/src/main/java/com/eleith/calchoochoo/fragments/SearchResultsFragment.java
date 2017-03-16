@@ -55,7 +55,7 @@ public class SearchResultsFragment extends Fragment {
   private Stop stopDestination;
   private Long stopDateTime;
   private Stop stopUnknown;
-  private Trips trip;
+  private String tripId;
   private Subscription subscription;
 
   @BindView(R.id.search_results_empty_state)
@@ -105,8 +105,8 @@ public class SearchResultsFragment extends Fragment {
     searchResultsRecyclerView.setAdapter(searchResultsViewAdapter);
 
     chooChooLoader.loadParentStops();
-    if (trip != null && stopUnknown != null) {
-      chooChooLoader.loadStopsOnTrip(trip.trip_id);
+    if (tripId != null && stopUnknown != null) {
+      chooChooLoader.loadStopsOnTrip(tripId);
     }
 
     return view;
@@ -126,8 +126,8 @@ public class SearchResultsFragment extends Fragment {
     if (stopDestination != null) {
       outState.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
     }
-    if (trip != null) {
-      outState.putParcelable(BundleKeys.TRIP, Parcels.wrap(trip));
+    if (tripId != null) {
+      outState.putString(BundleKeys.TRIP, tripId);
     }
     outState.putLong(BundleKeys.STOP_DATETIME, stopDateTime);
     outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
@@ -141,12 +141,12 @@ public class SearchResultsFragment extends Fragment {
       stopSource = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP_SOURCE));
       stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
       stopUnknown = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP));
-      trip = Parcels.unwrap(bundle.getParcelable(BundleKeys.TRIP));
+      tripId = bundle.getString(BundleKeys.TRIP);
     }
   }
 
   private void filterStopsWithKnownStops() {
-    if ((trip == null || stopUnknown == null) && parentStops != null) {
+    if ((tripId == null || stopUnknown == null) && parentStops != null) {
       searchStops = new ArrayList<>(parentStops);
     }
 
@@ -174,8 +174,8 @@ public class SearchResultsFragment extends Fragment {
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_STOP)) {
           Stop stop = (Stop) rxMessage.getMessage();
-          if (trip != null) {
-            chooChooLoader.loadPossibleTrip(trip.trip_id, stopUnknown.stop_id, stop.stop_id);
+          if (tripId != null) {
+            chooChooLoader.loadPossibleTrip(tripId, stopUnknown.stop_id, stop.stop_id);
           } else {
             if (stopDestination == null) {
               stopDestination = stop;

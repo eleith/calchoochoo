@@ -41,7 +41,6 @@ public class StopDetailsFragment extends Fragment {
   private Stop stop;
   private Subscription subscription;
   private ArrayList<PossibleTrain> possibleTrains = new ArrayList<>();
-  private ArrayList<Trips> trips = new ArrayList<>();
 
   @Inject
   RxBus rxBus;
@@ -89,10 +88,9 @@ public class StopDetailsFragment extends Fragment {
   }
 
   private void setAdapterData() {
-    if (stop != null && possibleTrains.size() > 0 && trips.size() > 0) {
+    if (stop != null && possibleTrains.size() > 0) {
       stopTrainsAdapter.setStop(stop);
       stopTrainsAdapter.setPossibleTrains(possibleTrains);
-      stopTrainsAdapter.setTrips(trips);
 
       Integer positionToScrollTo = 0;
       Integer northSelected = 0;
@@ -134,9 +132,6 @@ public class StopDetailsFragment extends Fragment {
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_NEXT_TRAINS)) {
           possibleTrains = ((RxMessageNextTrains) rxMessage).getMessage();
-          setAdapterData();
-        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_TRIPS)) {
-          trips = ((RxMessageTrips) rxMessage).getMessage();
           setAdapterData();
         }
       }

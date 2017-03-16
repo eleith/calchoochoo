@@ -33,7 +33,6 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
   private ChooChooActivity chooChooActivity;
   private ChooChooFragmentManager chooChooFragmentManager;
   private Stop stop;
-  private ArrayList<Trips> trips = new ArrayList<>();
   private Integer southSelected = null;
   private Integer northSelected = null;
 
@@ -45,10 +44,6 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
 
   public void setPossibleTrains(ArrayList<PossibleTrain> possibleTrains) {
     this.possibleTrains = possibleTrains;
-  }
-
-  public void setTrips(ArrayList<Trips> trips) {
-    this.trips = trips;
   }
 
   public void setStop(Stop stop) {
@@ -125,7 +120,7 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
     @OnClick(R.id.stop_card_widget_train_item)
     void onClickTripSummary() {
       PossibleTrain possibleTrain = possibleTrains.get(getAdapterPosition());
-      chooChooFragmentManager.loadSearchForSpotFragment(stop, TripUtils.getTripById(trips, possibleTrain.getTripId()));
+      chooChooFragmentManager.loadSearchForSpotFragment(stop, possibleTrain.getTripId());
     }
 
     private RouteViewHolder(View v) {

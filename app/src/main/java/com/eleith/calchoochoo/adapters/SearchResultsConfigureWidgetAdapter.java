@@ -11,10 +11,8 @@ import com.eleith.calchoochoo.ChooChooWidgetConfigure;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooWidgetConfigureScope;
 import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.utils.DistanceUtils;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 import javax.inject.Inject;
 
@@ -24,8 +22,7 @@ import butterknife.OnClick;
 
 @ChooChooWidgetConfigureScope
 public class SearchResultsConfigureWidgetAdapter extends RecyclerView.Adapter<SearchResultsConfigureWidgetAdapter.ViewHolder> {
-
-  private ArrayList<Stop> stops = new ArrayList<Stop>();
+  private ArrayList<Stop> stops = new ArrayList<>();
   private ChooChooWidgetConfigure activity;
 
   @Inject

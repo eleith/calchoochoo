@@ -204,10 +204,10 @@ public class ChooChooFragmentManager {
     setNextState(ChooChooFragmentManager.STATE_SEARCH_FOR_STOPS, arguments);
   }
 
-  public void loadSearchForSpotFragment(Stop stop, Trips trip) {
+  public void loadSearchForSpotFragment(Stop stop, String tripId) {
     Bundle arguments = new Bundle();
     arguments.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
-    arguments.putParcelable(BundleKeys.TRIP, Parcels.wrap(trip));
+    arguments.putString(BundleKeys.TRIP, tripId);
     setNextState(ChooChooFragmentManager.STATE_SEARCH_FOR_STOPS, arguments);
   }
 

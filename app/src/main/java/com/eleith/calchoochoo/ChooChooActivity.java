@@ -60,11 +60,11 @@ public class ChooChooActivity extends AppCompatActivity {
       String action = intent.getAction();
       Bundle bundle = intent.getExtras();
       if (action.equals(Intent.ACTION_VIEW) && bundle != null) {
-        Trips trip = Parcels.unwrap(bundle.getParcelable(BundleKeys.TRIP));
+        String tripId = bundle.getString(BundleKeys.TRIP);
         Stop stop = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP));
 
-        if (trip != null && stop != null) {
-          chooChooFragmentManager.loadSearchForSpotFragment(stop, trip);
+        if (tripId != null && stop != null) {
+          chooChooFragmentManager.loadSearchForSpotFragment(stop, tripId);
           return;
         }
       }

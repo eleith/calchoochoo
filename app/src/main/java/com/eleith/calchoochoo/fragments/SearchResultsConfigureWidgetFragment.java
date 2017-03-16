@@ -1,6 +1,8 @@
 package com.eleith.calchoochoo.fragments;
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -14,6 +16,8 @@ import android.widget.TextView;
 import com.eleith.calchoochoo.ChooChooWidgetConfigure;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.adapters.SearchResultsConfigureWidgetAdapter;
+import com.eleith.calchoochoo.data.ChooChooDatabase;
+import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -21,6 +25,7 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
+import com.eleith.calchoochoo.utils.StopUtils;
 
 import org.parceler.Parcels;
 
@@ -67,6 +72,12 @@ public class SearchResultsConfigureWidgetFragment extends Fragment {
 
     searchResultsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
+    ChooChooDatabase chooChooDatabase = new ChooChooDatabase(getContext());
+    SQLiteDatabase db = chooChooDatabase.getReadableDatabase();
+    Cursor cursor = db.query("stops", null, "stop_code = '' AND platform_code = ''", null, null, null, null);
+    stops = StopUtils.getStopsFromCursor(cursor);
+    cursor.close();
+
     searchResultsConfigureWidgetAdapter.setStops(stops);
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -83,14 +94,10 @@ public class SearchResultsConfigureWidgetFragment extends Fragment {
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
-    outState.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
     super.onSaveInstanceState(outState);
   }
 
   private void unPackBundle(Bundle bundle) {
-    if (bundle != null) {
-      stops = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOPS));
-    }
   }
 
   private Action1<RxMessage> handleRxMessages() {
