@@ -2,32 +2,30 @@ package com.eleith.calchoochoo.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.adapters.StopTrainsAdapter;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrain;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.PossibleTrainUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageNextTrains;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTrips;
-import com.eleith.calchoochoo.utils.TripUtils;
 
 import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.LocalTime;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -45,15 +43,17 @@ public class StopDetailsFragment extends Fragment {
   private ArrayList<PossibleTrain> possibleTrains = new ArrayList<>();
   private ArrayList<Trips> trips = new ArrayList<>();
 
-  @BindView(R.id.stop_details_trains)
-  LinearLayout stopDetailsTrains;
-
   @Inject
   RxBus rxBus;
   @Inject
   ChooChooFragmentManager chooChooFragmentManager;
   @Inject
   ChooChooLoader chooChooLoader;
+  @Inject
+  StopTrainsAdapter stopTrainsAdapter;
+
+  @BindView(R.id.stop_details_recyclerview)
+  RecyclerView stopDetailsRecyclerView;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -66,12 +66,19 @@ public class StopDetailsFragment extends Fragment {
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     unPackBundle(savedInstanceState);
 
-    View view = inflater.inflate(R.layout.fragment_stop_cards, container, false);
+    View view = inflater.inflate(R.layout.fragment_stop_details, container, false);
     ButterKnife.bind(this, view);
+
+    stopDetailsRecyclerView.setNestedScrollingEnabled(false);
+    stopDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+    setAdapterData();
+    stopDetailsRecyclerView.setAdapter(stopTrainsAdapter);
+
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     chooChooLoader.loadPossibleTrains(stop.stop_id, new LocalDateTime());
     chooChooLoader.loadRoutes();
     chooChooLoader.loadTrips();
+
     return view;
   }
 
@@ -79,6 +86,34 @@ public class StopDetailsFragment extends Fragment {
   public void onSaveInstanceState(Bundle outState) {
     outState.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
     super.onSaveInstanceState(outState);
+  }
+
+  private void setAdapterData() {
+    if (stop != null && possibleTrains.size() > 0 && trips.size() > 0) {
+      stopTrainsAdapter.setStop(stop);
+      stopTrainsAdapter.setPossibleTrains(possibleTrains);
+      stopTrainsAdapter.setTrips(trips);
+
+      Integer positionToScrollTo = 0;
+      Integer northSelected = 0;
+      Integer southSelected = 0;
+      LocalTime now = new LocalTime();
+      for (PossibleTrain possibleTrain : possibleTrains) {
+        if (possibleTrain.getDepartureTime().isBefore(now)) {
+          positionToScrollTo++;
+          if (possibleTrain.getTripDirectionId() == 1) {
+            northSelected = positionToScrollTo;
+          } else {
+            southSelected = positionToScrollTo;
+          }
+        }
+      }
+
+      stopTrainsAdapter.setSouthSelected(northSelected);
+      stopTrainsAdapter.setNorthSelected(southSelected);
+      stopTrainsAdapter.notifyDataSetChanged();
+      stopDetailsRecyclerView.scrollToPosition(positionToScrollTo);
+    }
   }
 
   private void unPackBundle(Bundle bundle) {
@@ -93,54 +128,16 @@ public class StopDetailsFragment extends Fragment {
     subscription.unsubscribe();
   }
 
-  private void addRecentTrains() {
-    if (possibleTrains != null && possibleTrains.size() > 0 && trips.size() > 0) {
-      for (int i = 0; i < possibleTrains.size(); i++) {
-        final PossibleTrain possibleTrain = possibleTrains.get(i);
-        DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
-
-        View recentTrains = LayoutInflater.from(getContext()).inflate(R.layout.fragment_stop_card_widget_trainitem, stopDetailsTrains, false);
-        TextView recentTrainNumber = (TextView) recentTrains.findViewById(R.id.stop_card_widget_trainitem_number);
-        TextView recentTrainDirection = (TextView) recentTrains.findViewById(R.id.stop_card_widget_direction);
-        ImageView recentTrainImage = (ImageView) recentTrains.findViewById(R.id.stop_card_widget_trainitem_image);
-        TextView recentTrainTime = (TextView) recentTrains.findViewById(R.id.stop_card_widget_trainitem_time);
-
-        recentTrainNumber.setText(possibleTrain.getTripId());
-        if (possibleTrain.getTripDirectionId() == 1) {
-          recentTrainDirection.setText(getContext().getString(R.string.south_bound));
-        } else {
-          recentTrainDirection.setText(getContext().getString(R.string.north_bound));
-        }
-
-        if (possibleTrain.getRouteLongName().contains("Bullet")) {
-          recentTrainImage.setImageDrawable(getContext().getDrawable(R.drawable.ic_train_bullet));
-        } else {
-          recentTrainImage.setImageDrawable(getContext().getDrawable(R.drawable.ic_train_local));
-        }
-
-        recentTrains.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            chooChooFragmentManager.loadSearchForSpotFragment(stop, TripUtils.getTripById(trips, possibleTrain.getTripId()));
-          }
-        });
-        recentTrainTime.setText(dateTimeFormatter.print(possibleTrain.getDepartureTime()));
-        stopDetailsTrains.addView(recentTrains);
-      }
-    }
-  }
-
   private Action1<RxMessage> handleRxMessages() {
     return new Action1<RxMessage>() {
       @Override
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_NEXT_TRAINS)) {
           possibleTrains = ((RxMessageNextTrains) rxMessage).getMessage();
-          possibleTrains = PossibleTrainUtils.filterByDateTime(possibleTrains, new LocalDateTime());
-          addRecentTrains();
+          setAdapterData();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_TRIPS)) {
           trips = ((RxMessageTrips) rxMessage).getMessage();
-          addRecentTrains();
+          setAdapterData();
         }
       }
     };

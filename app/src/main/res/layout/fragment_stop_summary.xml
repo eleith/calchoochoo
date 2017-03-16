@@ -50,37 +50,6 @@
                 android:textSize="14sp"
                 tools:text="5"
                 />
-            </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp"
-            android:paddingEnd="10dp"
-            android:gravity="end"
-            android:paddingStart="10dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="2sp"
-                android:textColor="?android:colorBackground"
-                android:textSize="14sp"
-                android:text="@string/trains_seen"
-                />
-
-            <TextView
-                android:id="@+id/stop_summary_datetime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="3sp"
-                android:layout_marginStart="3sp"
-                android:textColor="?android:colorBackground"
-                android:textSize="14sp"
-                tools:text="5:00pm on 4/11"
-                />
         </LinearLayout>
 
     </LinearLayout>

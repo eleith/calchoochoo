@@ -13,29 +13,18 @@ import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
-import com.eleith.calchoochoo.data.Routes;
-import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.RouteUtils;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageRoutes;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStops;
-import com.eleith.calchoochoo.utils.StopUtils;
 
 import org.joda.time.Minutes;
 import org.parceler.Parcels;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscription;
-import rx.functions.Action1;
 
 public class TripSummaryFragment extends Fragment {
   private PossibleTrip possibleTrip;
@@ -69,8 +58,6 @@ public class TripSummaryFragment extends Fragment {
     super.onCreate(savedInstanceState);
     ((ChooChooActivity) getActivity()).getComponent().inject(this);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
-    setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.image_transform));
-    setSharedElementReturnTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.image_transform));
   }
 
   @Override
@@ -78,10 +65,6 @@ public class TripSummaryFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_trip_summary, container, false);
     unWrapBundle(savedInstanceState);
     ButterKnife.bind(this, view);
-
-    chooChooLoader.loadParentStops();
-    chooChooLoader.loadRoutes();
-
     updateSummaryBar();
     return view;
   }
@@ -118,7 +101,5 @@ public class TripSummaryFragment extends Fragment {
       tripSummaryImage.setImageDrawable(getActivity().getDrawable(R.drawable.ic_train_local));
       tripSummaryImage.setContentDescription(getString(R.string.local_train));
     }
-
-    tripSummaryImage.setTransitionName(getString(R.string.transition_train_image) + possibleTrip.getTripId());
   }
 }

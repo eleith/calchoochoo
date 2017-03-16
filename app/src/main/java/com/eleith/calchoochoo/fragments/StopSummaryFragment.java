@@ -17,9 +17,6 @@ import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 
-import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.parceler.Parcels;
 
 import java.util.Locale;
@@ -40,8 +37,6 @@ public class StopSummaryFragment extends Fragment {
   TextView stopName;
   @BindView(R.id.stop_summary_zone)
   TextView stopZone;
-  @BindView(R.id.stop_summary_datetime)
-  TextView stopDateTime;
 
   @Inject
   RxBus rxBus;
@@ -60,11 +55,9 @@ public class StopSummaryFragment extends Fragment {
     ButterKnife.bind(this, view);
 
     unWrapBundle(savedInstanceState);
-    DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mm a 'on' M/d");
 
     stopName.setText(stop.stop_name);
     stopZone.setText(String.format(Locale.getDefault(), "%d", stop.zone_id + 1));
-    stopDateTime.setText(dateTimeFormatter.print(new LocalDateTime()));
 
     chooChooActivity.fabEnable(R.drawable.ic_link_black_24dp);
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());

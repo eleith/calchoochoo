@@ -1,11 +1,9 @@
 package com.eleith.calchoochoo;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.View;
 
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Stop;
@@ -34,7 +32,6 @@ import java.util.ArrayList;
 public class ChooChooFragmentManager {
   private FragmentManager fragmentManager;
   private FragmentTransaction fragmentTransaction;
-  private ArrayList<View> sharedTransitions;
 
   public static final String STATE_CONFIGURE_WIDGET = "configure_widget";
   public static final String STATE_SEARCH_FOR_STOPS = "search_for_stops";
@@ -112,7 +109,7 @@ public class ChooChooFragmentManager {
         tripFilterSelectMoreFragment.setArguments(arguments);
         routeStopsFragment.setArguments(arguments);
 
-        if (arguments.getParcelable(BundleKeys.ROUTE_STOPS) != null) {
+        if (arguments.getParcelable(BundleKeys.STOP_DESTINATION) != null && arguments.getParcelable(BundleKeys.STOP_SOURCE) != null) {
           updateTopAndBottomFragments(tripFilterFragmentResults, routeStopsFragment, true, stateID);
         } else {
           updateTopAndBottomFragments(tripFilterFragmentResults, tripFilterSelectMoreFragment, true, stateID);
@@ -193,15 +190,8 @@ public class ChooChooFragmentManager {
         fragmentTransaction.addToBackStack(stateId);
       }
 
-      if (sharedTransitions != null) {
-        for (View view : sharedTransitions) {
-          fragmentTransaction.addSharedElement(view, view.getTransitionName());
-        }
-      }
-
       fragmentTransaction.commit();
       fragmentTransaction = null;
-      sharedTransitions = null;
     }
   }
 
@@ -210,7 +200,7 @@ public class ChooChooFragmentManager {
     arguments.putInt(BundleKeys.STOP_METHOD, stopMethod);
     arguments.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
     arguments.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
-   arguments.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
+    arguments.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
     setNextState(ChooChooFragmentManager.STATE_SEARCH_FOR_STOPS, arguments);
   }
 
@@ -229,11 +219,6 @@ public class ChooChooFragmentManager {
   }
 
   public void loadTripDetailsFragments(PossibleTrip possibleTrip) {
-    loadTripDetailsFragments(possibleTrip, null);
-  }
-
-  public void loadTripDetailsFragments(PossibleTrip possibleTrip, ArrayList<View> views) {
-    this.sharedTransitions = views;
     Bundle arguments = new Bundle();
     arguments.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
     setNextState(ChooChooFragmentManager.STATE_SHOW_TRIP, arguments);

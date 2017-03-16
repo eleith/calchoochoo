@@ -66,7 +66,6 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
       holder.trainImage.setContentDescription(chooChooActivity.getString(R.string.local_train));
     }
 
-    holder.trainImage.setTransitionName(chooChooActivity.getString(R.string.transition_train_image) + possibleTrip.getTripId());
     holder.tripNumber.setText(possibleTrip.getTripId());
   }
 
@@ -90,9 +89,7 @@ public class RouteViewAdapter extends RecyclerView.Adapter<RouteViewAdapter.Rout
     @OnClick(R.id.trip_possible_summary)
     void onClickTripSummary() {
       PossibleTrip possibleTrip = possibleTrips.get(getAdapterPosition());
-      ArrayList<View> views = new ArrayList<>();
-      views.add((View) trainImage);
-      chooChooFragmentManager.loadTripDetailsFragments(possibleTrip, views);
+      chooChooFragmentManager.loadTripDetailsFragments(possibleTrip);
     }
 
     private RouteViewHolder(View v) {

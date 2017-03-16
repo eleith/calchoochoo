@@ -25,11 +25,14 @@ public class CalendarDateUtils {
       case 3:
         calendarFilter = "  AND calendar.wednesday = 1 ";
         break;
-      case 5:
+      case 4:
         calendarFilter = "  AND calendar.thursday = 1 ";
         break;
-      case 6:
+      case 5:
         calendarFilter = "  AND calendar.friday = 1 ";
+        break;
+      case 6:
+        calendarFilter = "  AND calendar.saturday = 1 ";
         break;
       case 7:
         calendarFilter = "  AND calendar.saturday = 1 ";

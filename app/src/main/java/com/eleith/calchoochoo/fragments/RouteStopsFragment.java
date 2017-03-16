@@ -6,7 +6,6 @@ import android.support.v4.util.Pair;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,7 @@ import rx.Subscription;
 import rx.functions.Action1;
 
 public class RouteStopsFragment extends Fragment {
-  private ArrayList<PossibleTrip> possibleTrips;
+  private ArrayList<PossibleTrip> possibleTrips = new ArrayList<>();
   private LocalDateTime stopDateTime = new LocalDateTime();
   private int stopMethod = RxMessageStopsAndDetails.DETAIL_ARRIVING;
   private Subscription subscription;
@@ -63,8 +62,6 @@ public class RouteStopsFragment extends Fragment {
     chooChooActivity = (ChooChooActivity) getActivity();
     chooChooActivity.getComponent().inject(this);
     unWrapBundle(savedInstanceState != null ? savedInstanceState : getArguments());
-    setSharedElementReturnTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.image_transform));
-    setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.image_transform));
   }
 
   @Override
@@ -73,22 +70,16 @@ public class RouteStopsFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_trips_possible, container, false);
     ButterKnife.bind(this, view);
 
-    if (possibleTrips.size() > 0) {
-      tripsPossibleEmptyState.setVisibility(View.GONE);
-      tripsPossibleRecyclerView.setVisibility(View.VISIBLE);
-      RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.trips_possible_recyclerview);
-      recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-      recyclerView.setNestedScrollingEnabled(false);
+    RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.trips_possible_recyclerview);
+    recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
+    recyclerView.setNestedScrollingEnabled(false);
 
-      setPossibleTrips(possibleTrips);
+    setPossibleTrips(possibleTrips);
 
-      recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-      recyclerView.setAdapter(routeViewAdapter);
-      chooChooActivity.fabEnable(R.drawable.ic_swap_vert_black_24dp);
-    } else {
-      tripsPossibleRecyclerView.setVisibility(View.GONE);
-      tripsPossibleEmptyState.setVisibility(View.VISIBLE);
-    }
+    recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+    recyclerView.setAdapter(routeViewAdapter);
+    chooChooActivity.fabEnable(R.drawable.ic_swap_vert_black_24dp);
+
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     chooChooLoader.loadRoutes();
     return view;
@@ -102,9 +93,19 @@ public class RouteStopsFragment extends Fragment {
   }
 
   public void setPossibleTrips(ArrayList<PossibleTrip> possibleTrips) {
-    this.possibleTrips = PossibleTripUtils.filterByDateTimeAndDirection(possibleTrips, stopDateTime, stopMethod == RxMessageStopsAndDetails.DETAIL_ARRIVING);
-    routeViewAdapter.setPossibleTrips(this.possibleTrips);
-    routeViewAdapter.notifyDataSetChanged();
+    if (possibleTrips != null && possibleTrips.size() > 0) {
+      this.possibleTrips = PossibleTripUtils.filterByDateTimeAndDirection(possibleTrips, stopDateTime, stopMethod == RxMessageStopsAndDetails.DETAIL_ARRIVING);
+    }
+
+    if (this.possibleTrips != null && this.possibleTrips.size() > 0) {
+      routeViewAdapter.setPossibleTrips(this.possibleTrips);
+      routeViewAdapter.notifyDataSetChanged();
+      tripsPossibleEmptyState.setVisibility(View.GONE);
+      tripsPossibleRecyclerView.setVisibility(View.VISIBLE);
+    } else {
+      tripsPossibleRecyclerView.setVisibility(View.GONE);
+      tripsPossibleEmptyState.setVisibility(View.VISIBLE);
+    }
   }
 
   @Override

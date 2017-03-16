@@ -67,6 +67,7 @@ public class TripDetailFragment extends Fragment {
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     chooChooLoader.loadTripStops(possibleTrip.getTripId(), possibleTrip.getFirstStopId(), possibleTrip.getLastStopId());
+    chooChooLoader.loadParentStops();
     return view;
   }
 
