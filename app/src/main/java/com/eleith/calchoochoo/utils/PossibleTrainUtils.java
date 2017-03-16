@@ -32,12 +32,12 @@ public class PossibleTrainUtils {
 
       possibleTrain.setRouteLongName(routeLongName);
       possibleTrain.setRouteId(routeId);
-      possibleTrain.setTripId(tripId);
       possibleTrain.setStopId(stopId);
       possibleTrain.setDepartureTime(departureTime);
       possibleTrain.setArrivalTime(arrivalTime);
       possibleTrain.setTripDirectionId(tripDirectionId);
       possibleTrain.setTripShortName(tripShortName);
+      possibleTrain.setTripId(tripId);
 
       possibleTrains.add(possibleTrain);
     }

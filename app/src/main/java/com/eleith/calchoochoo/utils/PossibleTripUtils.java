@@ -5,7 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
 import com.eleith.calchoochoo.data.PossibleTrip;
-import com.eleith.calchoochoo.data.Trips;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
@@ -15,9 +14,9 @@ import java.util.ArrayList;
 public class PossibleTripUtils {
   @Nullable
   public static PossibleTrip getPossibleTripFromCursor(Cursor cursor) {
-    PossibleTrip possibleTrip = new PossibleTrip();
 
-    if (!cursor.isAfterLast()) {
+    if (cursor.moveToNext()) {
+      PossibleTrip possibleTrip = new PossibleTrip();
       Float price = cursor.getFloat(cursor.getColumnIndex("price"));
 
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
@@ -69,9 +68,11 @@ public class PossibleTripUtils {
   public static ArrayList<PossibleTrip> getPossibleTripsFromCursor(Cursor cursor) {
     ArrayList<PossibleTrip> possibleTrips = new ArrayList<>();
 
-    while (cursor.moveToNext()) {
+    while (cursor.getPosition() < cursor.getCount()) {
       PossibleTrip possibleTrip = getPossibleTripFromCursor(cursor);
-      possibleTrips.add(possibleTrip);
+      if (possibleTrip != null) {
+        possibleTrips.add(possibleTrip);
+      }
     }
 
     return possibleTrips;

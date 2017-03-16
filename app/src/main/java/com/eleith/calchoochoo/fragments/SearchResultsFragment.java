@@ -84,7 +84,6 @@ public class SearchResultsFragment extends Fragment {
 
     unWrapBundle(savedInstanceState != null ? savedInstanceState : getArguments());
     setEnterTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_up));
-    setExitTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.slide_down));
   }
 
   @Override

@@ -58,6 +58,24 @@ public class StopTimesUtils {
     }
   }
 
+  @Nullable
+  public static Cursor getStopsFromStopTimesQuery(SQLiteDatabase db, String trip_id) {
+    String query = "SELECT * FROM stops, " +
+        " (SELECT " +
+        "     st.trip_id as st__trip_id, st.arrival_time as st__arrival_time, st.departure_time as st__departure_time, " +
+        "     st.stop_id as st__stop_id, st.stop_sequence as st__stop_sequence, st.pickup_time as st__pickup_time, st.drop_off_type as st__drop_off_type, " +
+        "     s.stop_id as s_stop_id, s.zone_id as s_zone_id, s.stop_name as s_stop_name, s.stop_lat as s_stop_lat, s.stop_lon as s_stop_lon, " +
+        "     s.parent_station as s_parent_station, s.stop_url as s_stop_url, s.platform_code as s_platform_code, s.stop_code as s_stop_code, s.wheelchar_board as s_wheelchar_board " +
+        "   FROM stops as s, stop_times as st " +
+        "   WHERE st.trip_id = ? " +
+        "   AND s.stop_id = st.stop_id) as stop_in_stop_times " +
+        " WHERE stop_id = stop_in_stop_times.s_parent_station " +
+        " ORDER BY stop_name ASC";
+
+    String[] args = {trip_id};
+    return db.rawQuery(query, args);
+  }
+
   public static ArrayList<Pair<Stop, StopTimes>> getStopTimesTripFromCursor(Cursor cursor) {
     ArrayList<Pair<Stop, StopTimes>> stopAndTimes = new ArrayList<>();
 

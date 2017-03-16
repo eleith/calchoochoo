@@ -138,8 +138,8 @@ public class ChooChooContentProvider extends ContentProvider {
         String nextPossibleTripsStop2 = uri.getPathSegments().get(4);
         cursor = PossibleTripUtils.getPossibleTripsQuery(db, dateTime, nextPossibleTripsStop1, nextPossibleTripsStop2); break;
       case URI_FIND_TRIP_STOPS:
-        args.add(uri.getPathSegments().get(2));
-        cursor = db.query("stop_times", projection, "trip_id = ?", args.toArray(new String[1]), null, null, sortOrder);
+        String stopFromStopTimesTripId = uri.getPathSegments().get(2);
+        cursor = StopTimesUtils.getStopsFromStopTimesQuery(db, stopFromStopTimesTripId);
         break;
       case URI_FIND_STOP_TIMES_TRIP:
         String tripDetailsTrip = uri.getPathSegments().get(1);

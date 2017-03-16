@@ -67,7 +67,6 @@ public class ChooChooFragmentManager {
         searchInputFragment.setArguments(arguments);
 
         updateTopAndBottomFragments(searchInputFragment, searchResultsFragment, false, stateID);
-        //addToBackStack = false;
         break;
       case STATE_CONFIGURE_WIDGET:
         SearchInputConfigureWidgetFragment searchInputConfigureWidgetFragment = new SearchInputConfigureWidgetFragment();

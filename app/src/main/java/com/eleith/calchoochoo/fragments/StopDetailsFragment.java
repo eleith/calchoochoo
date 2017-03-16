@@ -42,8 +42,8 @@ import rx.functions.Action1;
 public class StopDetailsFragment extends Fragment {
   private Stop stop;
   private Subscription subscription;
-  private ArrayList<PossibleTrain> possibleTrains;
-  private ArrayList<Trips> trips;
+  private ArrayList<PossibleTrain> possibleTrains = new ArrayList<>();
+  private ArrayList<Trips> trips = new ArrayList<>();
 
   @BindView(R.id.stop_details_trains)
   LinearLayout stopDetailsTrains;
@@ -94,7 +94,7 @@ public class StopDetailsFragment extends Fragment {
   }
 
   private void addRecentTrains() {
-    if (possibleTrains != null && possibleTrains.size() > 0 && trips != null) {
+    if (possibleTrains != null && possibleTrains.size() > 0 && trips.size() > 0) {
       for (int i = 0; i < possibleTrains.size(); i++) {
         final PossibleTrain possibleTrain = possibleTrains.get(i);
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");

@@ -1,6 +1,7 @@
 package com.eleith.calchoochoo.utils;
 
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
 
 import com.eleith.calchoochoo.data.Trips;
@@ -33,6 +34,7 @@ public class TripUtils {
       trip.shape_id = cursor.getString(cursor.getColumnIndex("shape_id"));
       trip.wheelchar_accessible = cursor.getInt(cursor.getColumnIndex("wheelchar_accessible"));
       trip.bikes_allowed = cursor.getInt(cursor.getColumnIndex("bikes_allowed"));
+      trip.trip_id = cursor.getString(cursor.getColumnIndex("trip_id"));
 
       return trip;
     } else {
