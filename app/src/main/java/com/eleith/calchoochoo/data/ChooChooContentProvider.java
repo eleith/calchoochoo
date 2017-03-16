@@ -136,8 +136,7 @@ public class ChooChooContentProvider extends ContentProvider {
         Long dateTime = Long.valueOf(uri.getPathSegments().get(2));
         String nextPossibleTripsStop1 = uri.getPathSegments().get(3);
         String nextPossibleTripsStop2 = uri.getPathSegments().get(4);
-        cursor = PossibleTripUtils.getPossibleTripsQuery(db, dateTime, nextPossibleTripsStop1, nextPossibleTripsStop2);
-        break;
+        cursor = PossibleTripUtils.getPossibleTripsQuery(db, dateTime, nextPossibleTripsStop1, nextPossibleTripsStop2); break;
       case URI_FIND_TRIP_STOPS:
         args.add(uri.getPathSegments().get(2));
         cursor = db.query("stop_times", projection, "trip_id = ?", args.toArray(new String[1]), null, null, sortOrder);

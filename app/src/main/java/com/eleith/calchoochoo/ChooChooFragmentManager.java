@@ -55,6 +55,7 @@ public class ChooChooFragmentManager {
   }
 
   private void setNextState(String stateID, Bundle arguments) {
+    Boolean addToBackStack = true;
     fragmentTransaction = getTransaction();
 
     switch (stateID) {
@@ -66,6 +67,7 @@ public class ChooChooFragmentManager {
         searchInputFragment.setArguments(arguments);
 
         updateTopAndBottomFragments(searchInputFragment, searchResultsFragment, false, stateID);
+        //addToBackStack = false;
         break;
       case STATE_CONFIGURE_WIDGET:
         SearchInputConfigureWidgetFragment searchInputConfigureWidgetFragment = new SearchInputConfigureWidgetFragment();
@@ -100,6 +102,7 @@ public class ChooChooFragmentManager {
         mapSearchFragment.setArguments(arguments);
 
         updateTopAndBottomFragments(null, mapSearchFragment, false, stateID);
+        addToBackStack = false;
         break;
       case STATE_SHOW_TRIP_FILTER:
         TripFilterFragment tripFilterFragmentResults = new TripFilterFragment();
@@ -118,7 +121,7 @@ public class ChooChooFragmentManager {
         break;
     }
 
-    commit(stateID);
+    commit(stateID, addToBackStack);
   }
 
   private void updateTopAndBottomFragments(Fragment f1, Fragment f2, Boolean useCoordinatorLayout, String stateId) {
@@ -185,9 +188,11 @@ public class ChooChooFragmentManager {
     }
   }
 
-  public void commit(String stateId) {
+  public void commit(String stateId, Boolean addToBackStack) {
     if (fragmentTransaction != null) {
-      fragmentTransaction.addToBackStack(stateId);
+      if (addToBackStack) {
+        fragmentTransaction.addToBackStack(stateId);
+      }
 
       if (sharedTransitions != null) {
         for (View view : sharedTransitions) {
@@ -206,7 +211,7 @@ public class ChooChooFragmentManager {
     arguments.putInt(BundleKeys.STOP_METHOD, stopMethod);
     arguments.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
     arguments.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
-    arguments.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
+   arguments.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
     setNextState(ChooChooFragmentManager.STATE_SEARCH_FOR_STOPS, arguments);
   }
 
@@ -242,7 +247,6 @@ public class ChooChooFragmentManager {
 
   public void loadTripFilterFragment(ArrayList<PossibleTrip> possibleTrips, int stopMethod, LocalDateTime stopDateTime, Stop stopSource, Stop stopDestination) {
     Bundle arguments = new Bundle();
-    ArrayList<PossibleTrip> possibleTripsFiltered = PossibleTripUtils.filterByDateTimeAndDirection(possibleTrips, stopDateTime, stopMethod == RxMessageStopsAndDetails.DETAIL_ARRIVING);
 
     arguments.putInt(BundleKeys.STOP_METHOD, stopMethod);
 
@@ -258,8 +262,11 @@ public class ChooChooFragmentManager {
       arguments.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
     }
 
-    if (stopSource != null && stopDestination != null && stopDateTime != null && possibleTripsFiltered.size() > 0) {
-      arguments.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTripsFiltered));
+    if (stopSource != null && stopDestination != null && stopDateTime != null && possibleTrips.size() > 0) {
+      ArrayList<PossibleTrip> possibleTripsFiltered = PossibleTripUtils.filterByDateTimeAndDirection(possibleTrips, stopDateTime, stopMethod == RxMessageStopsAndDetails.DETAIL_ARRIVING);
+      if (possibleTripsFiltered.size() > 0) {
+        arguments.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTripsFiltered));
+      }
     }
 
     setNextState(ChooChooFragmentManager.STATE_SHOW_TRIP_FILTER, arguments);
@@ -267,46 +274,5 @@ public class ChooChooFragmentManager {
 
   public void loadSearchWidgetConfigureFragment() {
     setNextState(ChooChooFragmentManager.STATE_CONFIGURE_WIDGET, null);
-  }
-
-  public void handleBackPressed(Boolean doOneLastBack) {
-    Boolean changed;
-    changed = skipSearchFragment();
-    skipExtraFilterFragments(changed || !doOneLastBack);
-    if (doOneLastBack) {
-      fragmentManager.popBackStack();
-    }
-  }
-
-  private Boolean skipExtraFilterFragments(Boolean canBeInvisible) {
-    String name = getBackStackStateName();
-    if (name != null && name.equals(STATE_SHOW_TRIP_FILTER)) {
-      Fragment filter = fragmentManager.findFragmentByTag(STATE_SHOW_TRIP_FILTER + "top");
-      if (filter != null && (filter.isVisible() || canBeInvisible)) {
-        fragmentManager.popBackStackImmediate(STATE_SHOW_TRIP_FILTER, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        handleBackPressed(false);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private Boolean skipSearchFragment() {
-    String name = getBackStackStateName();
-    if (name != null && name.equals(STATE_SEARCH_FOR_STOPS)) {
-      fragmentManager.popBackStackImmediate();
-      return true;
-    }
-    return false;
-  }
-
-  @Nullable
-  private String getBackStackStateName() {
-    int backStackEntryCount = fragmentManager.getBackStackEntryCount();
-    if (backStackEntryCount > 1) {
-      FragmentManager.BackStackEntry last = fragmentManager.getBackStackEntryAt(backStackEntryCount - 2);
-      return last.getName();
-    }
-    return null;
   }
 }

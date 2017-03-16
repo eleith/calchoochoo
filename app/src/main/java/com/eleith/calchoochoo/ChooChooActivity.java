@@ -107,11 +107,6 @@ public class ChooChooActivity extends AppCompatActivity {
     return chooChooComponent;
   }
 
-  @Override
-  public void onBackPressed() {
-    chooChooFragmentManager.handleBackPressed(true);
-  }
-
   public void fabEnable(int drawableId) {
     floatingActionButton.setVisibility(View.VISIBLE);
     floatingActionButton.setImageDrawable(getDrawable(drawableId));

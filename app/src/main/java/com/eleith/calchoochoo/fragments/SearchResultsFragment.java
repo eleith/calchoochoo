@@ -23,11 +23,13 @@ import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.DeviceLocation;
+import com.eleith.calchoochoo.utils.PossibleTripUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStops;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 

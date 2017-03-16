@@ -13,21 +13,17 @@ import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.ChooChooLoader;
-import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.parceler.Parcels;
-
-import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -122,8 +118,8 @@ public class TripFilterFragment extends Fragment {
   @OnClick(R.id.trip_filter_refresh_date)
   void refreshDateClick() {
     stopDateTime = new LocalDateTime();
-    updateTimeEdit();
-    chooChooLoader.loadPossibleTrips(stopSource.stop_id, stopDestination.stop_id, stopDateTime);
+    Pair<Integer, LocalDateTime> pair = new Pair<>(stopMethod, stopDateTime);
+    rxBus.send(new RxMessageStopMethodAndDateTime(RxMessageKeys.DATE_TIME_SELECTED, pair));
   }
 
   @OnClick(R.id.trip_filter_destination)
@@ -177,10 +173,10 @@ public class TripFilterFragment extends Fragment {
           Pair<Integer, LocalDateTime> pair = ((RxMessageStopMethodAndDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
           stopDateTime = pair.second;
+          updateStops();
           chooChooLoader.loadPossibleTrips(stopSource.stop_id, stopDestination.stop_id, stopDateTime);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIPS)) {
-          ArrayList<PossibleTrip> possibleTrips = ((RxMessagePossibleTrips) rxMessage).getMessage();
-          chooChooFragmentManager.loadTripFilterFragment(possibleTrips, stopMethod, new LocalDateTime(stopDateTime), stopSource, stopDestination);
+          updateStops();
         }
       }
     };

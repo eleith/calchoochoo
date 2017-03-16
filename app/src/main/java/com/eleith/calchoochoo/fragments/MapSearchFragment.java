@@ -71,6 +71,9 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @BindView(R.id.map_search_input)
   EditText mapSearchInput;
 
+  @BindView(R.id.search_google_maps)
+  MapView mapSearchMaps;
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);

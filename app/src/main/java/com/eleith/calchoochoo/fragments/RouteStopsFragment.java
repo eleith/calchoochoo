@@ -2,6 +2,7 @@ package com.eleith.calchoochoo.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,9 +18,12 @@ import com.eleith.calchoochoo.adapters.RouteViewAdapter;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.PossibleTripUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
 import org.joda.time.LocalDateTime;
@@ -58,14 +62,14 @@ public class RouteStopsFragment extends Fragment {
     super.onCreate(savedInstanceState);
     chooChooActivity = (ChooChooActivity) getActivity();
     chooChooActivity.getComponent().inject(this);
-    unPackBundle(savedInstanceState != null ? savedInstanceState : getArguments());
+    unWrapBundle(savedInstanceState != null ? savedInstanceState : getArguments());
     setSharedElementReturnTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.image_transform));
     setSharedElementEnterTransition(TransitionInflater.from(getContext()).inflateTransition(R.transition.image_transform));
   }
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    unPackBundle(savedInstanceState);
+    unWrapBundle(savedInstanceState);
     View view = inflater.inflate(R.layout.fragment_trips_possible, container, false);
     ButterKnife.bind(this, view);
 
@@ -76,7 +80,7 @@ public class RouteStopsFragment extends Fragment {
       recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
       recyclerView.setNestedScrollingEnabled(false);
 
-      routeViewAdapter.setPossibleTrips(possibleTrips);
+      setPossibleTrips(possibleTrips);
 
       recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
       recyclerView.setAdapter(routeViewAdapter);
@@ -97,6 +101,12 @@ public class RouteStopsFragment extends Fragment {
     chooChooActivity.fabDisable();
   }
 
+  public void setPossibleTrips(ArrayList<PossibleTrip> possibleTrips) {
+    this.possibleTrips = PossibleTripUtils.filterByDateTimeAndDirection(possibleTrips, stopDateTime, stopMethod == RxMessageStopsAndDetails.DETAIL_ARRIVING);
+    routeViewAdapter.setPossibleTrips(this.possibleTrips);
+    routeViewAdapter.notifyDataSetChanged();
+  }
+
   @Override
   public void onSaveInstanceState(Bundle outState) {
     outState.putParcelable(BundleKeys.ROUTE_STOPS, Parcels.wrap(possibleTrips));
@@ -105,7 +115,7 @@ public class RouteStopsFragment extends Fragment {
     super.onSaveInstanceState(outState);
   }
 
-  private void unPackBundle(Bundle bundle) {
+  private void unWrapBundle(Bundle bundle) {
     if (bundle != null) {
       possibleTrips = Parcels.unwrap(bundle.getParcelable(BundleKeys.ROUTE_STOPS));
       stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME));
@@ -119,6 +129,13 @@ public class RouteStopsFragment extends Fragment {
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.FAB_CLICKED)) {
           rxBus.send(new RxMessage(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED));
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIPS)) {
+          ArrayList<PossibleTrip> possibleTrips = ((RxMessagePossibleTrips) rxMessage).getMessage();
+          setPossibleTrips(possibleTrips);
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
+          Pair<Integer, LocalDateTime> pair = ((RxMessageStopMethodAndDateTime) rxMessage).getMessage();
+          stopMethod = pair.first;
+          stopDateTime = pair.second;
         }
       }
     };

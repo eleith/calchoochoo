@@ -20,8 +20,8 @@
         android:background="?android:colorBackground"
         android:elevation="4dp"
         android:focusable="false"
-        android:visibility="invisible"
         android:hint="@string/where_to_go"
-        android:padding="10dp"/>
+        android:padding="10dp"
+        android:visibility="invisible"/>
 
 </FrameLayout>

@@ -14,17 +14,14 @@ import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrain;
-import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.PossibleTrainUtils;
-import com.eleith.calchoochoo.utils.RouteUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageNextTrains;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageRoutes;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTrips;
 import com.eleith.calchoochoo.utils.TripUtils;
 
