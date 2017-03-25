@@ -1,7 +1,6 @@
 package com.eleith.calchoochoo.data;
 
 import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -21,10 +20,7 @@ public class ChooChooContentProvider extends ContentProvider {
   private ChooChooDatabase database;
 
   private static final String AUTHORITY = "com.eleith.calchoochoo.data";
-  private static final String BASE_PATH = "calchoochoo";
   public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
-  public static final String CONTENT_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + BASE_PATH;
-  public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + BASE_PATH;
   private static final UriMatcher uriMatcher;
 
   public static final int URI_STOPS_PARENTS = 1;
@@ -53,8 +49,8 @@ public class ChooChooContentProvider extends ContentProvider {
     uriMatcher.addURI(AUTHORITY, "trips", URI_TRIPS);
     uriMatcher.addURI(AUTHORITY, "fareRules", URI_FARERULES);
     uriMatcher.addURI(AUTHORITY, "fareAttributes", URI_FAREATTRIBUTES);
-    uriMatcher.addURI(AUTHORITY, "stops/parent/#", URI_STOPS_PARENTS_ID);
-    uriMatcher.addURI(AUTHORITY, "stops/directional/#", URI_STOPS_DIRECTIONAL_ID);
+    uriMatcher.addURI(AUTHORITY, "stops/parent/*", URI_STOPS_PARENTS_ID);
+    uriMatcher.addURI(AUTHORITY, "stops/directional/*", URI_STOPS_DIRECTIONAL_ID);
     uriMatcher.addURI(AUTHORITY, "trips/#", URI_TRIPS_ID);
     uriMatcher.addURI(AUTHORITY, "routes/#", URI_ROUTES_ID);
     uriMatcher.addURI(AUTHORITY, "fareAttributes/id", URI_FAREATTRIBUTES_ID);
@@ -102,7 +98,7 @@ public class ChooChooContentProvider extends ContentProvider {
         cursor = db.query("fare_attributes", projection, selection, selectionArgs, null, null, sortOrder);
         break;
       case URI_STOPS_PARENTS_ID:
-        args.add(uri.getPathSegments().get(1));
+        args.add(uri.getPathSegments().get(2));
         cursor = db.query("stops", projection, "stop_code = '' AND platform_code = '' AND stop_id = ?", args.toArray(new String[1]), null, null, sortOrder);
         break;
       case URI_STOPS_DIRECTIONAL_ID:
@@ -136,7 +132,8 @@ public class ChooChooContentProvider extends ContentProvider {
         Long dateTime = Long.valueOf(uri.getPathSegments().get(2));
         String nextPossibleTripsStop1 = uri.getPathSegments().get(3);
         String nextPossibleTripsStop2 = uri.getPathSegments().get(4);
-        cursor = PossibleTripUtils.getPossibleTripsQuery(db, dateTime, nextPossibleTripsStop1, nextPossibleTripsStop2); break;
+        cursor = PossibleTripUtils.getPossibleTripsQuery(db, dateTime, nextPossibleTripsStop1, nextPossibleTripsStop2);
+        break;
       case URI_FIND_TRIP_STOPS:
         String stopFromStopTimesTripId = uri.getPathSegments().get(2);
         cursor = StopTimesUtils.getStopsFromStopTimesQuery(db, stopFromStopTimesTripId);

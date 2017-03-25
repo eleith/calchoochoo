@@ -1,7 +1,14 @@
 package com.eleith.calchoochoo.dagger;
 
-import com.eleith.calchoochoo.ChooChooActivity;
-import com.eleith.calchoochoo.ChooChooFragmentManager;
+import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
+
+import com.eleith.calchoochoo.ChooChooRouterManager;
+import com.eleith.calchoochoo.MapSearchActivity;
+import com.eleith.calchoochoo.StopActivity;
+import com.eleith.calchoochoo.StopSearchActivity;
+import com.eleith.calchoochoo.TripActivity;
+import com.eleith.calchoochoo.TripFilterActivity;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -12,33 +19,57 @@ import dagger.Provides;
 
 @Module
 public class ChooChooModule {
-  private ChooChooActivity chooChooActivity;
+  private AppCompatActivity activity;
 
-  public ChooChooModule(ChooChooActivity chooChooActivity) {
-    this.chooChooActivity = chooChooActivity;
+  public ChooChooModule(AppCompatActivity activity) {
+    this.activity = activity;
   }
 
   @ChooChooScope
   @Provides
-  public ChooChooActivity providesActivity() {
-    return chooChooActivity;
+  public MapSearchActivity providesMapSearchActivity() {
+    return (MapSearchActivity) activity;
   }
 
   @ChooChooScope
   @Provides
-  public ChooChooFragmentManager providesChooChooFragmentManager() {
-    return new ChooChooFragmentManager(chooChooActivity.getSupportFragmentManager());
+  public TripActivity providesTripActivity() {
+    return (TripActivity) activity;
+  }
+
+  @ChooChooScope
+  @Provides
+  public TripFilterActivity providesTripFilterActivity() {
+    return (TripFilterActivity) activity;
+  }
+
+  @ChooChooScope
+  @Provides
+  public StopSearchActivity providesStopSearchActivity() {
+    return (StopSearchActivity) activity;
+  }
+
+  @ChooChooScope
+  @Provides
+  public StopActivity providesStopActivity() {
+    return (StopActivity) activity;
+  }
+
+  @ChooChooScope
+  @Provides
+  public ChooChooRouterManager providesChooChooFragmentManager() {
+    return new ChooChooRouterManager(activity.getSupportFragmentManager());
   }
 
   @ChooChooScope
   @Provides
   public ChooChooLoader providesChooChooLoader(RxBus rxBus) {
-    return new ChooChooLoader(chooChooActivity, rxBus);
+    return new ChooChooLoader(activity, rxBus);
   }
 
   @ChooChooScope
   @Provides
   DeviceLocation providesDeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient) {
-    return new DeviceLocation(rxBus, googleApiClient, chooChooActivity);
+    return new DeviceLocation(rxBus, googleApiClient, activity);
   }
 }

@@ -1,5 +1,6 @@
 package com.eleith.calchoochoo.fragments;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
@@ -10,18 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
-import com.eleith.calchoochoo.ChooChooActivity;
-import com.eleith.calchoochoo.ChooChooFragmentManager;
+import com.eleith.calchoochoo.ChooChooRouterManager;
+import com.eleith.calchoochoo.MapSearchActivity;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.Stop;
+import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.DrawableUtils;
+import com.eleith.calchoochoo.utils.IntentKeys;
 import com.eleith.calchoochoo.utils.MapUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStops;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 import com.eleith.calchoochoo.utils.StopUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,7 +37,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.joda.time.LocalDateTime;
+import org.parceler.Parcels;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -46,6 +50,7 @@ import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 
+import static android.app.Activity.RESULT_OK;
 import static com.eleith.calchoochoo.utils.DrawableUtils.getBitmapCircle;
 
 public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
@@ -57,14 +62,14 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   private LatLng myDefaultLatLng = new LatLng(37.30, -122.06);
   private Subscription subscriptionLocation;
   private Subscription subscriptionRxBus;
-  private ChooChooActivity chooChooActivity;
+  private MapSearchActivity mapSearchActivity;
 
   @Inject
   RxBus rxBus;
   @Inject
   DeviceLocation deviceLocation;
   @Inject
-  ChooChooFragmentManager chooChooFragmentManager;
+  ChooChooRouterManager chooChooRouterManager;
   @Inject
   ChooChooLoader chooChooLoader;
 
@@ -77,8 +82,8 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    chooChooActivity = (ChooChooActivity) getActivity();
-    chooChooActivity.getComponent().inject(this);
+    mapSearchActivity = (MapSearchActivity) getActivity();
+    mapSearchActivity.getComponent().inject(this);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
@@ -88,7 +93,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     ButterKnife.bind(this, view);
 
     unWrapBundle(savedInstanceState);
-    chooChooActivity.fabEnable(R.drawable.ic_gps_not_fixed_black_24dp);
+    mapSearchActivity.fabEnable(R.drawable.ic_gps_not_fixed_black_24dp);
 
     // initialize the map!
     googleMapView = ((MapView) view.findViewById(R.id.search_google_maps));
@@ -100,9 +105,11 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @OnClick(R.id.map_search_input)
   void onClickSearchInput() {
     Stop stop = StopUtils.findStopClosestTo(stops, lastLocation);
-    LocalDateTime stopDateTime = new LocalDateTime();
-    int stopMethod = RxMessageStopsAndDetails.DETAIL_DEPARTING;
-    chooChooFragmentManager.loadSearchForSpotFragment(stop, null, stopMethod, stopDateTime);
+    ArrayList<String> filteredStopIds = new ArrayList<>();
+    if (stop != null) {
+      filteredStopIds.add(stop.stop_id);
+    }
+    chooChooRouterManager.loadStopSearchActivity(this, getContext(), filteredStopIds);
   }
 
   @Override
@@ -110,6 +117,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     this.googleMap = googleMap;
     CameraPosition.Builder cameraBuilder = new CameraPosition.Builder().zoom(13);
     LatLng myLatLng;
+    final Fragment fragment = this;
 
     setStopMarkers();
 
@@ -127,17 +135,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     cameraBuilder.target(myLatLng);
     CameraPosition cameraPosition = cameraBuilder.build();
     googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-      @Override
-      public boolean onMarkerClick(Marker marker) {
-        String stopId = (String) marker.getTag();
-        Stop touchedStop = StopUtils.getStopById(stops, stopId);
-        if (touchedStop != null) {
-          chooChooFragmentManager.loadStopsFragments(touchedStop);
-        }
-        return true;
-      }
-    });
+    googleMap.setOnMarkerClickListener(new OnMarkerClickListener());
 
     deviceLocation.requestLocation(new DeviceLocation.LocationGetListener() {
       @Override
@@ -148,7 +146,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     });
 
     subscriptionRxBus = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
-    chooChooLoader.loadParentStops();
     subscriptionLocation = deviceLocation.subscribeToLocationUpdates(new DeviceLocation.LocationGetListener() {
       @Override
       public void onLocationGet(Location location) {
@@ -175,6 +172,8 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
 
   private void unWrapBundle(Bundle bundle) {
     if (bundle != null) {
+      stops = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOPS));
+      setStopMarkers();
       // if googleMap is set, then it never got the location!
       if (googleMap != null) {
         onMapReady(googleMap);
@@ -217,7 +216,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     if (subscriptionRxBus != null) {
       subscriptionRxBus.unsubscribe();
     }
-    ((ChooChooActivity) getActivity()).fabDisable();
+    ((MapSearchActivity) getActivity()).fabDisable();
   }
 
   @Override
@@ -238,6 +237,31 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     googleMapView.onLowMemory();
   }
 
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == IntentKeys.STOP_SEARCH_RESULT) {
+      Bundle bundle = data.getExtras();
+      String stopId = bundle.getString(BundleKeys.STOP);
+      Stop closestStop = StopUtils.findStopClosestTo(stops, lastLocation);
+      if (resultCode == RESULT_OK) {
+        if (closestStop != null) {
+          chooChooRouterManager.loadTripFilterActivity(getActivity(), closestStop.stop_id, stopId);
+        } else {
+          chooChooRouterManager.loadTripFilterActivity(getActivity(), null, stopId);
+        }
+      }
+    }
+  }
+
+  private class OnMarkerClickListener implements GoogleMap.OnMarkerClickListener {
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+      String stopId = (String) marker.getTag();
+      chooChooRouterManager.loadTripFilterActivity(getActivity(), stopId, stopId);
+      return true;
+    }
+  }
+
   private Action1<RxMessage> handleRxMessages() {
     return new Action1<RxMessage>() {
       @Override
@@ -246,9 +270,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
           LatLng myLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
           CameraPosition cameraPosition = new CameraPosition.Builder().zoom(13).target(myLatLng).build();
           googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOPS)) {
-          stops = ((RxMessageStops) rxMessage).getMessage();
-          setStopMarkers();
         }
       }
     };

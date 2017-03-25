@@ -1,5 +1,6 @@
 package com.eleith.calchoochoo.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,21 +10,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.eleith.calchoochoo.ChooChooActivity;
-import com.eleith.calchoochoo.ChooChooFragmentManager;
+import com.eleith.calchoochoo.ChooChooRouterManager;
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.TripFilterActivity;
 import com.eleith.calchoochoo.data.ChooChooLoader;
+import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.IntentKeys;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.parceler.Parcels;
+
+import java.util.ArrayList;
 
 import javax.inject.Inject;
 
@@ -33,13 +40,17 @@ import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 
+import static android.app.Activity.RESULT_OK;
+
 
 public class TripFilterFragment extends Fragment {
-  private Stop stopDestination;
-  private Stop stopSource;
   private LocalDateTime stopDateTime = new LocalDateTime();
-  private int stopMethod = RxMessageStopsAndDetails.DETAIL_ARRIVING;
+  private int stopMethod = RxMessageStopsAndDetails.DETAIL_DEPARTING;
   private Subscription subscription;
+  private ArrayList<PossibleTrip> possibleTrips;
+  private String sourceStopId;
+  private String destinationStopId;
+  private boolean lookingForSource = true;
 
   @BindView(R.id.trip_filter_destination)
   TextView destinationEdit;
@@ -55,7 +66,7 @@ public class TripFilterFragment extends Fragment {
   @Inject
   RxBus rxBus;
   @Inject
-  ChooChooFragmentManager chooChooFragmentManager;
+  ChooChooRouterManager chooChooRouterManager;
   @Inject
   ChooChooLoader chooChooLoader;
 
@@ -63,7 +74,7 @@ public class TripFilterFragment extends Fragment {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    ((ChooChooActivity) getActivity()).getComponent().inject(this);
+    ((TripFilterActivity) getActivity()).getComponent().inject(this);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
@@ -72,7 +83,6 @@ public class TripFilterFragment extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
-    chooChooLoader.loadParentStops();
   }
 
   @Override
@@ -90,12 +100,12 @@ public class TripFilterFragment extends Fragment {
   }
 
   private void updateStops() {
-    if (stopDestination != null) {
-      destinationEdit.setText(stopDestination.stop_name.replace(" Caltrain", ""));
+    if (sourceStopId != null) {
+      chooChooLoader.loadStopByParentId(sourceStopId);
     }
 
-    if (stopSource != null) {
-      sourceEdit.setText(stopSource.stop_name.replace(" Caltrain", ""));
+    if (destinationStopId != null) {
+      chooChooLoader.loadStopByParentId(destinationStopId);
     }
 
     sourceEdit.setVisibility(View.VISIBLE);
@@ -124,12 +134,22 @@ public class TripFilterFragment extends Fragment {
 
   @OnClick(R.id.trip_filter_destination)
   void destinationClick() {
-    chooChooFragmentManager.loadSearchForSpotFragment(stopSource, null, stopMethod, stopDateTime);
+    lookingForSource = false;
+    ArrayList<String> filteredOutStopIds = new ArrayList<>();
+    if (sourceStopId != null) {
+      filteredOutStopIds.add(sourceStopId);
+    }
+    chooChooRouterManager.loadStopSearchActivity(this, getActivity(), filteredOutStopIds);
   }
 
   @OnClick(R.id.trip_filter_source)
   void sourceClick() {
-    chooChooFragmentManager.loadSearchForSpotFragment(null, stopDestination, stopMethod, stopDateTime);
+    lookingForSource = true;
+    ArrayList<String> filteredOutStopIds = new ArrayList<>();
+    if (destinationStopId != null) {
+      filteredOutStopIds.add(destinationStopId);
+    }
+    chooChooRouterManager.loadStopSearchActivity(this, getActivity(), filteredOutStopIds);
   }
 
   @OnClick(R.id.trip_filter_datetime)
@@ -144,19 +164,35 @@ public class TripFilterFragment extends Fragment {
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
-    outState.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
-    outState.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
+    outState.putParcelable(BundleKeys.POSSIBLE_TRIPS, Parcels.wrap(possibleTrips));
     outState.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
     outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
     super.onSaveInstanceState(outState);
   }
 
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    if (requestCode == IntentKeys.STOP_SEARCH_RESULT) {
+      Bundle bundle = data.getExtras();
+      String stopId = bundle.getString(BundleKeys.STOP);
+      if (resultCode == RESULT_OK) {
+        if (lookingForSource) {
+          sourceStopId = stopId;
+        } else {
+          destinationStopId = stopId;
+        }
+        chooChooLoader.loadPossibleTrips(sourceStopId, destinationStopId, new LocalDateTime(stopMethod));
+      }
+    }
+  }
+
   private void unWrapBundle(Bundle bundle) {
     if (bundle != null) {
-      stopDestination = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP_DESTINATION));
-      stopSource = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP_SOURCE));
+      possibleTrips = Parcels.unwrap(bundle.getParcelable(BundleKeys.POSSIBLE_TRIPS));
       stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME));
       stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+      sourceStopId = bundle.getString(BundleKeys.STOP_SOURCE);
+      destinationStopId = bundle.getString(BundleKeys.STOP_DESTINATION);
     }
   }
 
@@ -165,18 +201,23 @@ public class TripFilterFragment extends Fragment {
       @Override
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED)) {
-          Stop stopTemp = stopDestination;
-          stopDestination = stopSource;
-          stopSource = stopTemp;
-          chooChooLoader.loadPossibleTrips(stopSource.stop_id, stopDestination.stop_id, stopDateTime);
+          chooChooLoader.loadPossibleTrips(destinationStopId, sourceStopId, stopDateTime);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageStopMethodAndDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
           stopDateTime = pair.second;
-          updateStops();
-          chooChooLoader.loadPossibleTrips(stopSource.stop_id, stopDestination.stop_id, stopDateTime);
+          updateTimeEdit();
+          chooChooLoader.loadPossibleTrips(sourceStopId, destinationStopId, stopDateTime);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIPS)) {
+          possibleTrips = ((RxMessagePossibleTrips) rxMessage).getMessage();
           updateStops();
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOP)) {
+          Stop stop = ((RxMessageStop) rxMessage).getMessage();
+          if (destinationStopId.equals(stop.stop_id)) {
+            destinationEdit.setText(stop.stop_name.replace(" Caltrain", ""));
+          } else {
+            sourceEdit.setText(stop.stop_name.replace(" Caltrain", ""));
+          }
         }
       }
     };

@@ -35,7 +35,7 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
   RecyclerView searchResultsRecyclerView;
 
   @Inject
-  ChooChooFragmentManager chooChooFragmentManager;
+  ChooChooRouterManager chooChooRouterManager;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -57,9 +57,9 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
       chooChooWidgetConfigureComponent.inject(this);
 
       super.onCreate(savedInstanceState);
-      setContentView(R.layout.activity_choochoo);
+      setContentView(R.layout.activity_linear_top_bottom);
 
-      chooChooFragmentManager.loadSearchWidgetConfigureFragment();
+      chooChooRouterManager.loadSearchWidgetConfigureFragment();
     }
   }
 

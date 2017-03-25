@@ -23,6 +23,7 @@ public class RxMessageKeys {
   public static final String LOADED_NEXT_TRAINS = "loadedNextTrains";
   public static final String LOADED_ROUTE = "loadedRoute";
   public static final String LOADED_TRIP = "loadedTrip";
+  public static final String LOADED_STOP = "loadedStop";
   public static final String LOADED_TRIPS = "loadedTrips";
   public static final String LOADED_POSSIBLE_TRIP = "loadedPossibleTrip";
   public static final String LOADED_POSSIBLE_TRIPS = "loadedPossibleTrips";
@@ -51,6 +52,7 @@ public class RxMessageKeys {
     map.put(LOADED_NEXT_TRAINS, RxMessageNextTrains.class);
     map.put(LOADED_ROUTE, RxMessageRoute.class);
     map.put(LOADED_TRIP, RxMessageTrip.class);
+    map.put(LOADED_STOP, RxMessageStop.class);
     map.put(LOADED_TRIPS, RxMessageTrips.class);
     map.put(LOADED_POSSIBLE_TRIP, RxMessagePossibleTrip.class);
     map.put(LOADED_STOPS_ON_TRIP, RxMessageStops.class);

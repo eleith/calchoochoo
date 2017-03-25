@@ -12,13 +12,9 @@ import android.widget.RemoteViews;
 
 import com.eleith.calchoochoo.data.ChooChooDatabase;
 import com.eleith.calchoochoo.data.PossibleTrain;
-import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.PossibleTrainUtils;
-import com.eleith.calchoochoo.utils.RouteUtils;
-import com.eleith.calchoochoo.utils.TripUtils;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -80,7 +76,7 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
           DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
           RemoteViews item = new RemoteViews(context.getPackageName(), R.layout.fragment_stop_card_widget_trainitem);
 
-          Intent intent = new Intent(context, ChooChooActivity.class);
+          Intent intent = new Intent(context, MapSearchActivity.class);
 
           Bundle bundle = new Bundle();
           bundle.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));

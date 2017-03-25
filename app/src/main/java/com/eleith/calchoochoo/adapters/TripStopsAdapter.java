@@ -1,19 +1,18 @@
 package com.eleith.calchoochoo.adapters;
 
-import android.support.v4.util.Pair;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.eleith.calchoochoo.ChooChooFragmentManager;
+import com.eleith.calchoochoo.ChooChooRouterManager;
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.TripActivity;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.StopTimes;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.StopUtils;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -27,26 +26,21 @@ import butterknife.OnClick;
 
 @ChooChooScope
 public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneTripStopHolder> {
-  private ArrayList<Pair<Stop, StopTimes>> tripStops = new ArrayList<>();
-  private ArrayList<Stop> stops = new ArrayList<>();
-  private RxBus rxBus;
-  private ChooChooFragmentManager chooChooFragmentManager;
+  private ArrayList<StopTimes> tripStops = new ArrayList<>();
+  private ChooChooRouterManager chooChooRouterManager;
+  private TripActivity tripActivity;
   private final static int ITEM_TYPE_SOURCE = 0;
   private final static int ITEM_TYPE_DESTINATION = 1;
   private final static int ITEM_TYPE_MIDDLE = 2;
 
   @Inject
-  public TripStopsAdapter(RxBus rxBus, ChooChooFragmentManager chooChooFragmentManager) {
-    this.rxBus = rxBus;
-    this.chooChooFragmentManager = chooChooFragmentManager;
+  public TripStopsAdapter(ChooChooRouterManager chooChooRouterManager, TripActivity tripActivity) {
+    this.chooChooRouterManager = chooChooRouterManager;
+    this.tripActivity = tripActivity;
   }
 
-  public void setTripStops(ArrayList<Pair<Stop, StopTimes>> tripStops) {
+  public void setTripStops(ArrayList<StopTimes> tripStops) {
     this.tripStops = tripStops;
-  }
-
-  public void setStops(ArrayList<Stop> stops) {
-    this.stops = stops;
   }
 
   @Override
@@ -70,11 +64,11 @@ public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneT
 
   @Override
   public void onBindViewHolder(OneTripStopHolder holder, int position) {
-    Pair<Stop, StopTimes> pair = tripStops.get(position);
+    StopTimes pair = tripStops.get(position);
     DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
 
-    holder.name.setText(pair.first.stop_name.replace(" Caltrain", ""));
-    holder.startTime.setText(dateTimeFormatter.print(pair.second.arrival_time));
+    holder.name.setText(pair.stop.stop_name.replace(" Caltrain", ""));
+    holder.startTime.setText(dateTimeFormatter.print(pair.arrival_time));
   }
 
   @Override
@@ -99,9 +93,8 @@ public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneT
 
     @OnClick(R.id.one_trip_stop_details)
     void onClickTripSummary() {
-      Stop directionalStop = tripStops.get(getAdapterPosition()).first;
-      Stop stop = StopUtils.getStopById(stops, directionalStop.parent_station);
-      chooChooFragmentManager.loadStopsFragments(stop);
+      Stop directionalStop = tripStops.get(getAdapterPosition()).stop;
+      chooChooRouterManager.loadStopActivity(tripActivity, directionalStop.parent_station);
     }
 
     private OneTripStopHolder(View v) {

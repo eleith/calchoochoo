@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.eleith.calchoochoo.ChooChooFragmentManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.Stop;
@@ -27,20 +26,19 @@ import butterknife.OnClick;
 
 @ChooChooScope
 public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResultsViewAdapter.ViewHolder> {
-
-  private ArrayList<Stop> stops = new ArrayList<Stop>();
+  private ArrayList<Stop> stops;
+  private ArrayList<String> filteredStopIds;
   private Location location;
   private RxBus rxBus;
-  private ChooChooFragmentManager chooChooFragmentManager;
 
   @Inject
-  public SearchResultsViewAdapter(RxBus rxBus, ChooChooFragmentManager chooChooFragmentManager) {
+  public SearchResultsViewAdapter(RxBus rxBus) {
     this.rxBus = rxBus;
-    this.chooChooFragmentManager = chooChooFragmentManager;
   }
 
-  public void setStops(ArrayList<Stop> stops) {
+  public void setStops(ArrayList<Stop> stops, ArrayList<String> filteredStopIds) {
     this.stops = stops;
+    this.filteredStopIds = filteredStopIds;
   }
 
   @Override
@@ -85,7 +83,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
     Stop mItem;
 
     @OnClick(R.id.search_result_item)
-    void onClickTripSummary() {
+    void onClickResult() {
       rxBus.send(new RxMessageStop(RxMessageKeys.SEARCH_RESULT_STOP, mItem));
     }
 

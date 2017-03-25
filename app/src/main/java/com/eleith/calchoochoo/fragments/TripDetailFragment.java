@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.TripActivity;
 import com.eleith.calchoochoo.adapters.TripStopsAdapter;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
@@ -18,26 +18,19 @@ import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.StopTimes;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStops;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTripStops;
 
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
-import rx.Subscription;
-import rx.functions.Action1;
 
 public class TripDetailFragment extends Fragment {
   private PossibleTrip possibleTrip;
-  private ArrayList<Pair<Stop, StopTimes>> tripStops;
-  private ArrayList<Stop> parentStops;
-  private Subscription subscription;
+  private ArrayList<StopTimes> tripStops;
 
   @Inject
   RxBus rxBus;
@@ -49,7 +42,7 @@ public class TripDetailFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ((ChooChooActivity) getActivity()).getComponent().inject(this);
+    ((TripActivity) getActivity()).getComponent().inject(this);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
@@ -64,10 +57,6 @@ public class TripDetailFragment extends Fragment {
 
     recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     recyclerView.setAdapter(tripStopsAdapter);
-
-    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
-    chooChooLoader.loadTripStops(possibleTrip.getTripId(), possibleTrip.getFirstStopId(), possibleTrip.getLastStopId());
-    chooChooLoader.loadParentStops();
     return view;
   }
 
@@ -80,33 +69,14 @@ public class TripDetailFragment extends Fragment {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    subscription.unsubscribe();
   }
 
   private void unWrapBundle(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
       possibleTrip = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.POSSIBLE_TRIP));
+      tripStops = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.TRIP_STOP_STOPTIMES));
+      tripStopsAdapter.setTripStops(tripStops);
+      tripStopsAdapter.notifyDataSetChanged();
     }
-  }
-
-  private Action1<RxMessage> handleRxMessages() {
-    return new Action1<RxMessage>() {
-      @Override
-      public void call(RxMessage rxMessage) {
-        if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_TRIP_DETAILS)) {
-          tripStops = ((RxMessageTripStops) rxMessage).getMessage();
-          tripStopsAdapter.setTripStops(tripStops);
-          if (tripStops != null && parentStops != null) {
-            tripStopsAdapter.notifyDataSetChanged();
-          }
-        } else if(rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOPS)) {
-          parentStops = ((RxMessageStops) rxMessage).getMessage();
-          tripStopsAdapter.setStops(parentStops);
-          if (tripStops != null && parentStops != null) {
-            tripStopsAdapter.notifyDataSetChanged();
-          }
-        }
-      }
-    };
   }
 }

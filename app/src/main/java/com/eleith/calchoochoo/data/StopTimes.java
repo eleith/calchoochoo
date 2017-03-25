@@ -12,4 +12,5 @@ public class StopTimes {
   public int stop_sequence;
   public int pickup_time;
   public int drop_off_type;
+  public Stop stop;
 }

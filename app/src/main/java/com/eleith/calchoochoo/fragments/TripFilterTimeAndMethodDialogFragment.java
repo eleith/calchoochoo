@@ -15,14 +15,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.TripFilterActivity;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.InfinitePager;
 import com.eleith.calchoochoo.utils.InfinitePagerDataDates;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
 import org.joda.time.LocalDate;
@@ -105,7 +105,7 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ((ChooChooActivity) getActivity()).getComponent().inject(this);
+    ((TripFilterActivity) getActivity()).getComponent().inject(this);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 

@@ -7,14 +7,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.eleith.calchoochoo.ChooChooActivity;
-import com.eleith.calchoochoo.ChooChooFragmentManager;
+import com.eleith.calchoochoo.ChooChooRouterManager;
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.StopActivity;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.PossibleTrain;
-import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.data.Trips;
-import com.eleith.calchoochoo.utils.TripUtils;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -30,24 +27,19 @@ import butterknife.OnClick;
 @ChooChooScope
 public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.RouteViewHolder> {
   private ArrayList<PossibleTrain> possibleTrains = new ArrayList<>();
-  private ChooChooActivity chooChooActivity;
-  private ChooChooFragmentManager chooChooFragmentManager;
-  private Stop stop;
+  private StopActivity activity;
+  private ChooChooRouterManager chooChooRouterManager;
   private Integer southSelected = null;
   private Integer northSelected = null;
 
   @Inject
-  public StopTrainsAdapter(ChooChooActivity chooChooActivity, ChooChooFragmentManager chooChooFragmentManager) {
-    this.chooChooActivity = chooChooActivity;
-    this.chooChooFragmentManager = chooChooFragmentManager;
+  public StopTrainsAdapter(StopActivity activity, ChooChooRouterManager chooChooRouterManager) {
+    this.activity = activity;
+    this.chooChooRouterManager = chooChooRouterManager;
   }
 
   public void setPossibleTrains(ArrayList<PossibleTrain> possibleTrains) {
     this.possibleTrains = possibleTrains;
-  }
-
-  public void setStop(Stop stop) {
-    this.stop = stop;
   }
 
   public void setNorthSelected(Integer northSelected) {
@@ -76,15 +68,15 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
 
     holder.stopCardTrainItemNumber.setText(possibleTrain.getTripShortName());
     if (possibleTrain.getTripDirectionId() == 1) {
-      holder.stopCardTrainDirection.setText(chooChooActivity.getString(R.string.south_bound));
+      holder.stopCardTrainDirection.setText(activity.getString(R.string.south_bound));
     } else {
-      holder.stopCardTrainDirection.setText(chooChooActivity.getString(R.string.north_bound));
+      holder.stopCardTrainDirection.setText(activity.getString(R.string.north_bound));
     }
 
     if (possibleTrain.getRouteLongName().contains("Bullet")) {
-      holder.stopCardTrainItemImage.setImageDrawable(chooChooActivity.getDrawable(R.drawable.ic_train_bullet));
+      holder.stopCardTrainItemImage.setImageDrawable(activity.getDrawable(R.drawable.ic_train_bullet));
     } else {
-      holder.stopCardTrainItemImage.setImageDrawable(chooChooActivity.getDrawable(R.drawable.ic_train_local));
+      holder.stopCardTrainItemImage.setImageDrawable(activity.getDrawable(R.drawable.ic_train_local));
     }
 
     holder.stopCardTrainItemTime.setText(dateTimeFormatter.print(possibleTrain.getDepartureTime()));
@@ -119,8 +111,10 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
 
     @OnClick(R.id.stop_card_widget_train_item)
     void onClickTripSummary() {
+      ArrayList<String> filteredStopIds = new ArrayList<>();
       PossibleTrain possibleTrain = possibleTrains.get(getAdapterPosition());
-      chooChooFragmentManager.loadSearchForSpotFragment(stop, possibleTrain.getTripId());
+      filteredStopIds.add(possibleTrain.getStopId());
+      //chooChooRouterManager.loadStopSearchActivity(fragment, activity, filteredStopIds);
     }
 
     private RouteViewHolder(View v) {

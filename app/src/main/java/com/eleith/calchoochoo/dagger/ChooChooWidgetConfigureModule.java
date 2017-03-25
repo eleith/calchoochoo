@@ -1,8 +1,6 @@
 package com.eleith.calchoochoo.dagger;
 
-import android.support.v4.app.FragmentManager;
-
-import com.eleith.calchoochoo.ChooChooFragmentManager;
+import com.eleith.calchoochoo.ChooChooRouterManager;
 import com.eleith.calchoochoo.ChooChooWidgetConfigure;
 import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -27,8 +25,8 @@ public class ChooChooWidgetConfigureModule {
 
   @ChooChooWidgetConfigureScope
   @Provides
-  public ChooChooFragmentManager providesChooChooFragmentManager() {
-    return new ChooChooFragmentManager(chooChooWidgetConfigure.getSupportFragmentManager());
+  public ChooChooRouterManager providesChooChooFragmentManager() {
+    return new ChooChooRouterManager(chooChooWidgetConfigure.getSupportFragmentManager());
   }
 
   @ChooChooWidgetConfigureScope

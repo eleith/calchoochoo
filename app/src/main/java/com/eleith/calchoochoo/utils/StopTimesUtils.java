@@ -3,9 +3,7 @@ package com.eleith.calchoochoo.utils;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.Nullable;
-import android.support.v4.util.Pair;
 
-import com.eleith.calchoochoo.data.Routes;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.StopTimes;
 
@@ -76,8 +74,8 @@ public class StopTimesUtils {
     return db.rawQuery(query, args);
   }
 
-  public static ArrayList<Pair<Stop, StopTimes>> getStopTimesTripFromCursor(Cursor cursor) {
-    ArrayList<Pair<Stop, StopTimes>> stopAndTimes = new ArrayList<>();
+  public static ArrayList<StopTimes> getStopTimesTripFromCursor(Cursor cursor) {
+    ArrayList<StopTimes> stopAndTimes = new ArrayList<>();
 
     while (cursor.moveToNext()) {
       StopTimes stopTimes = new StopTimes();
@@ -101,7 +99,9 @@ public class StopTimesUtils {
       stop.stop_lon = cursor.getFloat(cursor.getColumnIndex("s__stop_lon"));
       stop.stop_lat = cursor.getFloat(cursor.getColumnIndex("s__stop_lat"));
 
-      stopAndTimes.add(new Pair<>(stop, stopTimes));
+      stopTimes.stop = stop;
+
+      stopAndTimes.add(stopTimes);
     }
 
     return stopAndTimes;

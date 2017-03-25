@@ -7,21 +7,25 @@
 
     <application
         android:name=".ChooChooApplication"
-        android:fullBackupContent="true"
         android:allowBackup="true"
-        android:icon="@drawable/ic_cal_choo_choo"
+        android:fullBackupContent="true"
+        android:icon="@drawable/calchoochoo"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/CalChooChooTheme">
-        <activity android:name=".ChooChooActivity">
+        <activity android:name=".MapSearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
             </intent-filter>
         </activity>
+        <activity android:name=".TripFilterActivity"/>
+        <activity android:name=".StopSearchActivity"/>
+        <activity android:name=".StopActivity"/>
+        <activity android:name=".TripActivity"/>
         <activity android:name=".ChooChooWidgetConfigure">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
@@ -36,13 +40,13 @@
             android:value="@string/GOOGLE_MAPS_API_KEY"/>
 
         <provider
-            android:exported="false"
             android:name=".data.ChooChooContentProvider"
-            android:authorities="com.eleith.calchoochoo.data"/>
+            android:authorities="com.eleith.calchoochoo.data"
+            android:exported="false"/>
 
         <receiver
             android:name="ChooChooWidgetProvider"
-            android:icon="@drawable/ic_cal_choo_choo"
+            android:icon="@drawable/calchoochoo"
             android:label="Example Widget">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>

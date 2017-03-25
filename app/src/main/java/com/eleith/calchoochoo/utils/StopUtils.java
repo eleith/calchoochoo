@@ -46,9 +46,11 @@ public class StopUtils {
   public static ArrayList<Stop> getStopsFromCursor(Cursor cursor) {
     ArrayList<Stop> stops = new ArrayList<>();
 
-    while (cursor.moveToNext()) {
+    while (cursor.getPosition() < cursor.getCount()) {
       Stop stop = getStopFromCursor(cursor);
-      stops.add(stop);
+      if (stop != null) {
+        stops.add(stop);
+      }
     }
 
     cursor.close();
@@ -57,9 +59,9 @@ public class StopUtils {
 
   @Nullable
   public static Stop getStopFromCursor(Cursor cursor) {
-    Stop stop = new Stop();
 
-    if (!cursor.isAfterLast()) {
+    if (cursor.moveToNext()) {
+      Stop stop = new Stop();
       stop.stop_name = cursor.getString(cursor.getColumnIndex("stop_name"));
       stop.stop_id = cursor.getString(cursor.getColumnIndex("stop_id"));
       stop.stop_lat = cursor.getFloat(cursor.getColumnIndex("stop_lat"));

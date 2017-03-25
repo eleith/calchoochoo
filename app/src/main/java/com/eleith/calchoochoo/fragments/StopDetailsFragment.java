@@ -2,27 +2,21 @@ package com.eleith.calchoochoo.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.eleith.calchoochoo.ChooChooActivity;
-import com.eleith.calchoochoo.ChooChooFragmentManager;
+import com.eleith.calchoochoo.ChooChooRouterManager;
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.StopActivity;
 import com.eleith.calchoochoo.adapters.StopTrainsAdapter;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrain;
 import com.eleith.calchoochoo.data.Stop;
-import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageNextTrains;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTrips;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
@@ -34,18 +28,15 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import rx.Subscription;
-import rx.functions.Action1;
 
 public class StopDetailsFragment extends Fragment {
   private Stop stop;
-  private Subscription subscription;
   private ArrayList<PossibleTrain> possibleTrains = new ArrayList<>();
 
   @Inject
   RxBus rxBus;
   @Inject
-  ChooChooFragmentManager chooChooFragmentManager;
+  ChooChooRouterManager chooChooRouterManager;
   @Inject
   ChooChooLoader chooChooLoader;
   @Inject
@@ -57,7 +48,7 @@ public class StopDetailsFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    ((ChooChooActivity) getActivity()).getComponent().inject(this);
+    ((StopActivity) getActivity()).getComponent().inject(this);
     unPackBundle(savedInstanceState != null ? savedInstanceState : getArguments());
   }
 
@@ -73,23 +64,18 @@ public class StopDetailsFragment extends Fragment {
     setAdapterData();
     stopDetailsRecyclerView.setAdapter(stopTrainsAdapter);
 
-    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
-    chooChooLoader.loadPossibleTrains(stop.stop_id, new LocalDateTime());
-    chooChooLoader.loadRoutes();
-    chooChooLoader.loadTrips();
-
     return view;
   }
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
     outState.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
+    outState.putParcelable(BundleKeys.POSSIBLE_TRAINS, Parcels.wrap(possibleTrains));
     super.onSaveInstanceState(outState);
   }
 
   private void setAdapterData() {
     if (stop != null && possibleTrains.size() > 0) {
-      stopTrainsAdapter.setStop(stop);
       stopTrainsAdapter.setPossibleTrains(possibleTrains);
 
       Integer positionToScrollTo = 0;
@@ -117,24 +103,12 @@ public class StopDetailsFragment extends Fragment {
   private void unPackBundle(Bundle bundle) {
     if (bundle != null) {
       stop = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP));
+      possibleTrains = Parcels.unwrap(bundle.getParcelable(BundleKeys.POSSIBLE_TRAINS));
     }
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
-    subscription.unsubscribe();
-  }
-
-  private Action1<RxMessage> handleRxMessages() {
-    return new Action1<RxMessage>() {
-      @Override
-      public void call(RxMessage rxMessage) {
-        if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_NEXT_TRAINS)) {
-          possibleTrains = ((RxMessageNextTrains) rxMessage).getMessage();
-          setAdapterData();
-        }
-      }
-    };
   }
 }

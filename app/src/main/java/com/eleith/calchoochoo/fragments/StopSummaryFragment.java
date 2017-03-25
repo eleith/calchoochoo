@@ -9,8 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.eleith.calchoochoo.ChooChooActivity;
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.StopActivity;
+import com.eleith.calchoochoo.data.PossibleTrain;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -30,7 +31,7 @@ import rx.functions.Action1;
 
 public class StopSummaryFragment extends Fragment {
   private Stop stop;
-  private ChooChooActivity chooChooActivity;
+  private StopActivity stopActivity;
   private Subscription subscription;
 
   @BindView(R.id.stop_summary_name)
@@ -44,8 +45,8 @@ public class StopSummaryFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    chooChooActivity = (ChooChooActivity) getActivity();
-    chooChooActivity.getComponent().inject(this);
+    stopActivity = (StopActivity) getActivity();
+    stopActivity.getComponent().inject(this);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
@@ -59,7 +60,7 @@ public class StopSummaryFragment extends Fragment {
     stopName.setText(stop.stop_name);
     stopZone.setText(String.format(Locale.getDefault(), "%d", stop.zone_id + 1));
 
-    chooChooActivity.fabEnable(R.drawable.ic_link_black_24dp);
+    stopActivity.fabEnable(R.drawable.ic_link_black_24dp);
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
 
     return view;
@@ -68,7 +69,7 @@ public class StopSummaryFragment extends Fragment {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    chooChooActivity.fabDisable();
+    stopActivity.fabDisable();
     subscription.unsubscribe();
   }
 
