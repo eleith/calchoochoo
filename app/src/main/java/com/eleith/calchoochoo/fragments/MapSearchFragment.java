@@ -24,7 +24,6 @@ import com.eleith.calchoochoo.utils.MapUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 import com.eleith.calchoochoo.utils.StopUtils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,10 +35,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.joda.time.LocalDateTime;
 import org.parceler.Parcels;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -117,7 +114,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     this.googleMap = googleMap;
     CameraPosition.Builder cameraBuilder = new CameraPosition.Builder().zoom(13);
     LatLng myLatLng;
-    final Fragment fragment = this;
 
     setStopMarkers();
 

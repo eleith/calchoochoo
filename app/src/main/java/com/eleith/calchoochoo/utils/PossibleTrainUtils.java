@@ -23,7 +23,7 @@ public class PossibleTrainUtils {
 
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
       String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
-      String stopId = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
+      String stopId = cursor.getString(cursor.getColumnIndex("st1__parent_station"));
       String routeLongName = cursor.getString(cursor.getColumnIndex("route_long_name"));
       String tripShortName = cursor.getString(cursor.getColumnIndex("trip_short_name"));
       int tripDirectionId = cursor.getInt(cursor.getColumnIndex("trip_direction_id"));
@@ -52,7 +52,7 @@ public class PossibleTrainUtils {
         "routes.route_id as route_id, " +
         "routes.route_long_name as route_long_name, " +
         "st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
-        "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence " +
+        "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, st1.parent_station as st1__parent_station " +
         "FROM " +
         "    (SELECT * " +
         "    FROM stops, stop_times " +

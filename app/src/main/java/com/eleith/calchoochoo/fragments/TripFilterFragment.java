@@ -213,7 +213,7 @@ public class TripFilterFragment extends Fragment {
           updateStops();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOP)) {
           Stop stop = ((RxMessageStop) rxMessage).getMessage();
-          if (destinationStopId.equals(stop.stop_id)) {
+          if (destinationStopId != null && destinationStopId.equals(stop.stop_id)) {
             destinationEdit.setText(stop.stop_name.replace(" Caltrain", ""));
           } else {
             sourceEdit.setText(stop.stop_name.replace(" Caltrain", ""));

@@ -12,6 +12,7 @@ import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.StopActivity;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.PossibleTrain;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -111,10 +112,8 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
 
     @OnClick(R.id.stop_card_widget_train_item)
     void onClickTripSummary() {
-      ArrayList<String> filteredStopIds = new ArrayList<>();
       PossibleTrain possibleTrain = possibleTrains.get(getAdapterPosition());
-      filteredStopIds.add(possibleTrain.getStopId());
-      //chooChooRouterManager.loadStopSearchActivity(fragment, activity, filteredStopIds);
+      chooChooRouterManager.loadTripFilterActivity(activity, possibleTrain.getStopId(), null, RxMessageStopsAndDetails.DETAIL_DEPARTING, possibleTrain.getArrivalTime().toDateTimeToday().getMillis());
     }
 
     private RouteViewHolder(View v) {
