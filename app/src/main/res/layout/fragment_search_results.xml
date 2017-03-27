@@ -17,14 +17,15 @@
 
         <TextView
             android:id="@+id/search_results_empty_state"
-            android:visibility="gone"
             android:drawableTop="@drawable/ic_cal_choo_choo"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
             android:text="@string/no_matching_stops"
             android:textSize="20sp"
+            android:padding="10dp"
             android:orientation="vertical">
         </TextView>
 

@@ -247,8 +247,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
             chooChooRouterManager.loadTripFilterActivity(getActivity(), null, stopId);
           }
         }
-      } else {
-        chooChooRouterManager.loadMapSearchFragment(stops);
       }
     }
   }
