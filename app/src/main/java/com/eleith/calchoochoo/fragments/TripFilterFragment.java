@@ -201,7 +201,10 @@ public class TripFilterFragment extends Fragment {
       @Override
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED)) {
-          chooChooLoader.loadPossibleTrips(destinationStopId, sourceStopId, stopDateTime);
+          String tempId = destinationStopId;
+          destinationStopId = sourceStopId;
+          sourceStopId = tempId;
+          chooChooLoader.loadPossibleTrips(sourceStopId, destinationStopId, stopDateTime);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageStopMethodAndDateTime) rxMessage).getMessage();
           stopMethod = pair.first;
