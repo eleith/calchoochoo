@@ -1,7 +1,5 @@
 package com.eleith.calchoochoo.fragments;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.ChooChooRouterManager;
-import com.eleith.calchoochoo.MapSearchActivity;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.StopSearchActivity;
 import com.eleith.calchoochoo.adapters.SearchResultsViewAdapter;
@@ -26,7 +23,6 @@ import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStops;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.parceler.Parcels;

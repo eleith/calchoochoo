@@ -236,15 +236,19 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == IntentKeys.STOP_SEARCH_RESULT) {
-      Bundle bundle = data.getExtras();
-      String stopId = bundle.getString(BundleKeys.STOP);
-      Stop closestStop = StopUtils.findStopClosestTo(stops, lastLocation);
-      if (resultCode == RESULT_OK) {
-        if (closestStop != null) {
-          chooChooRouterManager.loadTripFilterActivity(getActivity(), closestStop.stop_id, stopId);
-        } else {
-          chooChooRouterManager.loadTripFilterActivity(getActivity(), null, stopId);
+      if (data != null) {
+        Bundle bundle = data.getExtras();
+        String stopId = bundle.getString(BundleKeys.STOP);
+        Stop closestStop = StopUtils.findStopClosestTo(stops, lastLocation);
+        if (resultCode == RESULT_OK) {
+          if (closestStop != null) {
+            chooChooRouterManager.loadTripFilterActivity(getActivity(), closestStop.stop_id, stopId);
+          } else {
+            chooChooRouterManager.loadTripFilterActivity(getActivity(), null, stopId);
+          }
         }
+      } else {
+        chooChooRouterManager.loadMapSearchFragment(stops);
       }
     }
   }

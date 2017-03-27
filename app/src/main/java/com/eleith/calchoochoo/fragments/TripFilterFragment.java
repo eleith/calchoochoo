@@ -173,15 +173,17 @@ public class TripFilterFragment extends Fragment {
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     if (requestCode == IntentKeys.STOP_SEARCH_RESULT) {
-      Bundle bundle = data.getExtras();
-      String stopId = bundle.getString(BundleKeys.STOP);
-      if (resultCode == RESULT_OK) {
-        if (lookingForSource) {
-          sourceStopId = stopId;
-        } else {
-          destinationStopId = stopId;
+      if (data != null) {
+        Bundle bundle = data.getExtras();
+        String stopId = bundle.getString(BundleKeys.STOP);
+        if (resultCode == RESULT_OK) {
+          if (lookingForSource) {
+            sourceStopId = stopId;
+          } else {
+            destinationStopId = stopId;
+          }
+          chooChooLoader.loadPossibleTrips(sourceStopId, destinationStopId, new LocalDateTime(stopMethod));
         }
-        chooChooLoader.loadPossibleTrips(sourceStopId, destinationStopId, new LocalDateTime(stopMethod));
       }
     }
   }
