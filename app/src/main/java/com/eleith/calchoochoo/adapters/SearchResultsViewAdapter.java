@@ -1,5 +1,6 @@
 package com.eleith.calchoochoo.adapters;
 
+import android.graphics.Typeface;
 import android.location.Location;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -51,6 +52,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
   @Override
   public void onBindViewHolder(final ViewHolder holder, int position) {
     Stop stop = stops.get(position);
+    int type = holder.getItemViewType();
 
     if (location != null) {
       Double distance = location.distanceTo(stop.getLocation()) / 1.0;
@@ -62,6 +64,19 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
 
     holder.mItem = stop;
     holder.mIdView.setText(stop.stop_name.replace(" Caltrain", ""));
+    if (type == 1) {
+      holder.mIdView.setTypeface(null, Typeface.ITALIC);
+    }
+  }
+
+  @Override
+  public int getItemViewType(int position) {
+    Stop stop = stops.get(position);
+    if (filteredStopIds.indexOf(stop.stop_id) != -1) {
+      return 1;
+    } else {
+      return 0;
+    }
   }
 
   @Override
