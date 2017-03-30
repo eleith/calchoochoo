@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -62,10 +63,19 @@ public class TripSummaryFragment extends Fragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_trip_summary, container, false);
+    final View view = inflater.inflate(R.layout.fragment_trip_summary, container, false);
     unWrapBundle(savedInstanceState);
     ButterKnife.bind(this, view);
     updateSummaryBar();
+
+    view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+      public boolean onPreDraw() {
+        view.getViewTreeObserver().removeOnPreDrawListener(this);
+        getActivity().startPostponedEnterTransition();
+        return true;
+      }
+    });
+
     return view;
   }
 
