@@ -26,7 +26,6 @@ public class DeviceLocation
   private GoogleApiClient googleApiClient;
   private Activity activity;
   private Boolean googleApiClientReady = false;
-  private Boolean requestingLocation = false;
   private Boolean getRequestingLocationUpdates = false;
   private int requestedUpdates = 0;
 
@@ -48,6 +47,10 @@ public class DeviceLocation
           locationRequest.setFastestInterval(3000); //3 seconds
           locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
           LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+          Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+          if (location != null) {
+            onLocationChanged(location);
+          }
         }
         requestedUpdates++;
       } else {
