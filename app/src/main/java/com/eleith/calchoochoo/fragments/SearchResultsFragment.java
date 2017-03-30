@@ -19,10 +19,10 @@ import com.eleith.calchoochoo.adapters.SearchResultsViewAdapter;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageLocation;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.parceler.Parcels;
@@ -42,6 +42,7 @@ public class SearchResultsFragment extends Fragment {
   private ArrayList<Stop> parentStops;
   private ArrayList<String> filteredStopIds;
   private Subscription subscription;
+  private Integer reason;
 
   @BindView(R.id.search_results_empty_state)
   TextView searchResultsEmptyState;
@@ -52,8 +53,6 @@ public class SearchResultsFragment extends Fragment {
   RxBus rxBus;
   @Inject
   SearchResultsViewAdapter searchResultsViewAdapter;
-  @Inject
-  DeviceLocation deviceLocation;
   @Inject
   ChooChooRouterManager chooChooRouterManager;
   @Inject
@@ -75,12 +74,6 @@ public class SearchResultsFragment extends Fragment {
     unWrapBundle(savedInstanceState);
 
     searchResultsRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-    deviceLocation.requestLocation(new DeviceLocation.LocationGetListener() {
-      @Override
-      public void onLocationGet(Location location) {
-        searchResultsViewAdapter.setLocation(location);
-      }
-    });
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
     searchResultsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -107,6 +100,7 @@ public class SearchResultsFragment extends Fragment {
     if (bundle != null) {
       filteredStopIds = bundle.getStringArrayList(BundleKeys.STOP_IDS);
       parentStops = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOPS));
+      reason = bundle.getInt(BundleKeys.SEARCH_REASON);
     }
   }
 
@@ -120,10 +114,13 @@ public class SearchResultsFragment extends Fragment {
     public void call(RxMessage rxMessage) {
       if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_STOP)) {
         Stop stop = (Stop) rxMessage.getMessage();
-        chooChooRouterManager.loadStopSearchReturnActivity(getActivity(), stop.stop_id);
+        chooChooRouterManager.loadStopSearchReturnActivity(getActivity(), reason, stop.stop_id);
       } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_INPUT_STRING)) {
         String filterString = ((RxMessageString) rxMessage).getMessage();
         filterResultsBy(filterString);
+      } else if (rxMessage.isMessageValidFor(RxMessageKeys.MY_LOCATION_UPDATE)) {
+        Location location = ((RxMessageLocation) rxMessage).getMessage();
+        searchResultsViewAdapter.setLocation(location);
       }
     }
   }

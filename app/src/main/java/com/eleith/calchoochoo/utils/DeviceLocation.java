@@ -50,6 +50,7 @@ public class DeviceLocation
         Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         if (location != null) {
           rxBus.send(new RxMessageLocation(RxMessageKeys.MY_LOCATION, location));
+        } else {
         }
       } else {
         activity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Permissions.READ_GPS);
@@ -87,6 +88,7 @@ public class DeviceLocation
     }
   }
 
+  /*
   public void requestLocation(final LocationGetListener locationGetListener) {
     rxBus.observeEvents(RxMessageLocation.class).first(new Func1<RxMessageLocation, Boolean>() {
       @Override
@@ -102,18 +104,21 @@ public class DeviceLocation
     initializeLocationUpdatesRequest();
     return subscription;
   }
+  */
 
   @Override
   public void onConnected(@Nullable Bundle bundle) {
     googleApiClientReady = true;
 
+    /*
     if (requestingLocation) {
       initializeLocationRequest();
     }
 
     if (getRequestingLocationUpdates) {
-      initializeLocationUpdatesRequest();
-    }
+    */
+    initializeLocationUpdatesRequest();
+    //}
   }
 
   @Override
@@ -133,6 +138,7 @@ public class DeviceLocation
     }
   }
 
+  /*
   private Action1<RxMessageLocation> handleRxMessageLocation(final LocationGetListener locationGetListener) {
     return new Action1<RxMessageLocation>() {
       @Override
@@ -160,4 +166,5 @@ public class DeviceLocation
   public interface LocationGetListener {
     void onLocationGet(Location location);
   }
+  */
 }

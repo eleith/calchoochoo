@@ -25,6 +25,7 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -50,7 +51,6 @@ public class TripFilterFragment extends Fragment {
   private ArrayList<PossibleTrip> possibleTrips;
   private String sourceStopId;
   private String destinationStopId;
-  private boolean lookingForSource = true;
 
   @BindView(R.id.trip_filter_destination)
   TextView destinationEdit;
@@ -134,22 +134,20 @@ public class TripFilterFragment extends Fragment {
 
   @OnClick(R.id.trip_filter_destination)
   void destinationClick() {
-    lookingForSource = false;
     ArrayList<String> filteredOutStopIds = new ArrayList<>();
     if (sourceStopId != null) {
       filteredOutStopIds.add(sourceStopId);
     }
-    chooChooRouterManager.loadStopSearchActivity(this, getActivity(), filteredOutStopIds);
+    chooChooRouterManager.loadStopSearchActivity(getActivity(), 1, filteredOutStopIds);
   }
 
   @OnClick(R.id.trip_filter_source)
   void sourceClick() {
-    lookingForSource = true;
     ArrayList<String> filteredOutStopIds = new ArrayList<>();
     if (destinationStopId != null) {
       filteredOutStopIds.add(destinationStopId);
     }
-    chooChooRouterManager.loadStopSearchActivity(this, getActivity(), filteredOutStopIds);
+    chooChooRouterManager.loadStopSearchActivity(getActivity(), 2, filteredOutStopIds);
   }
 
   @OnClick(R.id.trip_filter_datetime)
@@ -168,24 +166,6 @@ public class TripFilterFragment extends Fragment {
     outState.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
     outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
     super.onSaveInstanceState(outState);
-  }
-
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (requestCode == IntentKeys.STOP_SEARCH_RESULT) {
-      if (data != null) {
-        Bundle bundle = data.getExtras();
-        String stopId = bundle.getString(BundleKeys.STOP);
-        if (resultCode == RESULT_OK) {
-          if (lookingForSource) {
-            sourceStopId = stopId;
-          } else {
-            destinationStopId = stopId;
-          }
-          chooChooLoader.loadPossibleTrips(sourceStopId, destinationStopId, new LocalDateTime(stopMethod));
-        }
-      }
-    }
   }
 
   private void unWrapBundle(Bundle bundle) {
