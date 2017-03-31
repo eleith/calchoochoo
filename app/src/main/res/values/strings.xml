@@ -32,6 +32,11 @@
     <string name="north_bound">(North)</string>
     <string name="number_sign">#</string>
     <string name="trains_seen">Trains seen after</string>
+    <string name="san_jose">San Jose</string>
+    <string name="san_francisco">San Francisco</string>
+    <string name="image_direction_arrow">Select to switch train direction</string>
 
     <string name="transition_train_image">transition-train-image</string>
+    <string name="transition_train_number_text">transition-train-number-text</string>
+    <string name="transition_train_number">transition-train-number</string>
 </resources>

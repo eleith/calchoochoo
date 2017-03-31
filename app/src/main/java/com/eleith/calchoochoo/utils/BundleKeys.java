@@ -16,4 +16,5 @@ public class BundleKeys {
   public static final String TRIP_STOP_STOPTIMES = "tripStops";
   public static final String ROUTES = "routes";
   public static final String POSSIBLE_TRAINS = "possibleTrains";
+  public static final String DIRECTION = "direction";
 }

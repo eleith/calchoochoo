@@ -68,11 +68,6 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
     DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
 
     holder.stopCardTrainItemNumber.setText(possibleTrain.getTripShortName());
-    if (possibleTrain.getTripDirectionId() == 1) {
-      holder.stopCardTrainDirection.setText(activity.getString(R.string.south_bound));
-    } else {
-      holder.stopCardTrainDirection.setText(activity.getString(R.string.north_bound));
-    }
 
     if (possibleTrain.getRouteLongName().contains("Bullet")) {
       holder.stopCardTrainItemImage.setImageDrawable(activity.getDrawable(R.drawable.ic_train_bullet));
@@ -102,13 +97,10 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
   public class RouteViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.stop_card_widget_trainitem_number)
     TextView stopCardTrainItemNumber;
-    @BindView(R.id.stop_card_widget_direction)
-    TextView stopCardTrainDirection;
     @BindView(R.id.stop_card_widget_trainitem_image)
     ImageView stopCardTrainItemImage;
     @BindView(R.id.stop_card_widget_trainitem_time)
     TextView stopCardTrainItemTime;
-
 
     @OnClick(R.id.stop_card_widget_train_item)
     void onClickTripSummary() {

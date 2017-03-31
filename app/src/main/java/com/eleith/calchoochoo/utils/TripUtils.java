@@ -9,6 +9,8 @@ import com.eleith.calchoochoo.data.Trips;
 import java.util.ArrayList;
 
 public class TripUtils {
+  public static final int DIRECTION_SOUTH = 0;
+  public static final int DIRECTION_NORTH = 1;
 
   public static ArrayList<Trips> getTripsFromCursor(Cursor cursor) {
     ArrayList<Trips> trips = new ArrayList<>();

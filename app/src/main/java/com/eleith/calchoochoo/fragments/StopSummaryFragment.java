@@ -7,16 +7,18 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.StopActivity;
-import com.eleith.calchoochoo.data.PossibleTrain;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.TripUtils;
 
 import org.parceler.Parcels;
 
@@ -26,6 +28,7 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 
@@ -33,11 +36,16 @@ public class StopSummaryFragment extends Fragment {
   private Stop stop;
   private StopActivity stopActivity;
   private Subscription subscription;
+  private int direction;
 
   @BindView(R.id.stop_summary_name)
   TextView stopName;
   @BindView(R.id.stop_summary_zone)
   TextView stopZone;
+  @BindView(R.id.stop_summary_arrow_image)
+  ImageView stopArrowImage;
+  @BindView(R.id.stop_summary_direction_text)
+  TextView stopDirectionText;
 
   @Inject
   RxBus rxBus;
@@ -57,8 +65,16 @@ public class StopSummaryFragment extends Fragment {
 
     unWrapBundle(savedInstanceState);
 
-    stopName.setText(stop.stop_name);
+    stopName.setText(stop.stop_name.replace(" Caltrain", ""));
     stopZone.setText(String.format(Locale.getDefault(), "%d", stop.zone_id + 1));
+
+    if (direction == TripUtils.DIRECTION_SOUTH) {
+      stopArrowImage.setImageDrawable(stopActivity.getDrawable(R.drawable.ic_arrow_downward_black_24dp));
+      stopDirectionText.setText(stopActivity.getString(R.string.san_jose));
+    } else {
+      stopArrowImage.setImageDrawable(stopActivity.getDrawable(R.drawable.ic_arrow_upward_black_24dp));
+      stopDirectionText.setText(stopActivity.getString(R.string.san_francisco));
+    }
 
     stopActivity.fabEnable(R.drawable.ic_link_black_24dp);
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
@@ -82,6 +98,7 @@ public class StopSummaryFragment extends Fragment {
   private void unWrapBundle(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
       stop = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP));
+      direction = savedInstanceState.getInt(BundleKeys.DIRECTION);
     }
   }
 
@@ -96,5 +113,10 @@ public class StopSummaryFragment extends Fragment {
         }
       }
     };
+  }
+
+  @OnClick(R.id.stop_summary_switch_direction)
+  public void switchDirection() {
+    rxBus.send(new RxMessage(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED));
   }
 }

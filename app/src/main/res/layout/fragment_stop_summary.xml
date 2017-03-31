@@ -8,49 +8,91 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="?attr/colorPrimary"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/stop_summary_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
-            android:paddingTop="10dp"
-            android:textColor="?android:colorBackground"
-            android:textSize="22sp"
-            tools:text="name"
-            />
+        <ImageView
+            android:layout_gravity="center"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="50dp"
+            android:contentDescription="@string/bullet_train"
+            android:src="@drawable/ic_train_local"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
-            android:paddingTop="5dp">
+            android:layout_weight="3"
+            android:orientation="vertical">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/stop_summary_name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="3sp"
-                android:text="@string/zone"
+                android:background="?attr/colorPrimary"
+                android:paddingEnd="10dp"
+                android:paddingTop="10dp"
                 android:textColor="?android:colorBackground"
-                android:textSize="14sp"
+                android:textSize="22sp"
+                tools:text="name"
                 />
 
-            <TextView
-                android:id="@+id/stop_summary_zone"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?android:colorBackground"
-                android:textSize="14sp"
-                tools:text="5"
-                />
+                android:background="?attr/colorPrimary"
+                android:orientation="horizontal"
+                android:paddingBottom="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="3sp"
+                    android:text="@string/zone"
+                    android:textColor="?android:colorBackground"
+                    android:textSize="14sp"
+                    />
+
+                <TextView
+                    android:id="@+id/stop_summary_zone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:colorBackground"
+                    android:textSize="14sp"
+                    tools:text="5"
+                    />
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/stop_summary_switch_direction"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/stop_summary_arrow_image"
+                android:layout_width="50dp"
+                android:layout_gravity="center"
+                android:layout_height="50dp"
+                android:contentDescription="@string/image_direction_arrow"
+                android:src="@drawable/ic_arrow_downward_black_24dp"/>
+
+            <TextView
+                android:id="@+id/stop_summary_direction_text"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/san_francisco"
+                android:textColor="?android:colorBackground"
+                android:textSize="12sp"/>
+
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

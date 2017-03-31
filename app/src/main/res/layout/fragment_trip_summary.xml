@@ -40,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/train_number"
                 android:textColor="?android:colorBackground"
+                android:transitionName="@string/transition_train_number_text"
                 android:textSize="25sp"/>
 
             <TextView
@@ -48,6 +49,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="?android:colorBackground"
                 android:textSize="25sp"
+                android:transitionName="@string/transition_train_number"
                 tools:text="143"/>
         </LinearLayout>
 
