@@ -30,8 +30,7 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
   private ArrayList<PossibleTrain> possibleTrains = new ArrayList<>();
   private StopActivity activity;
   private ChooChooRouterManager chooChooRouterManager;
-  private Integer southSelected = null;
-  private Integer northSelected = null;
+  private Integer selected = null;
 
   @Inject
   public StopTrainsAdapter(StopActivity activity, ChooChooRouterManager chooChooRouterManager) {
@@ -43,12 +42,8 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
     this.possibleTrains = possibleTrains;
   }
 
-  public void setNorthSelected(Integer northSelected) {
-    this.northSelected = northSelected;
-  }
-
-  public void setSouthSelected(Integer southSelected) {
-    this.southSelected = southSelected;
+  public void setSelected(Integer selected) {
+    this.selected = selected;
   }
 
   @Override
@@ -80,9 +75,7 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
 
   @Override
   public int getItemViewType(int position) {
-    if (northSelected != null && northSelected == position) {
-      return 1;
-    } else if (southSelected != null && southSelected == position) {
+    if (selected != null && selected == position) {
       return 1;
     } else {
       return 0;

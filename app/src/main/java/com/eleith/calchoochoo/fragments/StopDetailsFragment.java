@@ -79,22 +79,16 @@ public class StopDetailsFragment extends Fragment {
       stopTrainsAdapter.setPossibleTrains(possibleTrains);
 
       Integer positionToScrollTo = 0;
-      Integer northSelected = 0;
-      Integer southSelected = 0;
+      Integer selected = 0;
       LocalTime now = new LocalTime();
       for (PossibleTrain possibleTrain : possibleTrains) {
         if (possibleTrain.getDepartureTime().isBefore(now)) {
           positionToScrollTo++;
-          if (possibleTrain.getTripDirectionId() == 1) {
-            northSelected = positionToScrollTo;
-          } else {
-            southSelected = positionToScrollTo;
-          }
+          selected = positionToScrollTo;
         }
       }
 
-      stopTrainsAdapter.setSouthSelected(northSelected);
-      stopTrainsAdapter.setNorthSelected(southSelected);
+      stopTrainsAdapter.setSelected(selected);
       stopTrainsAdapter.notifyDataSetChanged();
       stopDetailsRecyclerView.scrollToPosition(positionToScrollTo);
     }
