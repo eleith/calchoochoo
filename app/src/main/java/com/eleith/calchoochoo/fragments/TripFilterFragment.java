@@ -133,6 +133,7 @@ public class TripFilterFragment extends Fragment {
     if (sourceStopId != null) {
       filteredOutStopIds.add(sourceStopId);
     }
+    subscription.unsubscribe();
     chooChooRouterManager.loadStopSearchActivity(getActivity(), 1, filteredOutStopIds);
   }
 
@@ -142,6 +143,7 @@ public class TripFilterFragment extends Fragment {
     if (destinationStopId != null) {
       filteredOutStopIds.add(destinationStopId);
     }
+    subscription.unsubscribe();
     chooChooRouterManager.loadStopSearchActivity(getActivity(), 2, filteredOutStopIds);
   }
 
@@ -188,9 +190,6 @@ public class TripFilterFragment extends Fragment {
           stopDateTime = pair.second;
           updateTimeEdit();
           chooChooLoader.loadPossibleTrips(sourceStopId, destinationStopId, stopDateTime);
-        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIPS)) {
-          possibleTrips = ((RxMessagePossibleTrips) rxMessage).getMessage();
-          updateStops();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOP)) {
           Stop stop = ((RxMessageStop) rxMessage).getMessage();
           if (destinationStopId != null && destinationStopId.equals(stop.stop_id)) {
@@ -198,6 +197,9 @@ public class TripFilterFragment extends Fragment {
           } else {
             sourceEdit.setText(stop.stop_name.replace(" Caltrain", ""));
           }
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIPS)) {
+          possibleTrips = ((RxMessagePossibleTrips) rxMessage).getMessage();
+          updateStops();
         }
       }
     };
