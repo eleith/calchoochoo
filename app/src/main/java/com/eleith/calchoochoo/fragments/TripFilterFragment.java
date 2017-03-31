@@ -1,6 +1,5 @@
 package com.eleith.calchoochoo.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,7 +16,6 @@ import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.IntentKeys;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
@@ -25,7 +23,6 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -40,8 +37,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
-
-import static android.app.Activity.RESULT_OK;
 
 
 public class TripFilterFragment extends Fragment {
@@ -122,7 +117,7 @@ public class TripFilterFragment extends Fragment {
       methodArrivingText.setVisibility(View.GONE);
       methodDepartingText.setVisibility(View.VISIBLE);
     }
-    timeEdit.setText(DateTimeFormat.forPattern("E, MMM d @ h:mma").print(stopDateTime));
+    timeEdit.setText(DateTimeFormat.forPattern("M/d, E @ h:mma").print(stopDateTime));
   }
 
   @OnClick(R.id.trip_filter_refresh_date)

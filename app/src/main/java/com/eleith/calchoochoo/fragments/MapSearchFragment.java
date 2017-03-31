@@ -64,6 +64,8 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   ChooChooRouterManager chooChooRouterManager;
   @Inject
   ChooChooLoader chooChooLoader;
+  @Inject
+  DeviceLocation deviceLocation;
 
   @BindView(R.id.map_search_input)
   EditText mapSearchInput;
@@ -91,6 +93,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     googleMapView = ((MapView) view.findViewById(R.id.search_google_maps));
     googleMapView.onCreate(savedInstanceState);
     googleMapView.getMapAsync(this);
+
     return view;
   }
 

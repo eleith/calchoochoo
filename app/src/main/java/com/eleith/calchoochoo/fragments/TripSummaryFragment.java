@@ -9,7 +9,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.eleith.calchoochoo.MapSearchActivity;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.TripActivity;
 import com.eleith.calchoochoo.data.ChooChooLoader;

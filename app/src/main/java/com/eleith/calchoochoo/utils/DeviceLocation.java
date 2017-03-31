@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageLocation;
@@ -20,14 +21,15 @@ import javax.inject.Inject;
 public class DeviceLocation
     implements GoogleApiClient.ConnectionCallbacks,
     GoogleApiClient.OnConnectionFailedListener,
-    com.google.android.gms.location.LocationListener {
+    com.google.android.gms.location.LocationListener,
+    ActivityCompat.OnRequestPermissionsResultCallback {
 
   private RxBus rxBus;
   private GoogleApiClient googleApiClient;
   private Activity activity;
   private Boolean googleApiClientReady = false;
-  private Boolean getRequestingLocationUpdates = false;
   private int requestedUpdates = 0;
+  private int requestedLocation = 0;
 
   @Inject
   public DeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient, Activity activity) {
@@ -38,7 +40,24 @@ public class DeviceLocation
     googleApiClient.registerConnectionCallbacks(this);
   }
 
-  private void initializeLocationUpdatesRequest() {
+  public void requestLocation() {
+    if (googleApiClientReady) {
+      if (activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        if (location != null) {
+          onLocationChanged(location);
+        } else {
+          requestLocationUpdates();
+        }
+        return;
+      } else {
+        activity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Permissions.READ_GPS);
+      }
+    }
+    requestedLocation++;
+  }
+
+  public void requestLocationUpdates() {
     if (googleApiClientReady) {
       if (activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
         if (requestedUpdates == 0) {
@@ -47,24 +66,26 @@ public class DeviceLocation
           locationRequest.setFastestInterval(3000); //3 seconds
           locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
           LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
-          Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
-          if (location != null) {
-            onLocationChanged(location);
-          }
         }
-        requestedUpdates++;
+        return;
       } else {
         activity.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, Permissions.READ_GPS);
       }
-    } else {
-      getRequestingLocationUpdates = true;
     }
+    requestedUpdates++;
   }
 
   @Override
   public void onConnected(@Nullable Bundle bundle) {
     googleApiClientReady = true;
-    initializeLocationUpdatesRequest();
+
+    if (requestedUpdates > 0)  {
+      requestLocationUpdates();
+    }
+
+    if (requestedLocation > 0) {
+      requestLocation();
+    }
   }
 
   @Override
@@ -83,4 +104,22 @@ public class DeviceLocation
       rxBus.send(new RxMessageLocation(RxMessageKeys.MY_LOCATION_UPDATE, location));
     }
   }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
+    switch (requestCode) {
+      case Permissions.READ_GPS: {
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+          if (requestedUpdates > 0) {
+            requestLocationUpdates();
+          } else if (requestedLocation > 0) {
+            requestLocation();
+          }
+        } else {
+          rxBus.send(new RxMessageLocation(RxMessageKeys.MY_LOCATION_UPDATE, null));
+        }
+      }
+    }
+  }
+
 }

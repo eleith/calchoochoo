@@ -22,7 +22,6 @@ import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageLocation;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 
 import org.parceler.Parcels;
@@ -43,6 +42,7 @@ public class SearchResultsFragment extends Fragment {
   private ArrayList<String> filteredStopIds;
   private Subscription subscription;
   private Integer reason;
+  private Location location;
 
   @BindView(R.id.search_results_empty_state)
   TextView searchResultsEmptyState;
@@ -101,10 +101,12 @@ public class SearchResultsFragment extends Fragment {
       filteredStopIds = bundle.getStringArrayList(BundleKeys.STOP_IDS);
       parentStops = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOPS));
       reason = bundle.getInt(BundleKeys.SEARCH_REASON);
+      location = bundle.getParcelable(BundleKeys.LOCATION);
     }
   }
 
   private void filterStopsWithKnownStops() {
+    searchResultsViewAdapter.setLocation(location);
     searchResultsViewAdapter.setStops(parentStops, filteredStopIds);
     searchResultsViewAdapter.notifyDataSetChanged();
   }
@@ -118,9 +120,6 @@ public class SearchResultsFragment extends Fragment {
       } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_INPUT_STRING)) {
         String filterString = ((RxMessageString) rxMessage).getMessage();
         filterResultsBy(filterString);
-      } else if (rxMessage.isMessageValidFor(RxMessageKeys.MY_LOCATION_UPDATE)) {
-        Location location = ((RxMessageLocation) rxMessage).getMessage();
-        searchResultsViewAdapter.setLocation(location);
       }
     }
   }

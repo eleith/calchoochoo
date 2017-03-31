@@ -44,8 +44,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
 
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.fragment_search_result, parent, false);
+    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_search_result, parent, false);
     return new ViewHolder(view);
   }
 
@@ -56,16 +55,16 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
 
     if (location != null) {
       Double distance = location.distanceTo(stop.getLocation()) / 1.0;
-      holder.mContentView.setText(String.format(Locale.getDefault(), "%.2f", DistanceUtils.meterToMiles(distance)));
-      holder.mContentView.setVisibility(View.VISIBLE);
+      holder.searchDistanceText.setText(String.format(Locale.getDefault(), "%.2f", DistanceUtils.meterToMiles(distance)));
+      holder.searchDistanceText.setVisibility(View.VISIBLE);
     } else {
-      holder.mContentView.setVisibility(View.INVISIBLE);
+      holder.searchDistanceText.setVisibility(View.INVISIBLE);
     }
 
-    holder.mItem = stop;
-    holder.mIdView.setText(stop.stop_name.replace(" Caltrain", ""));
+    holder.stopNameText.setText(stop.stop_name.replace(" Caltrain", ""));
+
     if (type == 1) {
-      holder.mIdView.setTypeface(null, Typeface.ITALIC);
+      holder.stopNameText.setTypeface(null, Typeface.ITALIC);
     }
   }
 
@@ -91,15 +90,13 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
 
   class ViewHolder extends RecyclerView.ViewHolder {
     @BindView(R.id.search_result_distance)
-    TextView mContentView;
+    TextView searchDistanceText;
     @BindView(R.id.search_result_name)
-    TextView mIdView;
-
-    Stop mItem;
+    TextView stopNameText;
 
     @OnClick(R.id.search_result_item)
     void onClickResult() {
-      rxBus.send(new RxMessageStop(RxMessageKeys.SEARCH_RESULT_STOP, mItem));
+      rxBus.send(new RxMessageStop(RxMessageKeys.SEARCH_RESULT_STOP, stops.get(getAdapterPosition())));
     }
 
     ViewHolder(View view) {
@@ -109,7 +106,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
 
     @Override
     public String toString() {
-      return super.toString() + " '" + mContentView.getText() + "'";
+      return super.toString() + " '" + searchDistanceText.getText() + "'";
     }
   }
 }
