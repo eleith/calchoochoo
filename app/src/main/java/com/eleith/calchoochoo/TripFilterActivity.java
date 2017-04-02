@@ -90,16 +90,12 @@ public class TripFilterActivity extends AppCompatActivity {
   protected void onStart() {
     super.onStart();
     googleApiClient.connect();
-    if (subscription.isUnsubscribed()) {
-      subscription = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessages());
-    }
   }
 
   @Override
   protected void onStop() {
     super.onStop();
     googleApiClient.disconnect();
-    subscription.unsubscribe();
     fabShow();
   }
 

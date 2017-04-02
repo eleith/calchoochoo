@@ -77,13 +77,25 @@ public class TripFilterFragment extends Fragment {
   public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
-    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    if (subscription == null || subscription.isUnsubscribed()) {
+      subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
+    }
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+    subscription.unsubscribe();
   }
 
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    subscription.unsubscribe();
   }
 
   @Override
