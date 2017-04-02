@@ -59,7 +59,6 @@ public class StopDetailsFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_stop_details, container, false);
     ButterKnife.bind(this, view);
 
-    stopDetailsRecyclerView.setNestedScrollingEnabled(false);
     stopDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     setAdapterData();
     stopDetailsRecyclerView.setAdapter(stopTrainsAdapter);

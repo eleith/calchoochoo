@@ -67,12 +67,14 @@ public class MapSearchActivity extends AppCompatActivity {
 
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_linear_top_bottom);
+    setContentView(R.layout.activity_linear_top_bottom_with_fab);
     ButterKnife.bind(this);
+
+    floatingActionButton.setImageDrawable(getDrawable(R.drawable.ic_gps_not_fixed_black_24dp));
+    unWrapBundle(savedInstanceState);
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     subscriptionLocation = rxBus.observeEvents(RxMessageLocation.class).take(1).subscribe(handleRxLocationMessages());
-    unWrapBundle(savedInstanceState);
 
     if (stops == null) {
       chooChooLoader.loadParentStops();
@@ -86,6 +88,14 @@ public class MapSearchActivity extends AppCompatActivity {
   protected void onStart() {
     super.onStart();
     googleApiClient.connect();
+
+    if (subscription.isUnsubscribed()) {
+      subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
+    }
+
+    if (subscriptionLocation.isUnsubscribed()) {
+      subscriptionLocation = rxBus.observeEvents(RxMessageLocation.class).take(1).subscribe(handleRxLocationMessages());
+    }
   }
 
   @Override
@@ -130,11 +140,6 @@ public class MapSearchActivity extends AppCompatActivity {
     return chooChooComponent;
   }
 
-  public void fabEnable(int drawableId) {
-    floatingActionButton.setVisibility(View.VISIBLE);
-    floatingActionButton.setImageDrawable(getDrawable(drawableId));
-  }
-
   @Override
   protected void onSaveInstanceState(Bundle outState) {
     outState.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
@@ -151,10 +156,6 @@ public class MapSearchActivity extends AppCompatActivity {
     if (stops != null && location != null) {
       chooChooRouterManager.loadMapSearchFragment(stops, location);
     }
-  }
-
-  public void fabDisable() {
-    floatingActionButton.setVisibility(View.GONE);
   }
 
   private Action1<RxMessage> handleRxMessages() {

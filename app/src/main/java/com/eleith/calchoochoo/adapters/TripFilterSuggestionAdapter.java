@@ -99,7 +99,7 @@ public class TripFilterSuggestionAdapter extends RecyclerView.Adapter<TripFilter
       Pair<View, String> p3 = new Pair<>((View) tripNumberText, tripFilterActivity.getString(R.string.transition_train_number_text));
 
       ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(tripFilterActivity, p1, p2, p3);
-      chooChooRouterManager.loadTripActivity(tripFilterActivity, possibleTrip, options);
+      chooChooRouterManager.loadTripActivity(tripFilterActivity, possibleTrip.getTripId(), possibleTrip.getFirstStopId(), possibleTrip.getLastStopId(), options);
     }
 
     private RouteViewHolder(View v) {

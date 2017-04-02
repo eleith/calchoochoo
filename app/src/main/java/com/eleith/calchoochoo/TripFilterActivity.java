@@ -15,7 +15,6 @@ import com.eleith.calchoochoo.utils.IntentKeys;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -64,9 +63,10 @@ public class TripFilterActivity extends AppCompatActivity {
 
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_appbar_main);
+    setContentView(R.layout.activity_appbar_main_with_fab);
     ButterKnife.bind(this);
 
+    floatingActionButton.setImageDrawable(getDrawable(R.drawable.ic_swap_vert_black_24dp));
     Intent intent = getIntent();
     if (intent != null) {
       Bundle bundle = intent.getExtras();
@@ -90,12 +90,17 @@ public class TripFilterActivity extends AppCompatActivity {
   protected void onStart() {
     super.onStart();
     googleApiClient.connect();
+    if (subscription.isUnsubscribed()) {
+      subscription = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessages());
+    }
   }
 
   @Override
   protected void onStop() {
     super.onStop();
     googleApiClient.disconnect();
+    subscription.unsubscribe();
+    fabShow();
   }
 
   @Override
@@ -138,22 +143,21 @@ public class TripFilterActivity extends AppCompatActivity {
     return chooChooComponent;
   }
 
-  public void fabEnable(int drawableId) {
-    floatingActionButton.setVisibility(View.VISIBLE);
-    floatingActionButton.setImageDrawable(getDrawable(drawableId));
-  }
-
-  public void fabDisable() {
-    floatingActionButton.setVisibility(View.GONE);
-  }
-
   private Action1<RxMessagePossibleTrips> handleRxMessages() {
     return new Action1<RxMessagePossibleTrips>() {
       @Override
       public void call(RxMessagePossibleTrips rxMessage) {
-          possibleTrips = rxMessage.getMessage();
-          chooChooRouterManager.loadTripFilterFragment(possibleTrips, stopMethod, new LocalDateTime(stopDateTime), stopSourceId, stopDestinationId);
+        possibleTrips = rxMessage.getMessage();
+        chooChooRouterManager.loadTripFilterFragment(possibleTrips, stopMethod, new LocalDateTime(stopDateTime), stopSourceId, stopDestinationId);
       }
     };
+  }
+
+  public void fabHide() {
+    floatingActionButton.setVisibility(View.GONE);
+  }
+
+  public void fabShow() {
+    floatingActionButton.setVisibility(View.VISIBLE);
   }
 }

@@ -9,8 +9,8 @@ import com.eleith.calchoochoo.data.Trips;
 import java.util.ArrayList;
 
 public class TripUtils {
-  public static final int DIRECTION_SOUTH = 0;
-  public static final int DIRECTION_NORTH = 1;
+  public static final int DIRECTION_SOUTH = 1;
+  public static final int DIRECTION_NORTH = 0;
 
   public static ArrayList<Trips> getTripsFromCursor(Cursor cursor) {
     ArrayList<Trips> trips = new ArrayList<>();
@@ -27,7 +27,7 @@ public class TripUtils {
   public static Trips getTripFromCursor(Cursor cursor) {
     Trips trip = new Trips();
 
-    if (!cursor.isAfterLast()) {
+    if (cursor.moveToNext()) {
       trip.route_id = cursor.getString(cursor.getColumnIndex("route_id"));
       trip.service_id = cursor.getString(cursor.getColumnIndex("service_id"));
       trip.trip_headsign = cursor.getString(cursor.getColumnIndex("trip_headsign"));
@@ -53,5 +53,4 @@ public class TripUtils {
     }
     return null;
   }
-
 }

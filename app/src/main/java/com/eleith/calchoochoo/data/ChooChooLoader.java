@@ -85,6 +85,20 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     }
   }
 
+  public void loadTripById(String trip_id) {
+    if (trips != null) {
+      Trips trip = TripUtils.getTripById(trips, trip_id);
+      if (trip != null) {
+        notifyTripLoaded(trip);
+        return;
+      }
+    }
+
+    Bundle bundle = new Bundle();
+    bundle.putString(BundleKeys.TRIP, trip_id);
+    activity.getLoaderManager().initLoader(generateIdForKey(ChooChooContentProvider.URI_TRIPS_ID), bundle, this);
+  }
+
   public void loadStopByParentId(String stop_id) {
     if (stopsParents != null) {
       Stop stop = StopUtils.getStopById(stopsParents, stop_id);
@@ -99,27 +113,11 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     activity.getLoaderManager().initLoader(generateIdForKey(ChooChooContentProvider.URI_STOPS_PARENTS_ID), bundle, this);
   }
 
-  public void loadTripStops(String trip_id, String stop1_id, String stop2_id) {
-    Bundle bundle = new Bundle();
-    bundle.putString(BundleKeys.STOP_SOURCE, stop1_id);
-    bundle.putString(BundleKeys.STOP_DESTINATION, stop2_id);
-    bundle.putString(BundleKeys.TRIP, trip_id);
-    activity.getLoaderManager().initLoader(generateIdForKey(ChooChooContentProvider.URI_FIND_STOP_TIMES_TRIP), bundle, this);
-  }
-
   public void loadPossibleTrains(String stop_id, LocalDateTime localDateTime) {
     Bundle bundle = new Bundle();
     bundle.putString(BundleKeys.STOP_SOURCE, stop_id);
     bundle.putLong(BundleKeys.STOP_DATETIME, localDateTime.toDate().getTime());
     activity.getLoaderManager().initLoader(generateIdForKey(ChooChooContentProvider.URI_FIND_POSSIBLE_TRAIN), bundle, this);
-  }
-
-  public void loadPossibleTrip(String trip_id, String stop1_id, String stop2_id) {
-    Bundle bundle = new Bundle();
-    bundle.putString(BundleKeys.TRIP, trip_id);
-    bundle.putString(BundleKeys.STOP_SOURCE, stop1_id);
-    bundle.putString(BundleKeys.STOP_DESTINATION, stop2_id);
-    activity.getLoaderManager().initLoader(generateIdForKey(ChooChooContentProvider.URI_FIND_POSSIBLE_TRIP), bundle, this);
   }
 
   public void loadPossibleTrips(String stop1_id, String stop2_id, LocalDateTime localDateTime) {
@@ -130,7 +128,15 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     activity.getLoaderManager().initLoader(generateIdForKey(ChooChooContentProvider.URI_FIND_POSSIBLE_TRIPS), bundle, this);
   }
 
-  public void loadStopsOnTrip(String trip_id) {
+  public void loadPossibleTrip(String trip_id, String stop1_id, String stop2_id) {
+    Bundle bundle = new Bundle();
+    bundle.putString(BundleKeys.TRIP, trip_id);
+    bundle.putString(BundleKeys.STOP_SOURCE, stop1_id);
+    bundle.putString(BundleKeys.STOP_DESTINATION, stop2_id);
+    activity.getLoaderManager().initLoader(generateIdForKey(ChooChooContentProvider.URI_FIND_POSSIBLE_TRIP), bundle, this);
+  }
+
+  public void loadTripStops(String trip_id) {
     Bundle bundle = new Bundle();
     bundle.putString(BundleKeys.TRIP, trip_id);
     activity.getLoaderManager().initLoader(generateIdForKey(ChooChooContentProvider.URI_FIND_TRIP_STOPS), bundle, this);
@@ -168,12 +174,12 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
     rxBus.send(new RxMessageTrip(RxMessageKeys.LOADED_TRIP, trip));
   }
 
-  private void notifyPossibleTripLoaded(PossibleTrip possibleTrip) {
-    rxBus.send(new RxMessagePossibleTrip(RxMessageKeys.LOADED_POSSIBLE_TRIP, possibleTrip));
-  }
-
   private void notifyPossibleTripsLoaded(ArrayList<PossibleTrip> possibleTrips) {
     rxBus.send(new RxMessagePossibleTrips(RxMessageKeys.LOADED_POSSIBLE_TRIPS, possibleTrips));
+  }
+
+  private void notifyPossibleTripLoaded(PossibleTrip possibleTrip) {
+    rxBus.send(new RxMessagePossibleTrip(RxMessageKeys.LOADED_POSSIBLE_TRIP, possibleTrip));
   }
 
   private void notifyStopsOnTripLoaded(ArrayList<Stop> stops) {
@@ -203,16 +209,16 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
         notifyTripsLoaded();
         break;
       case ChooChooContentProvider.URI_FIND_TRIP_STOPS:
-        ArrayList<Stop> stops = StopUtils.getStopsFromCursor(data);
-        notifyStopsOnTripLoaded(stops);
-        break;
-      case ChooChooContentProvider.URI_FIND_POSSIBLE_TRIP:
-        PossibleTrip possibleTrip = PossibleTripUtils.getPossibleTripFromCursor(data);
-        notifyPossibleTripLoaded(possibleTrip);
+        ArrayList<StopTimes> stopTimes = StopTimesUtils.getStopTimesTripFromCursor(data);
+        notifyStopTimesTripLoaded(stopTimes);
         break;
       case ChooChooContentProvider.URI_FIND_POSSIBLE_TRIPS:
         ArrayList<PossibleTrip> possibleTrips = PossibleTripUtils.getPossibleTripsFromCursor(data);
         notifyPossibleTripsLoaded(possibleTrips);
+        break;
+      case ChooChooContentProvider.URI_FIND_POSSIBLE_TRIP:
+        PossibleTrip possibleTrip = PossibleTripUtils.getPossibleTripFromCursor(data);
+        notifyPossibleTripLoaded(possibleTrip);
         break;
       case ChooChooContentProvider.URI_FIND_STOP_TIMES_TRIP:
         ArrayList<StopTimes> tripStops = StopTimesUtils.getStopTimesTripFromCursor(data);
@@ -270,15 +276,7 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
         break;
       case ChooChooContentProvider.URI_FIND_TRIP_STOPS:
         String tripStopsId = args.getString(BundleKeys.TRIP);
-        baseUri = Uri.withAppendedPath(ChooChooContentProvider.CONTENT_URI, "stop_times/trip/" + tripStopsId);
-        cursorLoader = new CursorLoader(activity, baseUri, null, null, null, null);
-        break;
-      case ChooChooContentProvider.URI_FIND_POSSIBLE_TRIP:
-        String possibleTripId = args.getString(BundleKeys.TRIP);
-        String possibleTripSourceId = args.getString(BundleKeys.STOP_SOURCE);
-        String possibleTripDestinationId = args.getString(BundleKeys.STOP_DESTINATION);
-        String possibleTripPath = possibleTripId + "/" + possibleTripSourceId + "/" + possibleTripDestinationId;
-        baseUri = Uri.withAppendedPath(ChooChooContentProvider.CONTENT_URI, "possibleTrips/trip/" + possibleTripPath);
+        baseUri = Uri.withAppendedPath(ChooChooContentProvider.CONTENT_URI, "stopsAndTimes/" + tripStopsId);
         cursorLoader = new CursorLoader(activity, baseUri, null, null, null, null);
         break;
       case ChooChooContentProvider.URI_FIND_POSSIBLE_TRIPS:
@@ -287,6 +285,14 @@ public class ChooChooLoader implements LoaderManager.LoaderCallbacks<Cursor> {
         Long possibleTripsDateTime = args.getLong(BundleKeys.STOP_DATETIME);
         String possibleTripsPath = possibleTripsDateTime + "/" + possibleTripsSourceId + "/" + possibleTripsDestinationId;
         baseUri = Uri.withAppendedPath(ChooChooContentProvider.CONTENT_URI, "possibleTrips/on/" + possibleTripsPath);
+        cursorLoader = new CursorLoader(activity, baseUri, null, null, null, null);
+        break;
+      case ChooChooContentProvider.URI_FIND_POSSIBLE_TRIP:
+        String possibleTripSourceId = args.getString(BundleKeys.STOP_SOURCE);
+        String possibleTripDestinationId = args.getString(BundleKeys.STOP_DESTINATION);
+        String possibleTripTrip = args.getString(BundleKeys.TRIP);
+        String possibleTripPath = possibleTripTrip + "/" + possibleTripSourceId + "/" + possibleTripDestinationId;
+        baseUri = Uri.withAppendedPath(ChooChooContentProvider.CONTENT_URI, "possibleTrips/trip/" + possibleTripPath);
         cursorLoader = new CursorLoader(activity, baseUri, null, null, null, null);
         break;
       case ChooChooContentProvider.URI_FIND_STOP_TIMES_TRIP:

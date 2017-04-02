@@ -9,14 +9,16 @@ import com.eleith.calchoochoo.dagger.ChooChooModule;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.StopTimes;
+import com.eleith.calchoochoo.data.Trips;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTrip;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTripStops;
+import com.eleith.calchoochoo.utils.StopTimesUtils;
 import com.google.android.gms.common.api.GoogleApiClient;
-
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -29,7 +31,12 @@ import rx.functions.Action1;
 public class TripActivity extends AppCompatActivity {
   private ChooChooComponent chooChooComponent;
   private Subscription subscription;
+  private String sourceId;
+  private String destinationId;
+  private ArrayList<StopTimes> tripStops;
   private PossibleTrip possibleTrip;
+  private String tripId;
+  private Trips trip;
 
   @Inject
   RxBus rxBus;
@@ -57,8 +64,15 @@ public class TripActivity extends AppCompatActivity {
     if (intent != null) {
       Bundle bundle = intent.getExtras();
       if (bundle != null) {
-        possibleTrip = Parcels.unwrap(bundle.getParcelable(BundleKeys.POSSIBLE_TRIP));
-        chooChooLoader.loadTripStops(possibleTrip.getTripId(), possibleTrip.getFirstStopId(), possibleTrip.getLastStopId());
+        tripId = bundle.getString(BundleKeys.TRIP);
+        sourceId = bundle.getString(BundleKeys.STOP_SOURCE);
+        destinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
+
+        chooChooLoader.loadTripStops(tripId);
+
+        if (destinationId != null) {
+          chooChooLoader.loadPossibleTrip(tripId, sourceId, destinationId);
+        }
       }
     }
   }
@@ -67,6 +81,9 @@ public class TripActivity extends AppCompatActivity {
   protected void onStart() {
     super.onStart();
     googleApiClient.connect();
+    if (subscription.isUnsubscribed()) {
+      subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
+    }
   }
 
   @Override
@@ -96,12 +113,31 @@ public class TripActivity extends AppCompatActivity {
     return chooChooComponent;
   }
 
+  private void loadFragments() {
+    if (tripStops != null && possibleTrip != null) {
+      tripStops = StopTimesUtils.filterAndOrder(tripStops, possibleTrip.getTripDirection(), sourceId, destinationId);
+      chooChooRouterManager.loadTripDetailsFragments(possibleTrip, tripStops);
+    }
+  }
+
   private class HandleRxMessages implements Action1<RxMessage> {
     @Override
     public void call(RxMessage rxMessage) {
       if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_TRIP_DETAILS)) {
-        ArrayList<StopTimes> tripStops = ((RxMessageTripStops) rxMessage).getMessage();
-        chooChooRouterManager.loadTripDetailsFragments(possibleTrip, tripStops);
+        tripStops = ((RxMessageTripStops) rxMessage).getMessage();
+        if (destinationId != null) {
+          loadFragments();
+        } else {
+          chooChooLoader.loadTripById(tripId);
+        }
+      } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIP)) {
+        possibleTrip = ((RxMessagePossibleTrip) rxMessage).getMessage();
+        loadFragments();
+      } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_TRIP)) {
+        trip = ((RxMessageTrip) rxMessage).getMessage();
+        tripStops = StopTimesUtils.filterAndOrder(tripStops, trip.direction_id, sourceId);
+        destinationId = tripStops.get(tripStops.size() - 1).stop_id;
+        chooChooLoader.loadPossibleTrip(tripId, sourceId, destinationId);
       }
     }
   }

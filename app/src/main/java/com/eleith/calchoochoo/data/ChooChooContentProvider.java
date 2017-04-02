@@ -51,13 +51,13 @@ public class ChooChooContentProvider extends ContentProvider {
     uriMatcher.addURI(AUTHORITY, "fareAttributes", URI_FAREATTRIBUTES);
     uriMatcher.addURI(AUTHORITY, "stops/parent/*", URI_STOPS_PARENTS_ID);
     uriMatcher.addURI(AUTHORITY, "stops/directional/*", URI_STOPS_DIRECTIONAL_ID);
-    uriMatcher.addURI(AUTHORITY, "trips/#", URI_TRIPS_ID);
+    uriMatcher.addURI(AUTHORITY, "trips/*", URI_TRIPS_ID);
     uriMatcher.addURI(AUTHORITY, "routes/#", URI_ROUTES_ID);
     uriMatcher.addURI(AUTHORITY, "fareAttributes/id", URI_FAREATTRIBUTES_ID);
     uriMatcher.addURI(AUTHORITY, "possibleTrains/*/#", URI_FIND_POSSIBLE_TRAIN);
     uriMatcher.addURI(AUTHORITY, "possibleTrips/trip/*/*/*", URI_FIND_POSSIBLE_TRIP);
     uriMatcher.addURI(AUTHORITY, "possibleTrips/on/#/*/*", URI_FIND_POSSIBLE_TRIPS);
-    uriMatcher.addURI(AUTHORITY, "stop_times/trip/*", URI_FIND_TRIP_STOPS);
+    uriMatcher.addURI(AUTHORITY, "stopsAndTimes/*", URI_FIND_TRIP_STOPS);
     uriMatcher.addURI(AUTHORITY, "stopsAndTimes/*/*/*", URI_FIND_STOP_TIMES_TRIP);
     uriMatcher.addURI(AUTHORITY, "calendarDates", URI_CALENDAR_DATES);
   }
@@ -122,20 +122,20 @@ public class ChooChooContentProvider extends ContentProvider {
         String nextTrainDateTime = uri.getPathSegments().get(2);
         cursor = PossibleTrainUtils.getPossibleTrainQuery(db, nextTrainStop, Long.valueOf(nextTrainDateTime));
         break;
+      case URI_FIND_POSSIBLE_TRIPS:
+        Long dateTime = Long.valueOf(uri.getPathSegments().get(2));
+        String nextPossibleTripsStop1 = uri.getPathSegments().get(3);
+        String nextPossibleTripsStop2 = uri.getPathSegments().get(4);
+        cursor = PossibleTripUtils.getPossibleTripsByParentStopQuery(db, dateTime, nextPossibleTripsStop1, nextPossibleTripsStop2);
+        break;
       case URI_FIND_POSSIBLE_TRIP:
         String nextPossibleTripTrip = uri.getPathSegments().get(2);
         String nextPossibleTripStop1 = uri.getPathSegments().get(3);
         String nextPossibleTripStop2 = uri.getPathSegments().get(4);
         cursor = PossibleTripUtils.getPossibleTripQuery(db, nextPossibleTripTrip, nextPossibleTripStop1, nextPossibleTripStop2);
         break;
-      case URI_FIND_POSSIBLE_TRIPS:
-        Long dateTime = Long.valueOf(uri.getPathSegments().get(2));
-        String nextPossibleTripsStop1 = uri.getPathSegments().get(3);
-        String nextPossibleTripsStop2 = uri.getPathSegments().get(4);
-        cursor = PossibleTripUtils.getPossibleTripsQuery(db, dateTime, nextPossibleTripsStop1, nextPossibleTripsStop2);
-        break;
       case URI_FIND_TRIP_STOPS:
-        String stopFromStopTimesTripId = uri.getPathSegments().get(2);
+        String stopFromStopTimesTripId = uri.getPathSegments().get(1);
         cursor = StopTimesUtils.getStopsFromStopTimesQuery(db, stopFromStopTimesTripId);
         break;
       case URI_FIND_STOP_TIMES_TRIP:

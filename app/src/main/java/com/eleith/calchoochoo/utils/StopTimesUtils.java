@@ -10,6 +10,7 @@ import com.eleith.calchoochoo.data.StopTimes;
 import org.joda.time.LocalTime;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class StopTimesUtils {
   @Nullable
@@ -37,7 +38,7 @@ public class StopTimesUtils {
     } else {
       Integer higher_stop_sequence = stop1_sequence > stop2_sequence ? stop1_sequence : stop2_sequence;
       Integer lower_stop_sequence = higher_stop_sequence.equals(stop1_sequence) ? stop2_sequence : stop1_sequence;
-      Integer direction = stop1_sequence > stop2_sequence ? 0 : 1;
+      Integer direction = stop1_sequence > stop2_sequence ? TripUtils.DIRECTION_SOUTH : TripUtils.DIRECTION_NORTH;
 
       String query = "SELECT " +
           "  st.trip_id as st__trip_id, st.arrival_time as st__arrival_time, st.departure_time as st__departure_time, " +
@@ -49,7 +50,7 @@ public class StopTimesUtils {
           "  AND s.stop_id = st.stop_id " +
           "  AND st.stop_sequence >= ? " +
           "  AND st.stop_sequence <= ? " +
-          "  ORDER BY st.stop_sequence " + ((direction == 1) ? "ASC" : "DESC");
+          "  ORDER BY st.stop_sequence " + ((direction == TripUtils.DIRECTION_SOUTH) ? "DESC" : "ASC");
 
       String[] args = {trip_id, Integer.toString(lower_stop_sequence), Integer.toString(higher_stop_sequence)};
       return db.rawQuery(query, args);
@@ -62,13 +63,12 @@ public class StopTimesUtils {
         " (SELECT " +
         "     st.trip_id as st__trip_id, st.arrival_time as st__arrival_time, st.departure_time as st__departure_time, " +
         "     st.stop_id as st__stop_id, st.stop_sequence as st__stop_sequence, st.pickup_time as st__pickup_time, st.drop_off_type as st__drop_off_type, " +
-        "     s.stop_id as s_stop_id, s.zone_id as s_zone_id, s.stop_name as s_stop_name, s.stop_lat as s_stop_lat, s.stop_lon as s_stop_lon, " +
-        "     s.parent_station as s_parent_station, s.stop_url as s_stop_url, s.platform_code as s_platform_code, s.stop_code as s_stop_code, s.wheelchar_board as s_wheelchar_board " +
+        "     s.stop_id as s__stop_id, s.zone_id as s__zone_id, s.stop_name as s__stop_name, s.stop_lat as s__stop_lat, s.stop_lon as s__stop_lon, " +
+        "     s.parent_station as s__parent_station, s.stop_url as s__stop_url, s.platform_code as s__platform_code, s.stop_code as s__stop_code, s.wheelchar_board as s__wheelchar_board " +
         "   FROM stops as s, stop_times as st " +
         "   WHERE st.trip_id = ? " +
         "   AND s.stop_id = st.stop_id) as stop_in_stop_times " +
-        " WHERE stop_id = stop_in_stop_times.s_parent_station " +
-        " ORDER BY stop_name ASC";
+        " WHERE stop_id = stop_in_stop_times.s__parent_station ";
 
     String[] args = {trip_id};
     return db.rawQuery(query, args);
@@ -105,5 +105,48 @@ public class StopTimesUtils {
     }
 
     return stopAndTimes;
+  }
+
+  public static ArrayList<StopTimes> filterAndOrder(ArrayList<StopTimes> allTripStopTimes, int direction, String sourceId) {
+    ArrayList<StopTimes> filteredStopTimes = new ArrayList<>();
+    boolean foundSource = false;
+    Collections.sort(allTripStopTimes, StopTimes.sequenceComparator);
+
+    for (StopTimes stopTime : allTripStopTimes) {
+      if (stopTime.stop_id.equals(sourceId)) {
+        foundSource = true;
+      }
+
+      if (foundSource) {
+        filteredStopTimes.add(stopTime);
+      }
+    }
+
+    return filteredStopTimes;
+  }
+
+  public static ArrayList<StopTimes> filterAndOrder(ArrayList<StopTimes> _allTripStopTimes, int direction, String sourceId, String destinationId) {
+    ArrayList<StopTimes> allTripStopTimes = new ArrayList<>(_allTripStopTimes);
+    ArrayList<StopTimes> filteredStopTimes = new ArrayList<>();
+    boolean foundSource = false;
+    boolean foundDestination = false;
+    Collections.sort(allTripStopTimes, StopTimes.sequenceComparator);
+
+    for (StopTimes stopTime : allTripStopTimes) {
+      if (stopTime.stop_id.equals(sourceId)) {
+        foundSource = true;
+      } else if (stopTime.stop_id.equals(destinationId)) {
+        foundDestination = true;
+      }
+
+      if (foundSource && !foundDestination) {
+        filteredStopTimes.add(stopTime);
+      } else if (foundSource) {
+        filteredStopTimes.add(stopTime);
+        break;
+      }
+    }
+
+    return filteredStopTimes;
   }
 }

@@ -13,9 +13,18 @@ public class PossibleTrip {
   private LocalTime departureTime;
   private String routeId;
   private String tripId;
+  private Integer tripDirection;
   private float price;
   private Integer firstStopSequence;
   private String routeLongName = "";
+
+  public Integer getTripDirection() {
+    return tripDirection;
+  }
+
+  public void setTripDirection(Integer tripDirection) {
+    this.tripDirection = tripDirection;
+  }
 
   public String getFirstStopName() {
     return firstStopName;

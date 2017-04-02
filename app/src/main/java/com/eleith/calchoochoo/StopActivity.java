@@ -63,10 +63,11 @@ public class StopActivity extends AppCompatActivity {
 
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_appbar_main);
+    setContentView(R.layout.activity_appbar_main_with_fab);
     ButterKnife.bind(this);
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
+    floatingActionButton.setImageDrawable(getDrawable(R.drawable.ic_link_black_24dp));
     Intent intent = getIntent();
     if (intent != null) {
       Bundle bundle = intent.getExtras();
@@ -83,6 +84,9 @@ public class StopActivity extends AppCompatActivity {
   protected void onStart() {
     super.onStart();
     googleApiClient.connect();
+    if (subscription.isUnsubscribed()) {
+      subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
+    }
   }
 
   @Override
@@ -106,19 +110,11 @@ public class StopActivity extends AppCompatActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
+    subscription.unsubscribe();
   }
 
   public ChooChooComponent getComponent() {
     return chooChooComponent;
-  }
-
-  public void fabEnable(int drawableId) {
-    floatingActionButton.setVisibility(View.VISIBLE);
-    floatingActionButton.setImageDrawable(getDrawable(drawableId));
-  }
-
-  public void fabDisable() {
-    floatingActionButton.setVisibility(View.GONE);
   }
 
   private void loadFragment() {

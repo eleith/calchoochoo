@@ -2,12 +2,9 @@ package com.eleith.calchoochoo.utils;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.Nullable;
 
 import com.eleith.calchoochoo.data.PossibleTrain;
-import com.eleith.calchoochoo.data.PossibleTrip;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
@@ -23,7 +20,8 @@ public class PossibleTrainUtils {
 
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
       String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
-      String stopId = cursor.getString(cursor.getColumnIndex("st1__parent_station"));
+      String stopParentId = cursor.getString(cursor.getColumnIndex("st1__parent_station"));
+      String stopId = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
       String routeLongName = cursor.getString(cursor.getColumnIndex("route_long_name"));
       String tripShortName = cursor.getString(cursor.getColumnIndex("trip_short_name"));
       int tripDirectionId = cursor.getInt(cursor.getColumnIndex("trip_direction_id"));
@@ -32,6 +30,7 @@ public class PossibleTrainUtils {
 
       possibleTrain.setRouteLongName(routeLongName);
       possibleTrain.setRouteId(routeId);
+      possibleTrain.setStopParentId(stopParentId);
       possibleTrain.setStopId(stopId);
       possibleTrain.setDepartureTime(departureTime);
       possibleTrain.setArrivalTime(arrivalTime);

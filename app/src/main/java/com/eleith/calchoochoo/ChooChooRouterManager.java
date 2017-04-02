@@ -187,8 +187,8 @@ public class ChooChooRouterManager {
 
   public void loadTripDetailsFragments(PossibleTrip possibleTrip, ArrayList<StopTimes> tripStops) {
     Bundle arguments = new Bundle();
-    arguments.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
     arguments.putParcelable(BundleKeys.TRIP_STOP_STOPTIMES, Parcels.wrap(tripStops));
+    arguments.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
     setNextState(ChooChooRouterManager.STATE_SHOW_TRIP, arguments);
   }
 
@@ -219,15 +219,17 @@ public class ChooChooRouterManager {
     activity.startActivity(intent);
   }
 
-  public void loadTripActivity(Activity activity, PossibleTrip possibleTrip) {
-    loadTripActivity(activity, possibleTrip, null);
+  public void loadTripActivity(Activity activity, String tripId, String sourceId) {
+    loadTripActivity(activity, tripId, sourceId, null, null);
   }
 
-  public void loadTripActivity(Activity activity, PossibleTrip possibleTrip, ActivityOptionsCompat sharedElements) {
+  public void loadTripActivity(Activity activity, String tripId, String sourceId, String destinationId, ActivityOptionsCompat sharedElements) {
     Intent intent = new Intent(activity, TripActivity.class);
-    //intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
     Bundle bundle = new Bundle();
-    bundle.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
+    bundle.putString(BundleKeys.TRIP, tripId);
+    bundle.putString(BundleKeys.STOP_SOURCE, sourceId);
+    bundle.putString(BundleKeys.STOP_DESTINATION, destinationId);
     intent.putExtras(bundle);
 
     if (sharedElements != null) {

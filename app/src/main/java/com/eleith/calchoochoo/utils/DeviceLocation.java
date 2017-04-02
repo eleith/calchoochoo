@@ -30,6 +30,7 @@ public class DeviceLocation
   private Boolean googleApiClientReady = false;
   private int requestedUpdates = 0;
   private int requestedLocation = 0;
+  private Boolean requestingUpdates = false;
 
   @Inject
   public DeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient, Activity activity) {
@@ -60,12 +61,13 @@ public class DeviceLocation
   public void requestLocationUpdates() {
     if (googleApiClientReady) {
       if (activity.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-        if (requestedUpdates == 0) {
+        if (!requestingUpdates) {
           LocationRequest locationRequest = new LocationRequest();
           locationRequest.setInterval(5000); //5 seconds
           locationRequest.setFastestInterval(3000); //3 seconds
           locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
           LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, this);
+          requestingUpdates = true;
         }
         return;
       } else {

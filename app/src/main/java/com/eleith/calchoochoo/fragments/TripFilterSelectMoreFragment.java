@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.eleith.calchoochoo.R;
+import com.eleith.calchoochoo.TripFilterActivity;
 
 
 public class TripFilterSelectMoreFragment extends Fragment {
@@ -18,7 +19,9 @@ public class TripFilterSelectMoreFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_trip_filter_select_more, container, false);
+        View view = inflater.inflate(R.layout.fragment_trip_filter_select_more, container, false);
+        ((TripFilterActivity) getActivity()).fabHide();
+        return view;
     }
 
     @Override

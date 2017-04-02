@@ -76,7 +76,6 @@ public class StopSummaryFragment extends Fragment {
       stopDirectionText.setText(stopActivity.getString(R.string.san_francisco));
     }
 
-    stopActivity.fabEnable(R.drawable.ic_link_black_24dp);
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
 
     return view;
@@ -85,7 +84,6 @@ public class StopSummaryFragment extends Fragment {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    stopActivity.fabDisable();
     subscription.unsubscribe();
   }
 

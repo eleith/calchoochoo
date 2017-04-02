@@ -72,13 +72,11 @@ public class TripFilterSuggestionsFragment extends Fragment {
 
     RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.trips_possible_recyclerview);
     recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-    recyclerView.setNestedScrollingEnabled(false);
 
     setPossibleTrips(possibleTrips);
 
     recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     recyclerView.setAdapter(tripFilterSuggestionAdapter);
-    tripFilterActivity.fabEnable(R.drawable.ic_swap_vert_black_24dp);
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     chooChooLoader.loadRoutes();
@@ -89,7 +87,6 @@ public class TripFilterSuggestionsFragment extends Fragment {
   public void onDestroyView() {
     super.onDestroyView();
     subscription.unsubscribe();
-    tripFilterActivity.fabDisable();
   }
 
   public void setPossibleTrips(ArrayList<PossibleTrip> possibleTrips) {

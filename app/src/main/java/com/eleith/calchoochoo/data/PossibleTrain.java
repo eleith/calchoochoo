@@ -5,6 +5,7 @@ import org.parceler.Parcel;
 
 @Parcel
 public class PossibleTrain {
+  private String stopParentId;
   private String stopId;
   private LocalTime arrivalTime;
   private LocalTime departureTime;
@@ -46,6 +47,10 @@ public class PossibleTrain {
     this.tripId = tripId;
   }
 
+  public String getStopParentId() {
+    return stopParentId;
+  }
+
   public String getStopId() {
     return stopId;
   }
@@ -56,6 +61,10 @@ public class PossibleTrain {
 
   public String getRouteId() {
     return routeId;
+  }
+
+  public void setStopParentId(String stopParentId) {
+    this.stopParentId = stopParentId;
   }
 
   public void setStopId(String stopId) {

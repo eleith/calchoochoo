@@ -2,7 +2,6 @@ package com.eleith.calchoochoo.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,8 +12,6 @@ import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.TripActivity;
 import com.eleith.calchoochoo.adapters.TripStopsAdapter;
 import com.eleith.calchoochoo.data.ChooChooLoader;
-import com.eleith.calchoochoo.data.PossibleTrip;
-import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.StopTimes;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -22,14 +19,12 @@ import com.eleith.calchoochoo.utils.RxBus;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
 
 public class TripDetailFragment extends Fragment {
-  private PossibleTrip possibleTrip;
   private ArrayList<StopTimes> tripStops;
 
   @Inject
@@ -53,7 +48,6 @@ public class TripDetailFragment extends Fragment {
 
     unWrapBundle(savedInstanceState);
     RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.trip_stop_times);
-    recyclerView.setNestedScrollingEnabled(false);
 
     recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
     recyclerView.setAdapter(tripStopsAdapter);
@@ -62,7 +56,7 @@ public class TripDetailFragment extends Fragment {
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
-    outState.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
+    outState.putParcelable(BundleKeys.TRIP_STOP_STOPTIMES, Parcels.wrap(tripStops));
     super.onSaveInstanceState(outState);
   }
 
@@ -73,7 +67,6 @@ public class TripDetailFragment extends Fragment {
 
   private void unWrapBundle(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
-      possibleTrip = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.POSSIBLE_TRIP));
       tripStops = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.TRIP_STOP_STOPTIMES));
       tripStopsAdapter.setTripStops(tripStops);
       tripStopsAdapter.notifyDataSetChanged();

@@ -49,14 +49,6 @@ public class StopSearchActivity extends AppCompatActivity {
   @Inject
   DeviceLocation deviceLocation;
 
-  @BindView(R.id.activityFloatingActionButton)
-  FloatingActionButton floatingActionButton;
-
-  @OnClick(R.id.activityFloatingActionButton)
-  void onFabClicked() {
-    rxBus.send(new RxMessage(RxMessageKeys.FAB_CLICKED));
-  }
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     chooChooComponent = ChooChooApplication.from(this).getAppComponent().activityComponent(new ChooChooModule(this));

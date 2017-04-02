@@ -18,6 +18,7 @@ public class PossibleTripUtils {
     if (cursor.moveToNext()) {
       PossibleTrip possibleTrip = new PossibleTrip();
       Float price = cursor.getFloat(cursor.getColumnIndex("price"));
+      Integer direction = cursor.getInt(cursor.getColumnIndex("direction"));
 
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
       String stop1Id = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
@@ -57,6 +58,7 @@ public class PossibleTripUtils {
       possibleTrip.setRouteLongName(routeLongName);
       possibleTrip.setPrice(price);
       possibleTrip.setTripId(tripId);
+      possibleTrip.setTripDirection(direction);
       possibleTrip.setRouteId(routeId);
 
       return possibleTrip;
@@ -83,6 +85,7 @@ public class PossibleTripUtils {
         "routes.route_id as route_id, " +
         "routes.route_long_name as route_long_name, " +
         "fare_attributes.price as price, " +
+        "trips.direction_id as direction, " +
         "st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
         "st1.stop_name as st1__stop_name, st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, " +
         "st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +
@@ -93,13 +96,13 @@ public class PossibleTripUtils {
         "    WHERE " +
         "     stops.stop_id = stop_times.stop_id " +
         "     AND stop_times.trip_id = ? " +
-        "     AND stops.parent_station = ?) AS st1, " +
+        "     AND stops.stop_id = ?) AS st1, " +
         "    (Select * " +
         "    FROM stops, stop_times " +
         "    WHERE " +
         "     stops.stop_id = stop_times.stop_id " +
         "     AND stop_times.trip_id = ? " +
-        "     AND stops.parent_station = ?) AS st2, " +
+        "     AND stops.stop_id = ?) AS st2, " +
         "  trips, " +
         "  routes, " +
         "  calendar, " +
@@ -107,6 +110,7 @@ public class PossibleTripUtils {
         "  fare_attributes " +
         "WHERE st1.trip_id = st2.trip_id " +
         "  AND trips.route_id = routes.route_id " +
+        "  AND trips.trip_id = st1.trip_id " +
         "  AND calendar.service_id = trips.service_id " +
         "  AND fare_rules.origin_id = st1.zone_id " +
         "  AND fare_rules.destination_id = st2.zone_id " +
@@ -116,12 +120,13 @@ public class PossibleTripUtils {
     return db.rawQuery(query, args);
   }
 
-  public static Cursor getPossibleTripsQuery(SQLiteDatabase db, Long dateTime, String stop1_id, String stop2_id) {
+  public static Cursor getPossibleTripsByParentStopQuery(SQLiteDatabase db, Long dateTime, String stop1_id, String stop2_id) {
     String calendarFilter = CalendarDateUtils.getCalendarFilter(db, dateTime);
     String query = "SELECT " +
         "routes.route_id as route_id, " +
         "routes.route_long_name as route_long_name, " +
         "fare_attributes.price as price, " +
+        "trips.direction_id as direction, " +
         "st1.stop_name as st1__stop_name, st1.platform_code as st1__platform_code, st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
         "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, st1.pickup_time as st1__pickup_time, st1.drop_off_type as st1__drop_off_type, " +
         "st2.stop_name as st2__stop_name, st2.platform_code as st2__platform_code, st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +

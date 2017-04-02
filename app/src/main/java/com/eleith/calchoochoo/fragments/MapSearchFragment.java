@@ -87,7 +87,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     ButterKnife.bind(this, view);
 
     unWrapBundle(savedInstanceState);
-    mapSearchActivity.fabEnable(R.drawable.ic_gps_not_fixed_black_24dp);
 
     // initialize the map!
     googleMapView = ((MapView) view.findViewById(R.id.search_google_maps));
@@ -122,17 +121,20 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
 
     if (lastLocation != null) {
       myLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+      cameraBuilder.target(myLatLng);
+      CameraPosition cameraPosition = cameraBuilder.build();
+      googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+      googleMap.setOnMarkerClickListener(new OnMarkerClickListener());
+
+      MapUtils.moveMapToLocation(lastLocation, googleMap, new CameraPosition.Builder().zoom(13));
+      setMyLocationMarker(lastLocation);
     } else {
       myLatLng = myDefaultLatLng;
+      cameraBuilder.target(myLatLng);
+      CameraPosition cameraPosition = cameraBuilder.build();
+      googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+      googleMap.setOnMarkerClickListener(new OnMarkerClickListener());
     }
-
-    cameraBuilder.target(myLatLng);
-    CameraPosition cameraPosition = cameraBuilder.build();
-    googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-    googleMap.setOnMarkerClickListener(new OnMarkerClickListener());
-
-    MapUtils.moveMapToLocation(lastLocation, googleMap, new CameraPosition.Builder().zoom(13));
-    setMyLocationMarker(lastLocation);
 
     subscriptionRxBus = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
   }
@@ -192,12 +194,21 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   }
 
   @Override
-  public void onDestroyView() {
-    super.onDestroyView();
+  public void onStart() {
+    super.onStart();
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
     if (subscriptionRxBus != null) {
       subscriptionRxBus.unsubscribe();
     }
-    ((MapSearchActivity) getActivity()).fabDisable();
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
   }
 
   @Override
