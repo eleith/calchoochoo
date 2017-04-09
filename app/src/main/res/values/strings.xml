@@ -44,6 +44,8 @@
     <string name="notification_departure">Departure notification</string>
     <string name="notification_arriving">Arrival notification</string>
     <string name="before">before</string>
+    <string name="notifications_saved">Your trip notifications have been saved.</string>
+    <string name="notifications_removed">Your trip notifications have been removed.</string>
 
     <string-array name="minutes">
         <item>5 min</item>

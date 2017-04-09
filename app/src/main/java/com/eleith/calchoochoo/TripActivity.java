@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.eleith.calchoochoo.dagger.ChooChooComponent;
 import com.eleith.calchoochoo.dagger.ChooChooModule;
@@ -109,6 +110,8 @@ public class TripActivity extends AppCompatActivity {
   }
 
   private void changeNotificationPreferences(int departureMinutes, int arrivalMinutes) {
+    Boolean haveNotifications = false;
+    Boolean hadNotifications = false;
     Bundle bundle = new Bundle();
     bundle.putString(BundleKeys.TRIP, tripId);
     bundle.putString(BundleKeys.STOP_SOURCE, sourceId);
@@ -118,6 +121,7 @@ public class TripActivity extends AppCompatActivity {
     bundle.putString(BundleKeys.STOP_DESTINATION_NAME, possibleTrip.getLastStopName());
     bundle.putLong(BundleKeys.STOP_DESTINATION_TIME, possibleTrip.getArrivalTime().toDateTimeToday().getMillis());
 
+    hadNotifications = notifications.getAlarmId(tripId, Notifications.ARRIVING) != -1 || notifications.getAlarmId(tripId, Notifications.DEPARTING) != -1;
     notifications.cancel(tripId, Notifications.ARRIVING);
     notifications.cancel(tripId, Notifications.DEPARTING);
     floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorAccent)));
@@ -128,6 +132,7 @@ public class TripActivity extends AppCompatActivity {
       bundle.putString(BundleKeys.STOP_METHOD, Notifications.ARRIVING);
       notifications.set(tripId, arrivingDateTime, arrivalMinutes, Notifications.ARRIVING, bundle);
       floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
+      haveNotifications = true;
     }
 
     if (departureMinutes > 0) {
@@ -136,6 +141,13 @@ public class TripActivity extends AppCompatActivity {
       bundle.putString(BundleKeys.STOP_METHOD, Notifications.DEPARTING);
       notifications.set(tripId, departingDateTime, departureMinutes, Notifications.DEPARTING, bundle);
       floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
+      haveNotifications = true;
+    }
+
+    if (haveNotifications) {
+      Toast.makeText(this, getString(R.string.notifications_saved), Toast.LENGTH_SHORT).show();
+    } else if (hadNotifications) {
+      Toast.makeText(this, getString(R.string.notifications_removed), Toast.LENGTH_SHORT).show();
     }
   }
 
