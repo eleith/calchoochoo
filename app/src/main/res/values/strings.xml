@@ -39,4 +39,18 @@
     <string name="transition_train_image">transition-train-image</string>
     <string name="transition_train_number_text">transition-train-number-text</string>
     <string name="transition_train_number">transition-train-number</string>
+
+    <string name="notification_for_train_num">Notifications For Train #</string>
+    <string name="notification_departure">Departure notification</string>
+    <string name="notification_arriving">Arrival notification</string>
+    <string name="before">before</string>
+
+    <string-array name="minutes">
+        <item>5 min</item>
+        <item>10 min</item>
+        <item>15 min</item>
+        <item>20 min</item>
+        <item>25 min</item>
+        <item>30 min</item>
+    </string-array>
 </resources>

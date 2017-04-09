@@ -44,6 +44,13 @@
             android:authorities="com.eleith.calchoochoo.data"
             android:exported="false"/>
 
+        <receiver android:name=".ChooChooAlarmReceiver">
+            <intent-filter>
+                <action android:name="android.media.action.DISPLAY_NOTIFICATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </receiver>
+
         <receiver
             android:name="ChooChooWidgetProvider"
             android:icon="@drawable/calchoochoo"

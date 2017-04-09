@@ -1,0 +1,136 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              tools:context=".fragments.TripFilterTimeAndMethodDialogFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="?attr/colorAccent"
+        android:padding="15dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notification_for_train_num"
+            android:textColor="@color/primary_text_material_light"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/alarm_dialog_trip_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary_text_material_light"
+            android:textStyle="bold"
+            tools:text="145"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Switch
+            android:id="@+id/alarm_dialog_departure_enable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:text="@string/notification_departure"/>
+
+        <LinearLayout
+            android:id="@+id/alarm_dialog_departure_minutes_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="15dp"
+            android:visibility="gone">
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/alarm_dialog_departure_minutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/minutes"
+                android:spinnerMode="dropdown"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="6dp"
+                android:text="@string/before"/>
+
+            <TextView
+                android:id="@+id/alarm_dialog_departure_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Mountain View"/>
+
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/alarm_dialog_arrival_enable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:text="@string/notification_arriving"/>
+
+        <LinearLayout
+            android:id="@+id/alarm_dialog_arrival_minutes_form"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="15dp"
+            android:visibility="gone">
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/alarm_dialog_arrival_minutes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/minutes"
+                android:spinnerMode="dropdown"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="6dp"
+                android:text="@string/before"/>
+
+            <TextView
+                android:id="@+id/alarm_dialog_arrival_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Palo Alto"/>
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/alarm_dialog_cancel"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:textColor="?attr/colorAccent"/>
+
+        <Button
+            android:id="@+id/alarm_dialog_ok"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ok"
+            android:textColor="?attr/colorAccent"/>
+
+    </LinearLayout>
+
+</LinearLayout>

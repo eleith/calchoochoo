@@ -97,6 +97,7 @@ public class TripFilterActivity extends AppCompatActivity {
     super.onStop();
     googleApiClient.disconnect();
     fabShow();
+    subscription.unsubscribe();
   }
 
   @Override

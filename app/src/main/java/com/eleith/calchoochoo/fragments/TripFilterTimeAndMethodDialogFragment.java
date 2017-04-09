@@ -114,7 +114,7 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
   public Dialog onCreateDialog(Bundle savedInstanceState) {
     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
     LayoutInflater inflater = getActivity().getLayoutInflater();
-    View view = inflater.inflate(R.layout.fragment_departing_arriving_selector, null);
+    View view = inflater.inflate(R.layout.fragment_time_selection_dialog, null);
     ButterKnife.bind(this, view);
     builder.setView(view);
 

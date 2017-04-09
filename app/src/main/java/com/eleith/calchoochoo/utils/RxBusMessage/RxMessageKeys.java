@@ -27,7 +27,8 @@ public class RxMessageKeys {
   public static final String LOADED_TRIPS = "loadedTrips";
   public static final String LOADED_POSSIBLE_TRIP = "loadedPossibleTrip";
   public static final String LOADED_POSSIBLE_TRIPS = "loadedPossibleTrips";
-  public static final String LOADED_STOPS_ON_TRIP = "laodedStopsOnTrip";
+  public static final String LOADED_STOPS_ON_TRIP = "loadedStopsOnTrip";
+  public static final String NOTIFICATION_SELECTED = "notificationSelected";
 
   private static final Map<String, Class> keyToClassMap = createKeyMap();
 
@@ -57,6 +58,7 @@ public class RxMessageKeys {
     map.put(LOADED_POSSIBLE_TRIP, RxMessagePossibleTrip.class);
     map.put(LOADED_STOPS_ON_TRIP, RxMessageStops.class);
     map.put(LOADED_POSSIBLE_TRIPS, RxMessagePossibleTrips.class);
+    map.put(NOTIFICATION_SELECTED, RxMessageNotificationPair.class);
 
     return Collections.unmodifiableMap(map);
   }
