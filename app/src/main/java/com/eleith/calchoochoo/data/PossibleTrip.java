@@ -13,10 +13,19 @@ public class PossibleTrip {
   private LocalTime departureTime;
   private String routeId;
   private String tripId;
+  private String tripShortName;
   private Integer tripDirection;
   private float price;
   private Integer firstStopSequence;
   private String routeLongName = "";
+
+  public String getTripShortName() {
+    return tripShortName;
+  }
+
+  public void setTripShortName(String tripShortName) {
+    this.tripShortName = tripShortName;
+  }
 
   public Integer getTripDirection() {
     return tripDirection;

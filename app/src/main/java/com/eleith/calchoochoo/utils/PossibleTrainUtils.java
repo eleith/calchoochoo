@@ -25,8 +25,8 @@ public class PossibleTrainUtils {
       String routeLongName = cursor.getString(cursor.getColumnIndex("route_long_name"));
       String tripShortName = cursor.getString(cursor.getColumnIndex("trip_short_name"));
       int tripDirectionId = cursor.getInt(cursor.getColumnIndex("trip_direction_id"));
-      LocalTime departureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__departure_time")).replaceFirst("^24:", "01:"));
-      LocalTime arrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__arrival_time")).replaceFirst("^24:", "01:"));
+      LocalTime departureTime = new LocalTime(DataStringUtils.adjustLateTimes(cursor.getString(cursor.getColumnIndex("st1__departure_time"))));
+      LocalTime arrivalTime = new LocalTime(DataStringUtils.adjustLateTimes(cursor.getString(cursor.getColumnIndex("st1__arrival_time"))));
 
       possibleTrain.setRouteLongName(routeLongName);
       possibleTrain.setRouteId(routeId);

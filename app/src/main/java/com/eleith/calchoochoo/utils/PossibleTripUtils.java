@@ -19,6 +19,8 @@ public class PossibleTripUtils {
       PossibleTrip possibleTrip = new PossibleTrip();
       Float price = cursor.getFloat(cursor.getColumnIndex("price"));
       Integer direction = cursor.getInt(cursor.getColumnIndex("direction"));
+      String tripShortName = cursor.getString(cursor.getColumnIndex("trip_short_name"));
+      String routeLongName = cursor.getString(cursor.getColumnIndex("route_long_name"));
 
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
       String stop1Id = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
@@ -26,7 +28,6 @@ public class PossibleTripUtils {
       String stop1Name = cursor.getString(cursor.getColumnIndex("st1__stop_name"));
       String stop2Name = cursor.getString(cursor.getColumnIndex("st2__stop_name"));
       String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
-      String routeLongName = cursor.getString(cursor.getColumnIndex("route_long_name"));
       Integer stopOneSequence = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence"));
       Integer stopTwoSequence = cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
 
@@ -58,6 +59,7 @@ public class PossibleTripUtils {
       possibleTrip.setRouteLongName(routeLongName);
       possibleTrip.setPrice(price);
       possibleTrip.setTripId(tripId);
+      possibleTrip.setTripShortName(tripShortName);
       possibleTrip.setTripDirection(direction);
       possibleTrip.setRouteId(routeId);
 
@@ -86,6 +88,7 @@ public class PossibleTripUtils {
         "routes.route_long_name as route_long_name, " +
         "fare_attributes.price as price, " +
         "trips.direction_id as direction, " +
+        "trips.trip_short_name as trip_short_name, " +
         "st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
         "st1.stop_name as st1__stop_name, st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, " +
         "st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +
@@ -127,10 +130,11 @@ public class PossibleTripUtils {
         "routes.route_long_name as route_long_name, " +
         "fare_attributes.price as price, " +
         "trips.direction_id as direction, " +
+        "trips.trip_short_name as trip_short_name, " +
         "st1.stop_name as st1__stop_name, st1.platform_code as st1__platform_code, st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
-        "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, st1.pickup_time as st1__pickup_time, st1.drop_off_type as st1__drop_off_type, " +
+        "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, st1.drop_off_type as st1__drop_off_type, " +
         "st2.stop_name as st2__stop_name, st2.platform_code as st2__platform_code, st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +
-        "st2.stop_id as st2__stop_id, st2.stop_sequence as st2__stop_sequence, st2.pickup_time as st2__pickup_time, st2.drop_off_type as st2__drop_off_type " +
+        "st2.stop_id as st2__stop_id, st2.stop_sequence as st2__stop_sequence, st2.drop_off_type as st2__drop_off_type " +
         "FROM " +
         "    (SELECT * " +
         "    FROM stops, stop_times " +

@@ -11,6 +11,6 @@ public class Trips {
   public String trip_short_name;
   public int direction_id;
   public String shape_id;
-  public int wheelchar_accessible;
+  public int wheelchair_accessible;
   public int bikes_allowed;
 }

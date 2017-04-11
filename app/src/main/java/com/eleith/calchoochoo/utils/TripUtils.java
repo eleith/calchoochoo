@@ -34,7 +34,7 @@ public class TripUtils {
       trip.trip_short_name = cursor.getString(cursor.getColumnIndex("trip_short_name"));
       trip.direction_id = cursor.getInt(cursor.getColumnIndex("direction_id"));
       trip.shape_id = cursor.getString(cursor.getColumnIndex("shape_id"));
-      trip.wheelchar_accessible = cursor.getInt(cursor.getColumnIndex("wheelchar_accessible"));
+      trip.wheelchair_accessible = cursor.getInt(cursor.getColumnIndex("wheelchair_accessible"));
       trip.bikes_allowed = cursor.getInt(cursor.getColumnIndex("bikes_allowed"));
       trip.trip_id = cursor.getString(cursor.getColumnIndex("trip_id"));
 

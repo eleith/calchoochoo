@@ -12,7 +12,6 @@ public class StopTimes {
   public LocalTime departure_time;
   public String stop_id;
   public int stop_sequence;
-  public int pickup_time;
   public int drop_off_type;
   public Stop stop;
 

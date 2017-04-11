@@ -69,7 +69,7 @@ public class TripFilterSuggestionAdapter extends RecyclerView.Adapter<TripFilter
       holder.trainImage.setContentDescription(tripFilterActivity.getString(R.string.local_train));
     }
 
-    holder.tripNumber.setText(possibleTrip.getTripId());
+    holder.tripNumber.setText(possibleTrip.getTripShortName());
   }
 
   @Override

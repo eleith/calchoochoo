@@ -101,7 +101,7 @@ public class TripSummaryFragment extends Fragment {
 
     tripSummaryPrice.setText(String.format(Locale.getDefault(), "$%.2f", possibleTrip.getPrice()));
     tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime(), possibleTrip.getDepartureTime()).getMinutes()));
-    tripSummaryNumber.setText(possibleTrip.getTripId());
+    tripSummaryNumber.setText(possibleTrip.getTripShortName());
 
     if (possibleTrip.getRouteLongName().contains("Bullet")) {
       tripSummaryImage.setImageDrawable(getActivity().getDrawable(R.drawable.ic_train_bullet));
