@@ -15,6 +15,7 @@ import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.StopActivity;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.DataStringUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
@@ -65,7 +66,7 @@ public class StopSummaryFragment extends Fragment {
 
     unWrapBundle(savedInstanceState);
 
-    stopName.setText(stop.stop_name.replace(" Caltrain", ""));
+    stopName.setText(DataStringUtils.removeCaltrain(stop.stop_name));
     stopZone.setText(String.format(Locale.getDefault(), "%d", stop.zone_id + 1));
 
     if (direction == TripUtils.DIRECTION_SOUTH) {

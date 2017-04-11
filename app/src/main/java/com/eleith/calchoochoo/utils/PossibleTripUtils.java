@@ -31,10 +31,10 @@ public class PossibleTripUtils {
       Integer stopOneSequence = cursor.getInt(cursor.getColumnIndex("st1__stop_sequence"));
       Integer stopTwoSequence = cursor.getInt(cursor.getColumnIndex("st2__stop_sequence"));
 
-      LocalTime stopOneDepartureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__departure_time")).replaceFirst("^24:", "01:"));
-      LocalTime stopOneArrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st1__arrival_time")).replaceFirst("^24:", "01:"));
-      LocalTime stopTwoDepartureTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__departure_time")).replaceFirst("^24:", "01:"));
-      LocalTime stopTwoArrivalTime = new LocalTime(cursor.getString(cursor.getColumnIndex("st2__arrival_time")).replaceFirst("^24:", "01:"));
+      LocalTime stopOneDepartureTime = new LocalTime(DataStringUtils.adjustLateTimes(cursor.getString(cursor.getColumnIndex("st1__departure_time"))));
+      LocalTime stopOneArrivalTime = new LocalTime(DataStringUtils.adjustLateTimes(cursor.getString(cursor.getColumnIndex("st1__arrival_time"))));
+      LocalTime stopTwoDepartureTime = new LocalTime(DataStringUtils.adjustLateTimes(cursor.getString(cursor.getColumnIndex("st2__departure_time"))));
+      LocalTime stopTwoArrivalTime = new LocalTime(DataStringUtils.adjustLateTimes(cursor.getString(cursor.getColumnIndex("st2__arrival_time"))));
 
       if (stopOneSequence < stopTwoSequence) {
         possibleTrip.setArrivalTime(stopOneDepartureTime);

@@ -12,6 +12,7 @@ import com.eleith.calchoochoo.TripActivity;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.StopTimes;
+import com.eleith.calchoochoo.utils.DataStringUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 
 import org.joda.time.format.DateTimeFormat;
@@ -67,7 +68,7 @@ public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneT
     StopTimes pair = tripStops.get(position);
     DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
 
-    holder.name.setText(pair.stop.stop_name.replace(" Caltrain", ""));
+    holder.name.setText(DataStringUtils.removeCaltrain(pair.stop.stop_name));
     holder.startTime.setText(dateTimeFormatter.print(pair.arrival_time));
   }
 

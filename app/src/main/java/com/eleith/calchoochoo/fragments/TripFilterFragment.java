@@ -16,6 +16,7 @@ import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.DataStringUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
@@ -205,9 +206,9 @@ public class TripFilterFragment extends Fragment {
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOP)) {
           Stop stop = ((RxMessageStop) rxMessage).getMessage();
           if (destinationStopId != null && destinationStopId.equals(stop.stop_id)) {
-            destinationEdit.setText(stop.stop_name.replace(" Caltrain", ""));
+            destinationEdit.setText(DataStringUtils.removeCaltrain(stop.stop_name));
           } else {
-            sourceEdit.setText(stop.stop_name.replace(" Caltrain", ""));
+            sourceEdit.setText(DataStringUtils.removeCaltrain(stop.stop_name));
           }
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIPS)) {
           possibleTrips = ((RxMessagePossibleTrips) rxMessage).getMessage();

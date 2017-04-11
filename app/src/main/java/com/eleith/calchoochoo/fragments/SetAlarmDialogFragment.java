@@ -18,6 +18,7 @@ import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.TripActivity;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.DataStringUtils;
 import com.eleith.calchoochoo.utils.Notifications;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
@@ -88,8 +89,8 @@ public class SetAlarmDialogFragment extends android.support.v4.app.DialogFragmen
     int departingMinutes = notifications.getAlarmMinutes(possibleTrip.getTripId(), Notifications.DEPARTING);
 
     tripText.setText(possibleTrip.getTripId());
-    arrivalText.setText(possibleTrip.getLastStopName().replace(" Caltrain", ""));
-    departureText.setText(possibleTrip.getFirstStopName().replace(" Caltrain", ""));
+    arrivalText.setText(DataStringUtils.removeCaltrain(possibleTrip.getLastStopName()));
+    departureText.setText(DataStringUtils.removeCaltrain(possibleTrip.getFirstStopName()));
 
     if (arrivingMinutes != -1) {
       arrivalSpinner.setSelection((arrivingMinutes / 5) - 1);

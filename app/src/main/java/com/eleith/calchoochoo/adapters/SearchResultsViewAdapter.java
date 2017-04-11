@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
 import com.eleith.calchoochoo.data.Stop;
+import com.eleith.calchoochoo.utils.DataStringUtils;
 import com.eleith.calchoochoo.utils.DistanceUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
@@ -61,7 +62,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
       holder.searchDistanceText.setVisibility(View.INVISIBLE);
     }
 
-    holder.stopNameText.setText(stop.stop_name.replace(" Caltrain", ""));
+    holder.stopNameText.setText(DataStringUtils.removeCaltrain(stop.stop_name));
 
     if (type == 1) {
       holder.stopNameText.setTypeface(null, Typeface.ITALIC);

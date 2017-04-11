@@ -14,6 +14,7 @@ import com.eleith.calchoochoo.TripActivity;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.PossibleTrip;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.DataStringUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 
 import org.joda.time.Minutes;
@@ -96,8 +97,8 @@ public class TripSummaryFragment extends Fragment {
   }
 
   private void updateSummaryBar() {
-    tripSummaryFrom.setText(possibleTrip.getFirstStopName().replace(" Caltrain", ""));
-    tripSummaryTo.setText(possibleTrip.getLastStopName().replace(" Caltrain", ""));
+    tripSummaryFrom.setText(DataStringUtils.removeCaltrain(possibleTrip.getFirstStopName()));
+    tripSummaryTo.setText(DataStringUtils.removeCaltrain(possibleTrip.getLastStopName()));
 
     tripSummaryPrice.setText(String.format(Locale.getDefault(), "$%.2f", possibleTrip.getPrice()));
     tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime(), possibleTrip.getDepartureTime()).getMinutes()));
