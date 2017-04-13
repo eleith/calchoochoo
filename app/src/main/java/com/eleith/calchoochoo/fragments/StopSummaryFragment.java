@@ -78,13 +78,18 @@ public class StopSummaryFragment extends Fragment {
     }
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
-
     return view;
   }
 
   @Override
   public void onDestroyView() {
     super.onDestroyView();
+    subscription.unsubscribe();
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
     subscription.unsubscribe();
   }
 

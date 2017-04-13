@@ -18,6 +18,8 @@ public class PossibleTrip {
   private float price;
   private Integer firstStopSequence;
   private String routeLongName = "";
+  private String firstParentStopId = "";
+  private String lastParentStopId = "";
 
   public String getTripShortName() {
     return tripShortName;
@@ -135,5 +137,21 @@ public class PossibleTrip {
 
   public void setDepartureTime(LocalTime departureTime) {
     this.departureTime = departureTime;
+  }
+
+  public String getFirstParentStopId() {
+    return firstParentStopId;
+  }
+
+  public void setFirstParentStopId(String firstParentStopId) {
+    this.firstParentStopId = firstParentStopId;
+  }
+
+  public String getLastParentStopId() {
+    return lastParentStopId;
+  }
+
+  public void setLastParentStopId(String lastParentStopId) {
+    this.lastParentStopId = lastParentStopId;
   }
 }

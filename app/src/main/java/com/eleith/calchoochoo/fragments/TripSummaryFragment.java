@@ -9,6 +9,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.eleith.calchoochoo.ChooChooRouterManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.TripActivity;
 import com.eleith.calchoochoo.data.ChooChooLoader;
@@ -26,12 +27,15 @@ import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class TripSummaryFragment extends Fragment {
   private PossibleTrip possibleTrip;
 
   @Inject
   ChooChooLoader chooChooLoader;
+  @Inject
+  ChooChooRouterManager chooChooRouterManager;
 
   @Inject
   RxBus rxBus;
@@ -94,6 +98,11 @@ public class TripSummaryFragment extends Fragment {
     if (savedInstanceState != null) {
       possibleTrip = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.POSSIBLE_TRIP));
     }
+  }
+
+  @OnClick
+  public void exploreOtherStationTrips() {
+    chooChooRouterManager.loadTripFilterActivity(getActivity(), possibleTrip.getFirstParentStopId(), possibleTrip.getLastParentStopId());
   }
 
   private void updateSummaryBar() {

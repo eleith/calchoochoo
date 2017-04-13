@@ -88,7 +88,7 @@ public class SetAlarmDialogFragment extends android.support.v4.app.DialogFragmen
     int arrivingMinutes = notifications.getAlarmMinutes(possibleTrip.getTripId(), Notifications.ARRIVING);
     int departingMinutes = notifications.getAlarmMinutes(possibleTrip.getTripId(), Notifications.DEPARTING);
 
-    tripText.setText(possibleTrip.getTripId());
+    tripText.setText(possibleTrip.getTripShortName());
     arrivalText.setText(DataStringUtils.removeCaltrain(possibleTrip.getLastStopName()));
     departureText.setText(DataStringUtils.removeCaltrain(possibleTrip.getFirstStopName()));
 

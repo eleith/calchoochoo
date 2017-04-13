@@ -25,6 +25,8 @@ public class PossibleTripUtils {
       String routeId = cursor.getString(cursor.getColumnIndex("route_id"));
       String stop1Id = cursor.getString(cursor.getColumnIndex("st1__stop_id"));
       String stop2Id = cursor.getString(cursor.getColumnIndex("st2__stop_id"));
+      String stop1ParentId = cursor.getString(cursor.getColumnIndex("st1__parent_station"));
+      String stop2ParentId = cursor.getString(cursor.getColumnIndex("st2__parent_station"));
       String stop1Name = cursor.getString(cursor.getColumnIndex("st1__stop_name"));
       String stop2Name = cursor.getString(cursor.getColumnIndex("st2__stop_name"));
       String tripId = cursor.getString(cursor.getColumnIndex("st1__trip_id"));
@@ -42,7 +44,9 @@ public class PossibleTripUtils {
         possibleTrip.setFirstStopSequence(stopOneSequence);
         possibleTrip.setLastStopSequence(stopTwoSequence);
         possibleTrip.setFirstStopId(stop1Id);
+        possibleTrip.setFirstParentStopId(stop1ParentId);
         possibleTrip.setLastStopId(stop2Id);
+        possibleTrip.setLastParentStopId(stop2ParentId);
         possibleTrip.setFirstStopName(stop1Name);
         possibleTrip.setLastStopName(stop2Name);
       } else {
@@ -51,7 +55,9 @@ public class PossibleTripUtils {
         possibleTrip.setFirstStopSequence(stopTwoSequence);
         possibleTrip.setLastStopSequence(stopOneSequence);
         possibleTrip.setFirstStopId(stop2Id);
+        possibleTrip.setFirstParentStopId(stop2ParentId);
         possibleTrip.setLastStopId(stop1Id);
+        possibleTrip.setLastParentStopId(stop1ParentId);
         possibleTrip.setFirstStopName(stop2Name);
         possibleTrip.setLastStopName(stop1Name);
       }
@@ -90,9 +96,9 @@ public class PossibleTripUtils {
         "trips.direction_id as direction, " +
         "trips.trip_short_name as trip_short_name, " +
         "st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
-        "st1.stop_name as st1__stop_name, st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, " +
+        "st1.stop_name as st1__stop_name, st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, st1.parent_station as st1__parent_station, " +
         "st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +
-        "st2.stop_name as st2__stop_name, st2.stop_id as st2__stop_id, st2.stop_sequence as st2__stop_sequence " +
+        "st2.stop_name as st2__stop_name, st2.stop_id as st2__stop_id, st2.stop_sequence as st2__stop_sequence, st2.parent_station as st2__parent_station " +
         "FROM " +
         "    (SELECT * " +
         "    FROM stops, stop_times " +
@@ -132,9 +138,9 @@ public class PossibleTripUtils {
         "trips.direction_id as direction, " +
         "trips.trip_short_name as trip_short_name, " +
         "st1.stop_name as st1__stop_name, st1.platform_code as st1__platform_code, st1.trip_id as st1__trip_id, st1.arrival_time as st1__arrival_time, st1.departure_time as st1__departure_time, " +
-        "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, st1.drop_off_type as st1__drop_off_type, " +
+        "st1.stop_id as st1__stop_id, st1.stop_sequence as st1__stop_sequence, st1.drop_off_type as st1__drop_off_type, st1.parent_station as st1__parent_station, " +
         "st2.stop_name as st2__stop_name, st2.platform_code as st2__platform_code, st2.trip_id as st2__trip_id, st2.arrival_time as st2__arrival_time, st2.departure_time as st2__departure_time, " +
-        "st2.stop_id as st2__stop_id, st2.stop_sequence as st2__stop_sequence, st2.drop_off_type as st2__drop_off_type " +
+        "st2.stop_id as st2__stop_id, st2.stop_sequence as st2__stop_sequence, st2.drop_off_type as st2__drop_off_type, st2.parent_station as st2__parent_station " +
         "FROM " +
         "    (SELECT * " +
         "    FROM stops, stop_times " +
