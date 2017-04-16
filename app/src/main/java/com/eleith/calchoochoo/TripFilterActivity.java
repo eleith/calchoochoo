@@ -3,6 +3,7 @@ package com.eleith.calchoochoo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
@@ -16,6 +17,7 @@ import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.joda.time.LocalDateTime;
@@ -32,6 +34,7 @@ import rx.functions.Action1;
 
 public class TripFilterActivity extends AppCompatActivity {
   private ChooChooComponent chooChooComponent;
+  private Subscription subscriptionTrips;
   private Subscription subscription;
   private ArrayList<PossibleTrip> possibleTrips;
   private String stopSourceId;
@@ -67,6 +70,8 @@ public class TripFilterActivity extends AppCompatActivity {
     ButterKnife.bind(this);
 
     floatingActionButton.setImageDrawable(getDrawable(R.drawable.ic_swap_vert_black_24dp));
+    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessage());
+
     Intent intent = getIntent();
     if (intent != null) {
       Bundle bundle = intent.getExtras();
@@ -77,7 +82,7 @@ public class TripFilterActivity extends AppCompatActivity {
         stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis());
 
         if (stopDestinationId != null && stopSourceId != null) {
-          subscription = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessages());
+          subscriptionTrips = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessagePossibleTrips());
           chooChooLoader.loadPossibleTrips(stopSourceId, stopDestinationId, new LocalDateTime(stopDateTime));
         } else {
           chooChooRouterManager.loadTripFilterFragment(null, stopMethod, new LocalDateTime(stopDateTime), stopSourceId, stopDestinationId);
@@ -97,6 +102,7 @@ public class TripFilterActivity extends AppCompatActivity {
     super.onStop();
     googleApiClient.disconnect();
     fabShow();
+    subscriptionTrips.unsubscribe();
     subscription.unsubscribe();
   }
 
@@ -129,7 +135,7 @@ public class TripFilterActivity extends AppCompatActivity {
           } else {
             stopSourceId = stopId;
           }
-          subscription = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessages());
+          subscriptionTrips = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessagePossibleTrips());
           chooChooLoader.loadPossibleTrips(stopSourceId, stopDestinationId, new LocalDateTime(stopDateTime));
         }
       }
@@ -140,7 +146,20 @@ public class TripFilterActivity extends AppCompatActivity {
     return chooChooComponent;
   }
 
-  private Action1<RxMessagePossibleTrips> handleRxMessages() {
+  private Action1<RxMessage> handleRxMessage() {
+    return new Action1<RxMessage>() {
+      @Override
+      public void call(RxMessage rxMessage) {
+        if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
+          Pair<Integer, LocalDateTime> pair = ((RxMessageStopMethodAndDateTime) rxMessage).getMessage();
+          stopMethod = pair.first;
+          stopDateTime = pair.second.toDateTime().getMillis();
+        }
+      }
+    };
+  }
+
+  private Action1<RxMessagePossibleTrips> handleRxMessagePossibleTrips() {
     return new Action1<RxMessagePossibleTrips>() {
       @Override
       public void call(RxMessagePossibleTrips rxMessage) {
