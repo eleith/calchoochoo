@@ -100,7 +100,7 @@ public class TripSummaryFragment extends Fragment {
     }
   }
 
-  @OnClick
+  @OnClick(R.id.trip_summary_stations)
   public void exploreOtherStationTrips() {
     chooChooRouterManager.loadTripFilterActivity(getActivity(), possibleTrip.getFirstParentStopId(), possibleTrip.getLastParentStopId());
   }
