@@ -52,8 +52,7 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
       super.onCreate(savedInstanceState);
       finish();
     } else {
-      chooChooWidgetConfigureComponent = ChooChooApplication.from(this).getAppComponent()
-          .activityComponent(new ChooChooWidgetConfigureModule(this));
+      chooChooWidgetConfigureComponent = ChooChooApplication.from(this).getAppComponent().activityComponent(new ChooChooWidgetConfigureModule(this));
       chooChooWidgetConfigureComponent.inject(this);
 
       super.onCreate(savedInstanceState);

@@ -80,7 +80,7 @@ public class ChooChooRouterManager {
         searchInputConfigureWidgetFragment.setArguments(arguments);
         searchResultsConfigureWidgetFragment.setArguments(arguments);
 
-        updateAppBarFragments(searchInputConfigureWidgetFragment, searchResultsConfigureWidgetFragment, stateID);
+        updateLinearLayoutFragments(searchInputConfigureWidgetFragment, searchResultsConfigureWidgetFragment, stateID);
         break;
       case STATE_SHOW_ALL_STOPS:
         StopSummaryFragment stopSummaryFragment = new StopSummaryFragment();
@@ -149,8 +149,6 @@ public class ChooChooRouterManager {
   private void updateAppBarFragments(Fragment top, Fragment bottom, String stateId) {
     int topId = R.id.activityAppBarLayoutFragment;
     int bottomId = R.id.activityMainFragment;
-    Fragment appBar = fragmentManager.findFragmentById(topId);
-    Fragment main = fragmentManager.findFragmentById(bottomId);
     FragmentTransaction ft = getTransaction();
 
     ft.replace(topId, top, stateId + "top");

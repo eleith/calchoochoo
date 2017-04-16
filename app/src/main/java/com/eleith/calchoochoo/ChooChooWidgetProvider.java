@@ -76,10 +76,10 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
           DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
           RemoteViews item = new RemoteViews(context.getPackageName(), R.layout.fragment_stop_card_widget_trainitem);
 
-          Intent intent = new Intent(context, MapSearchActivity.class);
+          Intent intent = new Intent(context, TripActivity.class);
 
           Bundle bundle = new Bundle();
-          bundle.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
+          bundle.putString(BundleKeys.STOP_SOURCE, possibleTrain.getStopId());
           bundle.putString(BundleKeys.TRIP, possibleTrain.getTripId());
 
           intent.setAction(Intent.ACTION_VIEW);
