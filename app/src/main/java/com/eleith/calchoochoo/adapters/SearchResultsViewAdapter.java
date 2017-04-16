@@ -32,6 +32,8 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
   private ArrayList<String> filteredStopIds;
   private Location location;
   private RxBus rxBus;
+  private static final int ITEM_TYPE_AVAILABLE = 1;
+  private static final int ITEM_TYPE_FILTERED = 0;
 
   @Inject
   public SearchResultsViewAdapter(RxBus rxBus) {
@@ -64,7 +66,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
 
     holder.stopNameText.setText(DataStringUtils.removeCaltrain(stop.stop_name));
 
-    if (type == 1) {
+    if (type == ITEM_TYPE_FILTERED) {
       holder.stopNameText.setTypeface(null, Typeface.ITALIC);
     }
   }
@@ -73,9 +75,9 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
   public int getItemViewType(int position) {
     Stop stop = stops.get(position);
     if (filteredStopIds.indexOf(stop.stop_id) != -1) {
-      return 1;
+      return ITEM_TYPE_FILTERED;
     } else {
-      return 0;
+      return ITEM_TYPE_AVAILABLE;
     }
   }
 
@@ -97,7 +99,9 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
 
     @OnClick(R.id.search_result_item)
     void onClickResult() {
-      rxBus.send(new RxMessageStop(RxMessageKeys.SEARCH_RESULT_STOP, stops.get(getAdapterPosition())));
+      if (getItemViewType() == ITEM_TYPE_AVAILABLE) {
+        rxBus.send(new RxMessageStop(RxMessageKeys.SEARCH_RESULT_STOP, stops.get(getAdapterPosition())));
+      }
     }
 
     ViewHolder(View view) {
