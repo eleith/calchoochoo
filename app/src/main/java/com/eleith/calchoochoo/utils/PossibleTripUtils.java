@@ -124,7 +124,8 @@ public class PossibleTripUtils {
         "  AND fare_rules.origin_id = st1.zone_id " +
         "  AND fare_rules.destination_id = st2.zone_id " +
         "  AND fare_rules.route_id = routes.route_id " +
-        "  AND fare_rules.fare_id = fare_attributes.fare_id ";
+        "  AND fare_rules.fare_id = fare_attributes.fare_id " +
+        "ORDER BY st1.departure_time";
     String[] args = {trip_id, stop1_id, trip_id, stop2_id};
     return db.rawQuery(query, args);
   }
@@ -167,7 +168,8 @@ public class PossibleTripUtils {
         "  AND fare_rules.destination_id = st2.zone_id " +
         "  AND fare_rules.route_id = routes.route_id " +
         "  AND fare_rules.fare_id = fare_attributes.fare_id " +
-        calendarFilter;
+        calendarFilter +
+        "ORDER BY st1.departure_time ";
     String[] args = {stop1_id, stop2_id};
     return db.rawQuery(query, args);
   }
