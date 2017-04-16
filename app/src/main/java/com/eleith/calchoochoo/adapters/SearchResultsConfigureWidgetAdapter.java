@@ -11,6 +11,7 @@ import com.eleith.calchoochoo.ChooChooWidgetConfigure;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.dagger.ChooChooWidgetConfigureScope;
 import com.eleith.calchoochoo.data.Stop;
+import com.eleith.calchoochoo.utils.DataStringUtils;
 
 import java.util.ArrayList;
 
@@ -36,18 +37,16 @@ public class SearchResultsConfigureWidgetAdapter extends RecyclerView.Adapter<Se
 
   @Override
   public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-    View view = LayoutInflater.from(parent.getContext())
-        .inflate(R.layout.fragment_search_result, parent, false);
+    View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_search_result, parent, false);
     return new ViewHolder(view);
   }
 
   @Override
   public void onBindViewHolder(final ViewHolder holder, int position) {
     Stop stop = stops.get(position);
-
-    holder.distanceLine.setVisibility(View.GONE);
+    holder.distanceColumn.setVisibility(View.GONE);
     holder.mItem = stop;
-    holder.mIdView.setText(stop.stop_name);
+    holder.mIdView.setText(DataStringUtils.removeCaltrain(stop.stop_name));
   }
 
   @Override
@@ -56,10 +55,10 @@ public class SearchResultsConfigureWidgetAdapter extends RecyclerView.Adapter<Se
   }
 
   class ViewHolder extends RecyclerView.ViewHolder {
-    @BindView(R.id.search_result_distance_line)
-    LinearLayout distanceLine;
     @BindView(R.id.search_result_name)
     TextView mIdView;
+    @BindView(R.id.search_result_distance_column)
+    LinearLayout distanceColumn;
     Stop mItem;
 
     @OnClick(R.id.search_result_item)

@@ -3,12 +3,14 @@
               xmlns:tools="http://schemas.android.com/tools"
               android:id="@+id/search_result_item"
               android:layout_width="match_parent"
-              android:layout_height="wrap_content"
+              android:layout_height="70dp"
               android:orientation="horizontal">
 
     <LinearLayout
+        android:id="@+id/search_result_distance_column"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:layout_margin="10dp"
         android:layout_weight="1.5"
         android:orientation="vertical">
@@ -36,8 +38,7 @@
                 android:paddingEnd="3dp"
                 android:paddingStart="2dp"
                 android:textStyle="italic"
-                tools:text="15.45"
-                />
+                tools:text="15.45"/>
 
             <TextView
                 android:layout_width="wrap_content"
