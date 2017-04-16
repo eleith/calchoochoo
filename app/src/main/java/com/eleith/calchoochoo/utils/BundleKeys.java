@@ -21,4 +21,5 @@ public class BundleKeys {
   public static final String STOP_DESTINATION_NAME = "stopDestinationName";
   public static final String STOP_SOURCE_TIME = "stopSourceTime";
   public static final String STOP_DESTINATION_TIME = "stopDestinationTime";
+  public static final String APP_WIDGET_ID = "appWidgetId";
 }

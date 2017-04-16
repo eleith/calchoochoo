@@ -70,12 +70,14 @@ public class PossibleTrainUtils {
     return db.rawQuery(query, args);
   }
 
-  public static ArrayList<PossibleTrain> filterByDateTime(ArrayList<PossibleTrain> possibleTrains, LocalDateTime dateTime) {
+  public static ArrayList<PossibleTrain> filterByDateTimeAndDirection(ArrayList<PossibleTrain> possibleTrains, LocalDateTime dateTime, int direction) {
     ArrayList<PossibleTrain> possibleTrainsFiltered = new ArrayList<>();
 
     for (PossibleTrain possibleTrain : possibleTrains) {
       if (possibleTrain.getDepartureTime().isAfter(dateTime.toLocalTime())) {
-        possibleTrainsFiltered.add(possibleTrain);
+        if (possibleTrain.getTripDirectionId() == direction) {
+          possibleTrainsFiltered.add(possibleTrain);
+        }
       }
     }
 

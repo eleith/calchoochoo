@@ -11,16 +11,9 @@
         android:background="?attr/colorPrimary"
         android:orientation="horizontal">
 
-        <ImageView
-            android:layout_gravity="center"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="50dp"
-            android:contentDescription="@string/bullet_train"
-            android:src="@drawable/ic_train_local"/>
-
         <LinearLayout
             android:layout_width="0dp"
+            android:paddingStart="10dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:orientation="vertical">
@@ -73,7 +66,7 @@
             android:id="@+id/stop_summary_switch_direction"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <ImageView

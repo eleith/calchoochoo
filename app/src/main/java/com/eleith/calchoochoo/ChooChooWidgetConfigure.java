@@ -16,6 +16,7 @@ import com.eleith.calchoochoo.dagger.ChooChooWidgetConfigureModule;
 import com.eleith.calchoochoo.data.ChooChooDatabase;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.StopUtils;
+import com.eleith.calchoochoo.utils.TripUtils;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,8 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
   private int appWidgetId;
   private static final String PREFS_NAME = "com.eleith.calchoochoo.ChooChooWidgetProvider";
   private static final String PREF_PREFIX_KEY = "choochoo_widget_";
+  private static final String PREF_PREFIX_STOP = PREF_PREFIX_KEY + "stop_";
+  private static final String PREF_PREFIX_DIRECTION = PREF_PREFIX_KEY + "direction_";
 
   @BindView(R.id.search_results_empty_state)
   TextView searchResultsEmptyState;
@@ -97,13 +100,21 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
   }
 
   public void chooseStopToConfigure(Stop stop) {
-    saveWidgetConfiguration(stop.stop_id);
+    saveWidgetConfiguration(stop.stop_id, TripUtils.DIRECTION_NORTH);
     notifyWidget();
   }
 
-  private void saveWidgetConfiguration(String stopId) {
+  private void saveWidgetConfiguration(String stopId, int direction) {
     SharedPreferences.Editor prefs = this.getSharedPreferences(PREFS_NAME, 0).edit();
-    prefs.putString(PREF_PREFIX_KEY + appWidgetId, stopId);
+    prefs.putString(PREF_PREFIX_STOP + appWidgetId, stopId);
+    prefs.putInt(PREF_PREFIX_DIRECTION + appWidgetId, direction);
+    prefs.apply();
+  }
+
+  static void updateWidgetConfiguration(Context context, int appWidgetId, String stopId, int direction) {
+    SharedPreferences.Editor prefs = context.getSharedPreferences(PREFS_NAME, 0).edit();
+    prefs.putString(PREF_PREFIX_STOP + appWidgetId, stopId);
+    prefs.putInt(PREF_PREFIX_DIRECTION + appWidgetId, direction);
     prefs.apply();
   }
 
@@ -115,8 +126,13 @@ public class ChooChooWidgetConfigure extends AppCompatActivity {
     cursor.close();
 
     SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
-    String stopId = prefs.getString(PREF_PREFIX_KEY + appWidgetId, null);
+    String stopId = prefs.getString(PREF_PREFIX_STOP + appWidgetId, null);
     return StopUtils.getStopById(stops, stopId);
+  }
+
+  static int getDirectionFromPreferences(Context context, int appWidgetId) {
+    SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, 0);
+    return prefs.getInt(PREF_PREFIX_DIRECTION + appWidgetId, TripUtils.DIRECTION_NORTH);
   }
 
   public ChooChooWidgetConfigureComponent getComponent() {

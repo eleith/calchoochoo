@@ -89,7 +89,9 @@ public class StopDetailsFragment extends Fragment {
 
       stopTrainsAdapter.setSelected(selected);
       stopTrainsAdapter.notifyDataSetChanged();
-      stopDetailsRecyclerView.scrollToPosition(positionToScrollTo);
+      if (positionToScrollTo > 0) {
+        stopDetailsRecyclerView.scrollToPosition(positionToScrollTo - 1);
+      }
     }
   }
 

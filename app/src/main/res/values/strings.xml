@@ -28,8 +28,8 @@
     <string name="local_train">Local Train</string>
     <string name="train_number">Train #</string>
     <string name="no_more_trains">Sorry, there are no more trips at this time.</string>
-    <string name="south_bound">(South)</string>
-    <string name="north_bound">(North)</string>
+    <string name="south">South</string>
+    <string name="north">North</string>
     <string name="number_sign">#</string>
     <string name="trains_seen">Trains seen after</string>
     <string name="san_jose">San Jose</string>
