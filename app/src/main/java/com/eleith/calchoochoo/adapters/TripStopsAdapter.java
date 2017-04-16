@@ -92,12 +92,6 @@ public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneT
     TextView name;
     TextView startTime;
 
-    @OnClick(R.id.one_trip_stop_details)
-    void onClickTripSummary() {
-      Stop directionalStop = tripStops.get(getAdapterPosition()).stop;
-      chooChooRouterManager.loadStopActivity(tripActivity, directionalStop.parent_station);
-    }
-
     private OneTripStopHolder(View v) {
       super(v);
 

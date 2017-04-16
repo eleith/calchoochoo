@@ -233,7 +233,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public boolean onMarkerClick(Marker marker) {
       String stopId = (String) marker.getTag();
-      chooChooRouterManager.loadTripFilterActivity(getActivity(), stopId, stopId);
+      chooChooRouterManager.loadStopActivity(getActivity(), stopId);
       return true;
     }
   }
