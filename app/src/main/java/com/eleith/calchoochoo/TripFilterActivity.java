@@ -102,7 +102,9 @@ public class TripFilterActivity extends AppCompatActivity {
     super.onStop();
     googleApiClient.disconnect();
     fabShow();
-    subscriptionTrips.unsubscribe();
+    if (subscriptionTrips != null) {
+      subscriptionTrips.unsubscribe();
+    }
     subscription.unsubscribe();
   }
 
