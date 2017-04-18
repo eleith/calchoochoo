@@ -64,4 +64,6 @@ dependencies {
     //Parceler
     compile 'org.parceler:parceler-api:1.1.1'
     apt 'org.parceler:parceler:1.1.1'
+    // chrome custom tabs
+    compile 'com.android.support:customtabs:25.1.1'
 }

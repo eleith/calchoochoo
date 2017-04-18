@@ -35,6 +35,12 @@
     <string name="san_jose">San Jose</string>
     <string name="san_francisco">San Francisco</string>
     <string name="image_direction_arrow">Select to switch train direction</string>
+    <string name="calchoochoo_logo">CalChooChoo logo</string>
+    <string name="calchoochoo_schedule">Schedule from April 10, 2017</string>
+    <string name="map_search">Map Search</string>
+    <string name="trip_explorer">Trip Explorer</string>
+    <string name="caltrain_news">Caltrain News</string>
+    <string name="about_calchoochoo">About CalChooChoo</string>
 
     <string name="transition_train_image">transition-train-image</string>
     <string name="transition_train_number_text">transition-train-number-text</string>

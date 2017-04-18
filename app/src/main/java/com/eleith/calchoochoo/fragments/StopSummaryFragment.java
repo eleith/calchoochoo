@@ -1,20 +1,20 @@
 package com.eleith.calchoochoo.fragments;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.StopActivity;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.ColorUtils;
 import com.eleith.calchoochoo.utils.DataStringUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
@@ -111,9 +111,10 @@ public class StopSummaryFragment extends Fragment {
       @Override
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.FAB_CLICKED)) {
-          Intent intent = new Intent(Intent.ACTION_VIEW);
-          intent.setData(Uri.parse(stop.stop_url));
-          getContext().startActivity(intent);
+          CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+          CustomTabsIntent customTabsIntent = builder.build();
+          builder.setToolbarColor(ColorUtils.getThemeColor(getActivity(), R.attr.colorPrimary));
+          customTabsIntent.launchUrl(getActivity(), Uri.parse(stop.stop_url));
         }
       }
     };
