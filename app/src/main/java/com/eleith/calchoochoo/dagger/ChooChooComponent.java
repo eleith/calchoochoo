@@ -1,5 +1,7 @@
 package com.eleith.calchoochoo.dagger;
 
+import com.eleith.calchoochoo.ChooChooDrawer;
+import com.eleith.calchoochoo.MapSearch;
 import com.eleith.calchoochoo.StopActivity;
 import com.eleith.calchoochoo.StopSearchActivity;
 import com.eleith.calchoochoo.TripActivity;
@@ -7,7 +9,6 @@ import com.eleith.calchoochoo.TripFilterActivity;
 import com.eleith.calchoochoo.fragments.SetAlarmDialogFragment;
 import com.eleith.calchoochoo.fragments.TripFilterSuggestionsFragment;
 import com.eleith.calchoochoo.fragments.TripFilterTimeAndMethodDialogFragment;
-import com.eleith.calchoochoo.MapSearchActivity;
 import com.eleith.calchoochoo.fragments.StopDetailsFragment;
 import com.eleith.calchoochoo.fragments.TripFilterFragment;
 import com.eleith.calchoochoo.fragments.MapSearchFragment;
@@ -23,11 +24,12 @@ import dagger.Subcomponent;
 @Subcomponent(modules = ChooChooModule.class)
 public interface ChooChooComponent {
   // injection for activity
-  void inject(MapSearchActivity mapSearchActivity);
+  void inject(MapSearch mapSearchActivity);
   void inject(TripFilterActivity tripFilterActivity);
   void inject(TripActivity tripActivity);
   void inject(StopSearchActivity stopSearchActivity);
   void inject(StopActivity stopActivity);
+  void inject(ChooChooDrawer chooChooDrawer);
 
   // injection for fragments
   void inject(SearchResultsFragment searchResultsFragment);

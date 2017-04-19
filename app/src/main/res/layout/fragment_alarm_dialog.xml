@@ -10,12 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:background="?attr/colorAccent"
         android:padding="15dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="20sp"
             android:text="@string/notification_for_train_num"
             android:textColor="@color/primary_text_material_light"
             android:textStyle="bold"/>
@@ -25,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/primary_text_material_light"
+                        android:textSize="20sp"
             android:textStyle="bold"
             tools:text="145"/>
     </LinearLayout>

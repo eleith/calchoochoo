@@ -2,10 +2,7 @@ package com.eleith.calchoochoo;
 
 import android.content.Intent;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Bundle;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 
 import com.eleith.calchoochoo.dagger.ChooChooComponent;
@@ -13,7 +10,6 @@ import com.eleith.calchoochoo.dagger.ChooChooModule;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.ColorUtils;
 import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.IntentKeys;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -30,13 +26,12 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 
-public class MapSearchActivity extends AppCompatActivity {
+public class MapSearch extends AppCompatActivity {
   private ChooChooComponent chooChooComponent;
   private Subscription subscription;
   private Subscription subscriptionLocation;
@@ -54,37 +49,8 @@ public class MapSearchActivity extends AppCompatActivity {
   @Inject
   DeviceLocation deviceLocation;
 
-  @BindView(R.id.activityFloatingActionButton)
-  FloatingActionButton floatingActionButton;
-
-  @OnClick(R.id.activityDrawerNews)
-  void goToNewsWWW() {
-    String url = "https://twitter.com/caltrain";
-    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-    CustomTabsIntent customTabsIntent = builder.build();
-    builder.setToolbarColor(ColorUtils.getThemeColor(this, R.attr.colorPrimary));
-    customTabsIntent.launchUrl(this, Uri.parse(url));
-  }
-
-  @OnClick(R.id.activityDrawerTripExplorer)
-  void goToTripExplorer() {
-    Intent intent = new Intent(this, TripFilterActivity.class);
-    if (stops != null && location != null) {
-      Stop stop = StopUtils.findStopClosestTo(stops, location);
-      intent.putExtra(BundleKeys.STOP_SOURCE, stop.stop_id);
-    }
-    startActivity(intent);
-  }
-
-  @OnClick(R.id.activityDrawerMapSearch)
-  void goToMapSearch() {
-    Intent intent = new Intent(this, MapSearchActivity.class);
-    startActivity(intent);
-  }
-
-  @OnClick(R.id.activityDrawerAbout)
-  void goToAbout() {
-  }
+  //@BindView(R.id.activityFloatingActionButton)
+  //FloatingActionButton floatingActionButton;
 
   @OnClick(R.id.activityFloatingActionButton)
   void onFabClicked() {
@@ -98,10 +64,13 @@ public class MapSearchActivity extends AppCompatActivity {
 
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_linear_top_bottom_with_fab);
+    setContentView(R.layout.activity_drawer_fab);
     ButterKnife.bind(this);
 
-    floatingActionButton.setImageDrawable(getDrawable(R.drawable.ic_gps_not_fixed_black_24dp));
+    ChooChooDrawer chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
+    ChooChooFab chooChooFab = new ChooChooFab(this, rxBus, getWindow().getDecorView().getRootView());
+
+    chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_gps_not_fixed_black_24dp));
     unWrapBundle(savedInstanceState);
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());

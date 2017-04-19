@@ -54,7 +54,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="10dp">
+        android:padding="5dp">
 
         <TextView
             android:id="@+id/activityDrawerMapSearch"
@@ -62,8 +62,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="30dp"
             android:drawableStart="@drawable/ic_explore_black_24dp"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
+            android:padding="10dp"
             android:text="@string/map_search"
             android:textSize="16sp"/>
 
@@ -73,8 +72,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="30dp"
             android:drawableStart="@drawable/ic_event_black_24dp"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
+            android:padding="10dp"
             android:text="@string/trip_explorer"
             android:textSize="16sp"/>
 
@@ -84,8 +82,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="30dp"
             android:drawableStart="@drawable/ic_chrome_reader_mode_black_24dp"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
+                        android:padding="10dp"
             android:text="@string/caltrain_news"
             android:textSize="16sp"/>
     </LinearLayout>
@@ -102,8 +99,7 @@
             android:layout_gravity="bottom"
             android:drawablePadding="30dp"
             android:drawableStart="@drawable/ic_train_black_24dp"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
+            android:padding="10dp"
             android:text="@string/about_calchoochoo"
             android:textSize="16sp"/>
     </LinearLayout>

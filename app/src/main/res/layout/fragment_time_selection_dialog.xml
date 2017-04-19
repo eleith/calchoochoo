@@ -10,7 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        app:tabBackground="?attr/colorAccent"
+        app:tabBackground="?attr/colorPrimary"
+        app:tabTextColor="@color/cardview_light_background"
+        app:tabSelectedTextColor="@color/cardview_light_background"
         app:tabIndicatorColor="@color/primary_text_material_light">
 
         <android.support.design.widget.TabItem
