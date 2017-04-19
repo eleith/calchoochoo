@@ -9,27 +9,27 @@
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context="com.eleith.calchoochoo.MapSearchActivity">
 
-        <LinearLayout
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/activityAppBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <FrameLayout
+                android:id="@+id/activityAppBarLayoutFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <FrameLayout
             android:id="@+id/activityMainLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:id="@+id/activityLinearLayoutTop"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/activityLinearLayoutBottom"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </FrameLayout>
-
-        </LinearLayout>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <include layout="@layout/floating_action_button"/>
 

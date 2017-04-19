@@ -129,7 +129,6 @@ public class ChooChooRouterManager {
     int topId = R.id.activityLinearLayoutTop;
     int bottomId = R.id.activityLinearLayoutBottom;
     Fragment linearLayoutTop = fragmentManager.findFragmentById(topId);
-    // Fragment linearLayoutBottom = fragmentManager.findFragmentById(bottomId);
     FragmentTransaction ft = getTransaction();
 
     if (top == null) {
@@ -148,7 +147,7 @@ public class ChooChooRouterManager {
 
   private void updateAppBarFragments(Fragment top, Fragment bottom, String stateId) {
     int topId = R.id.activityAppBarLayoutFragment;
-    int bottomId = R.id.activityMainFragment;
+    int bottomId = R.id.activityMainLayout;
     FragmentTransaction ft = getTransaction();
 
     ft.replace(topId, top, stateId + "top");

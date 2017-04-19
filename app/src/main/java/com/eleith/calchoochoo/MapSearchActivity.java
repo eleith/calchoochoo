@@ -31,7 +31,7 @@ import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 
-public class MapSearch extends AppCompatActivity {
+public class MapSearchActivity extends AppCompatActivity {
   private ChooChooComponent chooChooComponent;
   private Subscription subscription;
   private Subscription subscriptionLocation;
@@ -48,14 +48,6 @@ public class MapSearch extends AppCompatActivity {
   ChooChooLoader chooChooLoader;
   @Inject
   DeviceLocation deviceLocation;
-
-  //@BindView(R.id.activityFloatingActionButton)
-  //FloatingActionButton floatingActionButton;
-
-  @OnClick(R.id.activityFloatingActionButton)
-  void onFabClicked() {
-    rxBus.send(new RxMessage(RxMessageKeys.FAB_CLICKED));
-  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {

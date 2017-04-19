@@ -8,5 +8,5 @@
     android:layout_height="wrap_content"
     android:layout_gravity="bottom|end"
     android:layout_margin="16dp"
-    app:layout_anchor="@id/activityLinearLayout"
+    app:layout_anchor="@id/activityMainLayout"
     app:layout_anchorGravity="bottom|right|end"/>

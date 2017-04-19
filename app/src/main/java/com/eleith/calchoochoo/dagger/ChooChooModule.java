@@ -3,7 +3,7 @@ package com.eleith.calchoochoo.dagger;
 import android.support.v7.app.AppCompatActivity;
 
 import com.eleith.calchoochoo.ChooChooRouterManager;
-import com.eleith.calchoochoo.MapSearch;
+import com.eleith.calchoochoo.MapSearchActivity;
 import com.eleith.calchoochoo.StopActivity;
 import com.eleith.calchoochoo.StopSearchActivity;
 import com.eleith.calchoochoo.TripActivity;
@@ -26,8 +26,8 @@ public class ChooChooModule {
 
   @ChooChooScope
   @Provides
-  public MapSearch providesMapSearchActivity() {
-    return (MapSearch) activity;
+  public MapSearchActivity providesMapSearchActivity() {
+    return (MapSearchActivity) activity;
   }
 
   @ChooChooScope

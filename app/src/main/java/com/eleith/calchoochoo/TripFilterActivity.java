@@ -41,6 +41,7 @@ public class TripFilterActivity extends AppCompatActivity {
   private String stopDestinationId;
   private Integer stopMethod;
   private Long stopDateTime;
+  private ChooChooFab chooChooFab;
 
   @Inject
   RxBus rxBus;
@@ -51,14 +52,6 @@ public class TripFilterActivity extends AppCompatActivity {
   @Inject
   ChooChooLoader chooChooLoader;
 
-  @BindView(R.id.activityFloatingActionButton)
-  FloatingActionButton floatingActionButton;
-
-  @OnClick(R.id.activityFloatingActionButton)
-  void onFabClicked() {
-    rxBus.send(new RxMessage(RxMessageKeys.FAB_CLICKED));
-  }
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     chooChooComponent = ChooChooApplication.from(this).getAppComponent().activityComponent(new ChooChooModule(this));
@@ -66,10 +59,13 @@ public class TripFilterActivity extends AppCompatActivity {
 
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_appbar_main_with_fab);
+    setContentView(R.layout.activity_appbar_drawer_fab);
     ButterKnife.bind(this);
 
-    floatingActionButton.setImageDrawable(getDrawable(R.drawable.ic_swap_vert_black_24dp));
+    ChooChooDrawer chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
+    chooChooFab = new ChooChooFab(this, rxBus, getWindow().getDecorView().getRootView());
+    chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_swap_vert_black_24dp));
+
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessage());
 
     Intent intent = getIntent();
@@ -172,10 +168,10 @@ public class TripFilterActivity extends AppCompatActivity {
   }
 
   public void fabHide() {
-    floatingActionButton.setVisibility(View.GONE);
+    chooChooFab.hide();
   }
 
   public void fabShow() {
-    floatingActionButton.setVisibility(View.VISIBLE);
+    chooChooFab.show();
   }
 }

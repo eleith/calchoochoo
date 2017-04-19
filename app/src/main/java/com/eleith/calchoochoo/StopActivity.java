@@ -48,14 +48,6 @@ public class StopActivity extends AppCompatActivity {
   @Inject
   ChooChooLoader chooChooLoader;
 
-  @BindView(R.id.activityFloatingActionButton)
-  FloatingActionButton floatingActionButton;
-
-  @OnClick(R.id.activityFloatingActionButton)
-  void onFabClicked() {
-    rxBus.send(new RxMessage(RxMessageKeys.FAB_CLICKED));
-  }
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     chooChooComponent = ChooChooApplication.from(this).getAppComponent().activityComponent(new ChooChooModule(this));
@@ -63,11 +55,15 @@ public class StopActivity extends AppCompatActivity {
 
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_appbar_main_with_fab);
+    setContentView(R.layout.activity_appbar_drawer_fab);
     ButterKnife.bind(this);
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
-    floatingActionButton.setImageDrawable(getDrawable(R.drawable.ic_link_black_24dp));
+    ChooChooFab chooChooFab = new ChooChooFab(this, rxBus, getWindow().getDecorView().getRootView());
+    ChooChooDrawer chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
+
+    chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_link_black_24dp));
+
     Intent intent = getIntent();
     if (intent != null) {
       Bundle bundle = intent.getExtras();
@@ -139,7 +135,7 @@ public class StopActivity extends AppCompatActivity {
         stop = ((RxMessageStop) rxMessage).getMessage();
         loadFragment();
       } else if (rxMessage.isMessageValidFor(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED)) {
-        direction = direction == TripUtils.DIRECTION_NORTH ? TripUtils.DIRECTION_SOUTH: TripUtils.DIRECTION_NORTH;
+        direction = direction == TripUtils.DIRECTION_NORTH ? TripUtils.DIRECTION_SOUTH : TripUtils.DIRECTION_NORTH;
         loadFragment();
       }
     }

@@ -1,6 +1,7 @@
 package com.eleith.calchoochoo;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
@@ -31,6 +32,10 @@ public class ChooChooFab {
 
   public void setImageDrawable(Drawable drawable) {
     floatingActionButton.setImageDrawable(drawable);
+  }
+
+  public void setBackgroundTintList(ColorStateList colorStateList) {
+    floatingActionButton.setBackgroundTintList(colorStateList);
   }
 
   public void hide() {

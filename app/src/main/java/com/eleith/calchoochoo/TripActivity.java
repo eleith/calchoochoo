@@ -53,6 +53,7 @@ public class TripActivity extends AppCompatActivity {
   private static final String PREFS_NAME = "com.eleith.calchoochoo.TripActivity";
   private static final String PREF_PREFIX_KEY = "choochoo_trip_";
   private Notifications notifications;
+  private ChooChooFab chooChooFab;
 
   @Inject
   RxBus rxBus;
@@ -63,9 +64,6 @@ public class TripActivity extends AppCompatActivity {
   @Inject
   ChooChooLoader chooChooLoader;
 
-  @BindView(R.id.activityFloatingActionButton)
-  FloatingActionButton floatingActionButton;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     chooChooComponent = ChooChooApplication.from(this).getAppComponent().activityComponent(new ChooChooModule(this));
@@ -74,14 +72,17 @@ public class TripActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     postponeEnterTransition();
 
-    setContentView(R.layout.activity_appbar_main_with_fab);
+    setContentView(R.layout.activity_appbar_drawer_fab);
 
     ButterKnife.bind(this);
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
     notifications = new Notifications(this);
 
-    floatingActionButton.setImageDrawable(getDrawable(R.drawable.ic_add_alarm_black_24dp));
-    floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorAccent)));
+    ChooChooDrawer chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
+
+    chooChooFab = new ChooChooFab(this, rxBus, getWindow().getDecorView().getRootView());
+    chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_add_alarm_black_24dp));
+    chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorAccent)));
 
     Intent intent = getIntent();
     if (intent != null) {
@@ -100,15 +101,6 @@ public class TripActivity extends AppCompatActivity {
     }
   }
 
-  @OnClick(R.id.activityFloatingActionButton)
-  public void openAlarmDialog() {
-    Bundle bundle = new Bundle();
-    SetAlarmDialogFragment dialog = new SetAlarmDialogFragment();
-    bundle.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
-    dialog.setArguments(bundle);
-    dialog.show(getSupportFragmentManager(), "dialog");
-  }
-
   private void changeNotificationPreferences(int departureMinutes, int arrivalMinutes) {
     Boolean haveNotifications = false;
     Boolean hadNotifications = false;
@@ -124,14 +116,14 @@ public class TripActivity extends AppCompatActivity {
     hadNotifications = notifications.getAlarmId(tripId, Notifications.ARRIVING) != -1 || notifications.getAlarmId(tripId, Notifications.DEPARTING) != -1;
     notifications.cancel(tripId, Notifications.ARRIVING);
     notifications.cancel(tripId, Notifications.DEPARTING);
-    floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorAccent)));
+    chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorAccent)));
 
     if (arrivalMinutes > 0) {
       LocalDateTime arrivingDateTime = new LocalDateTime(possibleTrip.getArrivalTime().toDateTimeToday());
 
       bundle.putString(BundleKeys.STOP_METHOD, Notifications.ARRIVING);
       notifications.set(tripId, arrivingDateTime, arrivalMinutes, Notifications.ARRIVING, bundle);
-      floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
+      chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
       haveNotifications = true;
     }
 
@@ -140,7 +132,7 @@ public class TripActivity extends AppCompatActivity {
 
       bundle.putString(BundleKeys.STOP_METHOD, Notifications.DEPARTING);
       notifications.set(tripId, departingDateTime, departureMinutes, Notifications.DEPARTING, bundle);
-      floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
+      chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
       haveNotifications = true;
     }
 
@@ -190,11 +182,11 @@ public class TripActivity extends AppCompatActivity {
   private void loadFragments() {
     if (tripStops != null && possibleTrip != null) {
       if (notifications.getAlarmMinutes(possibleTrip.getTripId(), Notifications.ARRIVING) != -1) {
-        floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
+        chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
       }
 
       if (notifications.getAlarmMinutes(possibleTrip.getTripId(), Notifications.DEPARTING) != -1) {
-        floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
+        chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
       }
 
       tripStops = StopTimesUtils.filterAndOrder(tripStops, possibleTrip.getTripDirection(), sourceId, destinationId);
@@ -212,6 +204,12 @@ public class TripActivity extends AppCompatActivity {
         } else {
           chooChooLoader.loadTripById(tripId);
         }
+      } else if (rxMessage.isMessageValidFor(RxMessageKeys.FAB_CLICKED)) {
+        Bundle bundle = new Bundle();
+        SetAlarmDialogFragment dialog = new SetAlarmDialogFragment();
+        bundle.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
+        dialog.setArguments(bundle);
+        dialog.show(getSupportFragmentManager(), "dialog");
       } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIP)) {
         possibleTrip = ((RxMessagePossibleTrip) rxMessage).getMessage();
         loadFragments();

@@ -1,7 +1,7 @@
 package com.eleith.calchoochoo.dagger;
 
 import com.eleith.calchoochoo.ChooChooDrawer;
-import com.eleith.calchoochoo.MapSearch;
+import com.eleith.calchoochoo.MapSearchActivity;
 import com.eleith.calchoochoo.StopActivity;
 import com.eleith.calchoochoo.StopSearchActivity;
 import com.eleith.calchoochoo.TripActivity;
@@ -24,7 +24,7 @@ import dagger.Subcomponent;
 @Subcomponent(modules = ChooChooModule.class)
 public interface ChooChooComponent {
   // injection for activity
-  void inject(MapSearch mapSearchActivity);
+  void inject(MapSearchActivity mapSearchActivityActivity);
   void inject(TripFilterActivity tripFilterActivity);
   void inject(TripActivity tripActivity);
   void inject(StopSearchActivity stopSearchActivity);

@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.eleith.calchoochoo.ChooChooRouterManager;
-import com.eleith.calchoochoo.MapSearch;
+import com.eleith.calchoochoo.MapSearchActivity;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.Stop;
@@ -75,8 +75,8 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    MapSearch mapSearchActivity = (MapSearch) getActivity();
-    mapSearchActivity.getComponent().inject(this);
+    MapSearchActivity mapSearchActivityActivity = (MapSearchActivity) getActivity();
+    mapSearchActivityActivity.getComponent().inject(this);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
 
