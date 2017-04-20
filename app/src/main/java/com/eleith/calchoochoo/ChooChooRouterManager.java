@@ -8,8 +8,6 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.eleith.calchoochoo.data.PossibleTrain;
 import com.eleith.calchoochoo.data.PossibleTrip;
@@ -263,6 +261,13 @@ public class ChooChooRouterManager {
     bundle.putInt(BundleKeys.SEARCH_REASON, reason);
     returnIntent.putExtras(bundle);
     activity.setResult(Activity.RESULT_OK, returnIntent);
+    activity.finish();
+  }
+
+  public void loadStopSearchCancelActivity(Activity activity) {
+    Intent returnIntent = new Intent();
+    returnIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+    activity.setResult(Activity.RESULT_CANCELED, returnIntent);
     activity.finish();
   }
 

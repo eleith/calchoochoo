@@ -3,7 +3,6 @@ package com.eleith.calchoochoo;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 
 import com.eleith.calchoochoo.dagger.ChooChooComponent;
@@ -23,9 +22,7 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 

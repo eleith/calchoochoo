@@ -1,21 +1,35 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context="com.eleith.calchoochoo.fragments.SearchInputFragment">
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="20dp"
+    android:background="?android:colorBackground"
+    android:elevation="4dp">
 
     <EditText
         android:id="@+id/searchInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="10dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:background="?android:colorBackground"
-        android:elevation="4dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="40dp"
+        android:background="@android:color/transparent"
         android:hint="@string/search_for_stop"
+        android:imeOptions="actionSearch"
+        android:inputType="text"
         android:padding="10dp"/>
 
+    <ImageView
+        android:id="@+id/searchBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="10dp"
+        android:contentDescription="@string/menu_calchoochoo"
+        android:src="@drawable/ic_arrow_back_black_24dp"/>
 
-</FrameLayout>
+</RelativeLayout>

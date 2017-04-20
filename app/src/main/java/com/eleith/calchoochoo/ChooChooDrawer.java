@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.customtabs.CustomTabsIntent;
+import android.support.v4.widget.DrawerLayout;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
@@ -15,6 +17,9 @@ import butterknife.OnClick;
 
 public class ChooChooDrawer {
   private Activity activity;
+
+  @BindView(R.id.activityDrawer)
+  DrawerLayout drawerLayout;
 
   @BindView(R.id.activityDrawerMapSearch)
   TextView activityDrawerMapSearchMenu;
@@ -63,5 +68,9 @@ public class ChooChooDrawer {
     } else if (this.getClass().equals(TripFilterActivity.class)) {
       getActivityDrawerTripMenu.setBackgroundColor(ColorUtils.getThemeColor(activity, android.R.attr.textColorSecondaryInverse));
     }
+  }
+
+  public void open() {
+    drawerLayout.openDrawer(Gravity.LEFT);
   }
 }

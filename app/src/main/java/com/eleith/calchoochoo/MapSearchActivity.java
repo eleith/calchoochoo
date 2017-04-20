@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 
@@ -37,6 +36,7 @@ public class MapSearchActivity extends AppCompatActivity {
   private Subscription subscriptionLocation;
   private ArrayList<Stop> stops;
   private Location location;
+  private ChooChooDrawer chooChooDrawer;
 
   @Inject
   RxBus rxBus;
@@ -59,7 +59,7 @@ public class MapSearchActivity extends AppCompatActivity {
     setContentView(R.layout.activity_drawer_fab);
     ButterKnife.bind(this);
 
-    ChooChooDrawer chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
+    chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
     ChooChooFab chooChooFab = new ChooChooFab(this, rxBus, getWindow().getDecorView().getRootView());
 
     chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_gps_not_fixed_black_24dp));
@@ -114,10 +114,10 @@ public class MapSearchActivity extends AppCompatActivity {
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == IntentKeys.STOP_SEARCH_RESULT) {
       if (data != null) {
-        Bundle bundle = data.getExtras();
-        String stopId = bundle.getString(BundleKeys.STOP);
-        Stop closestStop = StopUtils.findStopClosestTo(stops, location);
         if (resultCode == RESULT_OK) {
+          Bundle bundle = data.getExtras();
+          String stopId = bundle.getString(BundleKeys.STOP);
+          Stop closestStop = StopUtils.findStopClosestTo(stops, location);
           if (closestStop != null) {
             chooChooRouterManager.loadTripFilterActivity(this, closestStop.stop_id, stopId);
           } else {
@@ -157,6 +157,8 @@ public class MapSearchActivity extends AppCompatActivity {
         if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOPS)) {
           stops = ((RxMessageStops) rxMessage).getMessage();
           initializeFragments();
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.DRAWER_TOGGLE)) {
+          chooChooDrawer.open();
         }
       }
     };

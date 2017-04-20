@@ -105,6 +105,11 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     chooChooRouterManager.loadStopSearchActivity(getActivity(), 0, filteredStopIds);
   }
 
+  @OnClick(R.id.map_search_menu)
+  void onClickMenuOpen() {
+    rxBus.send(new RxMessage(RxMessageKeys.DRAWER_TOGGLE));
+  }
+
   @Override
   public void onMapReady(final GoogleMap googleMap) {
     this.googleMap = googleMap;

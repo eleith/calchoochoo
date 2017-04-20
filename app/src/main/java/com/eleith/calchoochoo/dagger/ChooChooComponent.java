@@ -6,6 +6,7 @@ import com.eleith.calchoochoo.StopActivity;
 import com.eleith.calchoochoo.StopSearchActivity;
 import com.eleith.calchoochoo.TripActivity;
 import com.eleith.calchoochoo.TripFilterActivity;
+import com.eleith.calchoochoo.fragments.SearchWidgetInputFragment;
 import com.eleith.calchoochoo.fragments.SetAlarmDialogFragment;
 import com.eleith.calchoochoo.fragments.TripFilterSuggestionsFragment;
 import com.eleith.calchoochoo.fragments.TripFilterTimeAndMethodDialogFragment;
@@ -43,4 +44,5 @@ public interface ChooChooComponent {
   void inject(MapSearchFragment mapSearchFragment);
   void inject(StopDetailsFragment stopDetailsFragment);
   void inject(SetAlarmDialogFragment setAlarmDialogFragment);
+  void inject(SearchWidgetInputFragment searchWidgetInputFragment);
 }
