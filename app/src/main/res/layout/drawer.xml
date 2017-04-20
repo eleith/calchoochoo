@@ -21,6 +21,14 @@
             android:padding="10dp"
             android:src="@drawable/ic_cal_choo_choo"/>
 
+        <ImageView
+            android:layout_width="120dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/calchoochoo_logo"
+            android:padding="10dp"
+            android:src="@drawable/ic_train_car"/>
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -82,7 +90,7 @@
             android:layout_height="wrap_content"
             android:drawablePadding="30dp"
             android:drawableStart="@drawable/ic_chrome_reader_mode_black_24dp"
-                        android:padding="10dp"
+            android:padding="10dp"
             android:text="@string/caltrain_news"
             android:textSize="16sp"/>
     </LinearLayout>
