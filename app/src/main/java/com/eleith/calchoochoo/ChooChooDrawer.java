@@ -38,13 +38,15 @@ public class ChooChooDrawer {
 
   @OnClick(R.id.activityDrawerTripExplorer)
   void goToTripExplorer() {
-    Intent intent = new Intent(activity, TripFilterActivity.class);
-    activity.startActivity(intent);
+    if (!activity.getClass().equals(TripFilterActivity.class)) {
+      Intent intent = new Intent(activity, TripFilterActivity.class);
+      activity.startActivity(intent);
+    }
   }
 
   @OnClick(R.id.activityDrawerMapSearch)
   void goToMapSearch() {
-    if (!this.getClass().equals(MapSearchActivity.class)) {
+    if (!activity.getClass().equals(MapSearchActivity.class)) {
       Intent intent = new Intent(activity, MapSearchActivity.class);
       activity.startActivity(intent);
     }
@@ -63,9 +65,9 @@ public class ChooChooDrawer {
     this.activity = activity;
     ButterKnife.bind(this, view);
 
-    if (this.getClass().equals(MapSearchActivity.class)) {
+    if (activity.getClass().equals(MapSearchActivity.class)) {
       activityDrawerMapSearchMenu.setBackgroundColor(ColorUtils.getThemeColor(activity, android.R.attr.textColorSecondaryInverse));
-    } else if (this.getClass().equals(TripFilterActivity.class)) {
+    } else if (activity.getClass().equals(TripFilterActivity.class)) {
       getActivityDrawerTripMenu.setBackgroundColor(ColorUtils.getThemeColor(activity, android.R.attr.textColorSecondaryInverse));
     }
   }

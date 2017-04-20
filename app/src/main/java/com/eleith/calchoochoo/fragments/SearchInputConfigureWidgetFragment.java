@@ -43,7 +43,7 @@ public class SearchInputConfigureWidgetFragment extends Fragment {
 
   @Override
   public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_search_input, container, false);
+    View view = inflater.inflate(R.layout.fragment_widget_search_input, container, false);
     ButterKnife.bind(this, view);
     searchInput.requestFocus();
     searchInput.setHint(getString(R.string.search_for_stop));

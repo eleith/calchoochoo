@@ -2,14 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 
 android {
-    signingConfigs {
-        calchoochoo {
-            keyAlias 'key0'
-            keyPassword 'testtest'
-            storeFile file("$rootDir/tmpKeyStore/tmp.jks")
-            storePassword 'testtest'
-        }
-    }
     compileSdkVersion 25
     buildToolsVersion '25.0.0'
     defaultConfig {
@@ -25,7 +17,6 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.calchoochoo
         }
     }
     packagingOptions {
