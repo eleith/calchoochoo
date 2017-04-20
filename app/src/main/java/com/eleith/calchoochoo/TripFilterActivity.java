@@ -18,6 +18,7 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrips;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopMethodAndDateTime;
+import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.joda.time.LocalDateTime;
@@ -83,6 +84,10 @@ public class TripFilterActivity extends AppCompatActivity {
         } else {
           chooChooRouterManager.loadTripFilterFragment(null, stopMethod, new LocalDateTime(stopDateTime), stopSourceId, stopDestinationId);
         }
+      } else {
+        stopDateTime = new LocalDateTime().toDateTime().getMillis();
+        stopMethod = RxMessageStopsAndDetails.DETAIL_DEPARTING;
+        chooChooRouterManager.loadTripFilterFragment(null, stopMethod, new LocalDateTime(stopDateTime), stopSourceId, stopDestinationId);
       }
     }
   }
