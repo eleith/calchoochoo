@@ -78,6 +78,10 @@ public class TripFilterActivity extends AppCompatActivity {
         stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
         stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis());
 
+        if (stopSourceId != null && stopSourceId.equals(stopDestinationId)) {
+          stopDestinationId = null;
+        }
+
         if (stopDestinationId != null && stopSourceId != null) {
           subscriptionTrips = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessagePossibleTrips());
           chooChooLoader.loadPossibleTrips(stopSourceId, stopDestinationId, new LocalDateTime(stopDateTime));

@@ -99,9 +99,7 @@ public class SearchResultsViewAdapter extends RecyclerView.Adapter<SearchResults
 
     @OnClick(R.id.search_result_item)
     void onClickResult() {
-      if (getItemViewType() == ITEM_TYPE_AVAILABLE) {
-        rxBus.send(new RxMessageStop(RxMessageKeys.SEARCH_RESULT_STOP, stops.get(getAdapterPosition())));
-      }
+      rxBus.send(new RxMessageStop(RxMessageKeys.SEARCH_RESULT_STOP, stops.get(getAdapterPosition())));
     }
 
     ViewHolder(View view) {
