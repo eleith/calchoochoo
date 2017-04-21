@@ -111,17 +111,17 @@ public class StopSummaryFragment extends Fragment {
       @Override
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.FAB_CLICKED)) {
-          CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-          CustomTabsIntent customTabsIntent = builder.build();
-          builder.setToolbarColor(ColorUtils.getThemeColor(getActivity(), R.attr.colorPrimary));
-          customTabsIntent.launchUrl(getActivity(), Uri.parse(stop.stop_url));
+          rxBus.send(new RxMessage(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED));
         }
       }
     };
   }
 
-  @OnClick(R.id.stop_summary_switch_direction)
-  public void switchDirection() {
-    rxBus.send(new RxMessage(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED));
+  @OnClick(R.id.stop_summary_link)
+  public void goToLink() {
+    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+    CustomTabsIntent customTabsIntent = builder.build();
+    builder.setToolbarColor(ColorUtils.getThemeColor(getActivity(), R.attr.colorPrimary));
+    customTabsIntent.launchUrl(getActivity(), Uri.parse(stop.stop_url));
   }
 }

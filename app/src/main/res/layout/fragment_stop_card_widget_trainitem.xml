@@ -9,6 +9,7 @@
               android:paddingBottom="1dp">
 
     <LinearLayout
+        android:id="@+id/stop_card_widget_train_item_back"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@color/cardview_light_background">

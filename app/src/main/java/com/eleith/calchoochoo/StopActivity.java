@@ -62,7 +62,7 @@ public class StopActivity extends AppCompatActivity {
     ChooChooFab chooChooFab = new ChooChooFab(this, rxBus, getWindow().getDecorView().getRootView());
     ChooChooDrawer chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
 
-    chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_link_black_24dp));
+    chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_swap_vert_black_24dp));
 
     Intent intent = getIntent();
     if (intent != null) {
