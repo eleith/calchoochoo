@@ -94,6 +94,8 @@ public class TripFilterSuggestionsFragment extends Fragment {
       this.possibleTrips = PossibleTripUtils.filterByDateTimeAndDirection(possibleTrips, stopDateTime, stopMethod == RxMessageStopsAndDetails.DETAIL_ARRIVING);
     }
 
+    tripFilterSuggestionAdapter.setMetaData(stopMethod, stopDateTime.toDate().getTime());
+
     if (this.possibleTrips != null && this.possibleTrips.size() > 0) {
       tripFilterSuggestionAdapter.setPossibleTrips(this.possibleTrips);
       tripFilterSuggestionAdapter.notifyDataSetChanged();

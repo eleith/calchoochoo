@@ -33,6 +33,8 @@ public class TripFilterSuggestionAdapter extends RecyclerView.Adapter<TripFilter
   private ArrayList<PossibleTrip> possibleTrips;
   private TripFilterActivity tripFilterActivity;
   private ChooChooRouterManager chooChooRouterManager;
+  private Long stopDateTime;
+  private Integer stopMethod;
 
   @Inject
   public TripFilterSuggestionAdapter(TripFilterActivity tripFilterActivity, ChooChooRouterManager chooChooRouterManager) {
@@ -42,6 +44,11 @@ public class TripFilterSuggestionAdapter extends RecyclerView.Adapter<TripFilter
 
   public void setPossibleTrips(ArrayList<PossibleTrip> possibleTrips) {
     this.possibleTrips = possibleTrips;
+  }
+
+  public void setMetaData(Integer stopMethod, Long stopDateTime) {
+    this.stopMethod = stopMethod;
+    this.stopDateTime = stopDateTime;
   }
 
   @Override
@@ -99,7 +106,7 @@ public class TripFilterSuggestionAdapter extends RecyclerView.Adapter<TripFilter
       Pair<View, String> p3 = new Pair<>((View) tripNumberText, tripFilterActivity.getString(R.string.transition_train_number_text));
 
       ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(tripFilterActivity, p1, p2, p3);
-      chooChooRouterManager.loadTripActivity(tripFilterActivity, possibleTrip.getTripId(), possibleTrip.getFirstStopId(), possibleTrip.getLastStopId(), options);
+      chooChooRouterManager.loadTripActivity(tripFilterActivity, possibleTrip.getTripId(), possibleTrip.getFirstStopId(), possibleTrip.getLastStopId(), stopMethod, stopDateTime, options);
     }
 
     private RouteViewHolder(View v) {

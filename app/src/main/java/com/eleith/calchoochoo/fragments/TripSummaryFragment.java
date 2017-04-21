@@ -31,6 +31,8 @@ import butterknife.OnClick;
 
 public class TripSummaryFragment extends Fragment {
   private PossibleTrip possibleTrip;
+  private Integer stopMethod;
+  private Long stopDateTime;
 
   @Inject
   ChooChooLoader chooChooLoader;
@@ -57,6 +59,11 @@ public class TripSummaryFragment extends Fragment {
 
   @BindView(R.id.trip_summary_train_image)
   ImageView tripSummaryImage;
+
+  @OnClick(R.id.trip_summary_change_details)
+  public void onClickChangeDetails() {
+    chooChooRouterManager.loadTripFilterActivity(getActivity(), possibleTrip.getFirstParentStopId(), possibleTrip.getLastParentStopId(), stopMethod, stopDateTime);
+  }
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -86,6 +93,8 @@ public class TripSummaryFragment extends Fragment {
   @Override
   public void onSaveInstanceState(Bundle outState) {
     outState.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
+    outState.putLong(BundleKeys.STOP_DATETIME, stopDateTime);
+    outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
     super.onSaveInstanceState(outState);
   }
 
@@ -97,6 +106,8 @@ public class TripSummaryFragment extends Fragment {
   private void unWrapBundle(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
       possibleTrip = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.POSSIBLE_TRIP));
+      stopMethod = savedInstanceState.getInt(BundleKeys.STOP_METHOD);
+      stopDateTime = savedInstanceState.getLong(BundleKeys.STOP_DATETIME);
     }
   }
 

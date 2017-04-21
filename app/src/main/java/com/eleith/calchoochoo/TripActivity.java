@@ -50,6 +50,8 @@ public class TripActivity extends AppCompatActivity {
   private PossibleTrip possibleTrip;
   private String tripId;
   private Trips trip;
+  private Integer stopMethod;
+  private Long stopDateTime;
   private static final String PREFS_NAME = "com.eleith.calchoochoo.TripActivity";
   private static final String PREF_PREFIX_KEY = "choochoo_trip_";
   private Notifications notifications;
@@ -91,6 +93,8 @@ public class TripActivity extends AppCompatActivity {
         tripId = bundle.getString(BundleKeys.TRIP);
         sourceId = bundle.getString(BundleKeys.STOP_SOURCE);
         destinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
+        stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+        stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME);
 
         chooChooDrawer.setStopSource(sourceId);
         chooChooLoader.loadTripStops(tripId);
@@ -191,7 +195,7 @@ public class TripActivity extends AppCompatActivity {
       }
 
       tripStops = StopTimesUtils.filterAndOrder(tripStops, possibleTrip.getTripDirection(), sourceId, destinationId);
-      chooChooRouterManager.loadTripDetailsFragments(possibleTrip, tripStops);
+      chooChooRouterManager.loadTripDetailsFragments(possibleTrip, tripStops, stopMethod, stopDateTime);
     }
   }
 

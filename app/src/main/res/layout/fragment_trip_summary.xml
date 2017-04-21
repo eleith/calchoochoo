@@ -1,117 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="?attr/colorPrimary"
-              android:baselineAligned="false"
-              android:orientation="horizontal"
-              android:padding="10dp">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:background="?attr/colorPrimary"
+        android:baselineAligned="false"
+        android:elevation="4dp"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
-        <ImageView
-            android:id="@+id/trip_summary_train_image"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:contentDescription="@string/bullet_train"
-            android:transitionName="@string/transition_train_image"
-            android:src="@drawable/ic_train_bullet"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/trip_summary_train_image"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@string/bullet_train"
+                android:src="@drawable/ic_train_bullet"
+                android:transitionName="@string/transition_train_image"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/train_number"
+                    android:textColor="?android:colorBackground"
+                    android:textSize="25sp"
+                    android:transitionName="@string/transition_train_number_text"/>
+
+                <TextView
+                    android:id="@+id/trip_summary_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:colorBackground"
+                    android:textSize="25sp"
+                    android:transitionName="@string/transition_train_number"
+                    tools:text="143"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/trip_summary_stations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/trip_summary_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:textColor="?android:colorBackground"
+                    tools:text="Milbrae"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:text="@string/to_lower"
+                    android:textColor="?android:colorBackground"/>
+
+                <TextView
+                    android:id="@+id/trip_summary_to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="?android:colorBackground"
+                    tools:text="Mountain View"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.2"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/trip_summary_total_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="?android:colorBackground"
+                tools:text="42 min"/>
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="1dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:background="?android:colorBackground"/>
+
+            <TextView
+                android:id="@+id/trip_summary_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="?android:colorBackground"
+                tools:text="$4.25 pm"/>
+        </LinearLayout>
+
 
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="0dp"
+        android:id="@+id/trip_summary_change_details"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="4"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/train_number"
-                android:textColor="?android:colorBackground"
-                android:transitionName="@string/transition_train_number_text"
-                android:textSize="25sp"/>
-
-            <TextView
-                android:id="@+id/trip_summary_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?android:colorBackground"
-                android:textSize="25sp"
-                android:transitionName="@string/transition_train_number"
-                tools:text="143"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/trip_summary_stations"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/trip_summary_from"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:textColor="?android:colorBackground"
-                tools:text="Milbrae"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:text="@string/to_lower"
-                android:textColor="?android:colorBackground"/>
-
-            <TextView
-                android:id="@+id/trip_summary_to"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="?android:colorBackground"
-                tools:text="Mountain View"/>
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:background="?android:attr/colorPrimaryDark"
+        android:padding="10dp">
 
         <TextView
-            android:id="@+id/trip_summary_total_time"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="?android:colorBackground"
-            tools:text="42 min"/>
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/ic_tune_black_24dp"
+            android:gravity="center_vertical"
+            android:text="Change trip details"
+            android:textColor="?android:colorBackground"/>
 
-        <View
-            android:layout_width="20dp"
-            android:layout_height="1dp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp"
-            android:background="?android:colorBackground"/>
-
-        <TextView
-            android:id="@+id/trip_summary_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="?android:colorBackground"
-            tools:text="$4.25 pm"/>
     </LinearLayout>
 
 </LinearLayout>

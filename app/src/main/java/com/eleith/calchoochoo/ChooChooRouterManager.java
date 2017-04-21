@@ -180,10 +180,12 @@ public class ChooChooRouterManager {
     setNextState(ChooChooRouterManager.STATE_SHOW_ALL_STOPS, arguments);
   }
 
-  public void loadTripDetailsFragments(PossibleTrip possibleTrip, ArrayList<StopTimes> tripStops) {
+  public void loadTripDetailsFragments(PossibleTrip possibleTrip, ArrayList<StopTimes> tripStops, Integer stopMethod, Long stopDateTime) {
     Bundle arguments = new Bundle();
     arguments.putParcelable(BundleKeys.TRIP_STOP_STOPTIMES, Parcels.wrap(tripStops));
     arguments.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
+    arguments.putLong(BundleKeys.STOP_DATETIME, stopDateTime);
+    arguments.putInt(BundleKeys.STOP_METHOD, stopMethod);
     setNextState(ChooChooRouterManager.STATE_SHOW_TRIP, arguments);
   }
 
@@ -215,16 +217,30 @@ public class ChooChooRouterManager {
   }
 
   public void loadTripActivity(Activity activity, String tripId, String sourceId) {
-    loadTripActivity(activity, tripId, sourceId, null, null);
+    loadTripActivity(activity, tripId, sourceId, null, null, null, null);
   }
 
-  public void loadTripActivity(Activity activity, String tripId, String sourceId, String destinationId, ActivityOptionsCompat sharedElements) {
+  public void loadTripActivity(Activity activity, String tripId, String sourceId, String destinationid, ActivityOptionsCompat options) {
+    loadTripActivity(activity, tripId, sourceId, destinationid, null, null, options);
+  }
+
+  public void loadTripActivity(Activity activity, String tripId, String sourceId, String destinationId, Integer stopMethod, Long stopDateTime, ActivityOptionsCompat sharedElements) {
     Intent intent = new Intent(activity, TripActivity.class);
 
     Bundle bundle = new Bundle();
     bundle.putString(BundleKeys.TRIP, tripId);
-    bundle.putString(BundleKeys.STOP_SOURCE, sourceId);
-    bundle.putString(BundleKeys.STOP_DESTINATION, destinationId);
+    if (sourceId != null) {
+      bundle.putString(BundleKeys.STOP_SOURCE, sourceId);
+    }
+    if (destinationId != null) {
+      bundle.putString(BundleKeys.STOP_DESTINATION, destinationId);
+    }
+    if (stopMethod != null) {
+      bundle.putInt(BundleKeys.STOP_METHOD, stopMethod);
+    }
+    if (stopDateTime != null) {
+      bundle.putLong(BundleKeys.STOP_DATETIME, stopDateTime);
+    }
     intent.putExtras(bundle);
 
     if (sharedElements != null) {
