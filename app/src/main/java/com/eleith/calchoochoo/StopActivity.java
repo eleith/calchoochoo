@@ -72,6 +72,7 @@ public class StopActivity extends AppCompatActivity {
         direction = bundle.getInt(BundleKeys.DIRECTION);
         chooChooLoader.loadPossibleTrains(stopId, new LocalDateTime());
         chooChooLoader.loadStopByParentId(stopId);
+        chooChooDrawer.setStopSource(stopId);
       }
     }
   }

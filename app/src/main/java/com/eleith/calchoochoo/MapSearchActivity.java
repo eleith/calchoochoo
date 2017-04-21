@@ -141,7 +141,15 @@ public class MapSearchActivity extends AppCompatActivity {
 
   public void initializeFragments() {
     if (stops != null && location != null) {
+      updateDrawerTripFilter();
       chooChooRouterManager.loadMapSearchFragment(stops, location);
+    }
+  }
+
+  public void updateDrawerTripFilter() {
+    if (stops != null && location != null) {
+      Stop stop = StopUtils.findStopClosestTo(stops, location);
+      chooChooDrawer.setStopSource(stop.stop_id);
     }
   }
 

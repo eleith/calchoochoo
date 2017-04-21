@@ -92,6 +92,7 @@ public class TripActivity extends AppCompatActivity {
         sourceId = bundle.getString(BundleKeys.STOP_SOURCE);
         destinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
 
+        chooChooDrawer.setStopSource(sourceId);
         chooChooLoader.loadTripStops(tripId);
 
         if (destinationId != null) {

@@ -3,12 +3,14 @@ package com.eleith.calchoochoo;
 import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.TextView;
 
+import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.ColorUtils;
 
 import butterknife.BindView;
@@ -17,6 +19,7 @@ import butterknife.OnClick;
 
 public class ChooChooDrawer {
   private Activity activity;
+  private String stopSourceId;
 
   @BindView(R.id.activityDrawer)
   DrawerLayout drawerLayout;
@@ -40,6 +43,9 @@ public class ChooChooDrawer {
   void goToTripExplorer() {
     if (!activity.getClass().equals(TripFilterActivity.class)) {
       Intent intent = new Intent(activity, TripFilterActivity.class);
+      if (stopSourceId != null) {
+        intent.putExtra(BundleKeys.STOP_SOURCE, stopSourceId);
+      }
       activity.startActivity(intent);
     }
   }
@@ -70,6 +76,10 @@ public class ChooChooDrawer {
     } else if (activity.getClass().equals(TripFilterActivity.class)) {
       getActivityDrawerTripMenu.setBackgroundColor(ColorUtils.getThemeColor(activity, android.R.attr.textColorSecondaryInverse));
     }
+  }
+
+  public void setStopSource(String stopSourceId) {
+    this.stopSourceId = stopSourceId;
   }
 
   public void open() {
