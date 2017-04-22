@@ -207,7 +207,9 @@ public class TripFilterFragment extends Fragment {
           Stop stop = ((RxMessageStop) rxMessage).getMessage();
           if (destinationStopId != null && destinationStopId.equals(stop.stop_id)) {
             destinationEdit.setText(DataStringUtils.removeCaltrain(stop.stop_name));
-          } else {
+          }
+
+          if (sourceStopId != null && sourceStopId.equals(stop.stop_id)) {
             sourceEdit.setText(DataStringUtils.removeCaltrain(stop.stop_name));
           }
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIPS)) {
