@@ -6,14 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.eleith.calchoochoo.ChooChooRouterManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.TripActivity;
 import com.eleith.calchoochoo.dagger.ChooChooScope;
-import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.data.StopTimes;
 import com.eleith.calchoochoo.utils.DataStringUtils;
-import com.eleith.calchoochoo.utils.RxBus;
 
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -23,20 +20,17 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 @ChooChooScope
 public class TripStopsAdapter extends RecyclerView.Adapter<TripStopsAdapter.OneTripStopHolder> {
   private ArrayList<StopTimes> tripStops = new ArrayList<>();
-  private ChooChooRouterManager chooChooRouterManager;
   private TripActivity tripActivity;
   private final static int ITEM_TYPE_SOURCE = 0;
   private final static int ITEM_TYPE_DESTINATION = 1;
   private final static int ITEM_TYPE_MIDDLE = 2;
 
   @Inject
-  public TripStopsAdapter(ChooChooRouterManager chooChooRouterManager, TripActivity tripActivity) {
-    this.chooChooRouterManager = chooChooRouterManager;
+  public TripStopsAdapter(TripActivity tripActivity) {
     this.tripActivity = tripActivity;
   }
 

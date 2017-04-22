@@ -66,6 +66,8 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
     Integer minutes = Minutes.minutesBetween(now, possibleTrain.getDepartureTime().toDateTimeToday()).getMinutes();
 
     holder.stopCardTrainItemNumber.setText(possibleTrain.getTripShortName());
+    holder.stopCardTrainItemTime.setTypeface(null, Typeface.NORMAL);
+    holder.stopCardTrainItemBack.setBackgroundColor(activity.getColor(R.color.cardview_light_background));
 
     if (possibleTrain.getRouteLongName().contains("Bullet")) {
       holder.stopCardTrainItemImage.setImageDrawable(activity.getDrawable(R.drawable.ic_train_bullet));
@@ -81,8 +83,6 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
       holder.stopCardTrainItemTime.setText(dateTimeFormatter.print(possibleTrain.getDepartureTime()));
       if (minutes < 0) {
         holder.stopCardTrainItemBack.setBackgroundColor(ColorUtils.getThemeColor(activity, android.R.attr.textColorSecondaryInverse));
-      } else {
-        holder.stopCardTrainItemBack.setBackgroundColor(activity.getColor(R.color.cardview_light_background));
       }
     }
   }

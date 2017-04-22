@@ -160,7 +160,7 @@ public class PossibleTripUtils {
         "  fare_attributes " +
         "WHERE st1.trip_id = st2.trip_id " +
         "  AND st1.platform_code = st2.platform_code " +
-        "  AND st1.stop_sequence < st2.stop_sequence " +
+        "  AND cast(st1.stop_sequence as integer) < cast(st2.stop_sequence as integer) " +
         "  AND trips.trip_id = st1.trip_id " +
         "  AND trips.route_id = routes.route_id " +
         "  AND calendar.service_id = trips.service_id " +

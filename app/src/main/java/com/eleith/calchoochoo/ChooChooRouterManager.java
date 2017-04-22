@@ -229,18 +229,25 @@ public class ChooChooRouterManager {
 
     Bundle bundle = new Bundle();
     bundle.putString(BundleKeys.TRIP, tripId);
+
     if (sourceId != null) {
       bundle.putString(BundleKeys.STOP_SOURCE, sourceId);
     }
+
     if (destinationId != null) {
       bundle.putString(BundleKeys.STOP_DESTINATION, destinationId);
     }
+
     if (stopMethod != null) {
       bundle.putInt(BundleKeys.STOP_METHOD, stopMethod);
     }
+
     if (stopDateTime != null) {
       bundle.putLong(BundleKeys.STOP_DATETIME, stopDateTime);
+    } else {
+      bundle.putLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDate().getTime());
     }
+
     intent.putExtras(bundle);
 
     if (sharedElements != null) {
