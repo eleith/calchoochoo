@@ -135,16 +135,18 @@ public class TripFilterActivity extends AppCompatActivity {
     if (requestCode == IntentKeys.STOP_SEARCH_RESULT) {
       if (data != null) {
         Bundle bundle = data.getExtras();
-        String stopId = bundle.getString(BundleKeys.STOP);
-        Integer reason = bundle.getInt(BundleKeys.SEARCH_REASON);
-        if (resultCode == RESULT_OK) {
-          if (reason == 1) {
-            stopDestinationId = stopId;
-          } else {
-            stopSourceId = stopId;
+        if (bundle != null) {
+          String stopId = bundle.getString(BundleKeys.STOP);
+          Integer reason = bundle.getInt(BundleKeys.SEARCH_REASON);
+          if (resultCode == RESULT_OK) {
+            if (reason == 1) {
+              stopDestinationId = stopId;
+            } else {
+              stopSourceId = stopId;
+            }
+            subscriptionTrips = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessagePossibleTrips());
+            chooChooLoader.loadPossibleTrips(stopSourceId, stopDestinationId, new LocalDateTime(stopDateTime));
           }
-          subscriptionTrips = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessagePossibleTrips());
-          chooChooLoader.loadPossibleTrips(stopSourceId, stopDestinationId, new LocalDateTime(stopDateTime));
         }
       }
     }

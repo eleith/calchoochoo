@@ -1,6 +1,7 @@
 package com.eleith.calchoochoo.adapters;
 
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,7 +68,7 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
 
     holder.stopCardTrainItemNumber.setText(possibleTrain.getTripShortName());
     holder.stopCardTrainItemTime.setTypeface(null, Typeface.NORMAL);
-    holder.stopCardTrainItemBack.setBackgroundColor(activity.getColor(R.color.cardview_light_background));
+    holder.stopCardTrainItemBack.setBackgroundColor(ContextCompat.getColor(activity, R.color.cardview_light_background));
 
     if (possibleTrain.getRouteLongName().contains("Bullet")) {
       holder.stopCardTrainItemImage.setImageDrawable(activity.getDrawable(R.drawable.ic_train_bullet));
@@ -78,7 +79,7 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
     if (minutes > 0 && minutes <= 60) {
       holder.stopCardTrainItemTime.setText(String.format(Locale.getDefault(), "in %d min", minutes));
       holder.stopCardTrainItemTime.setTypeface(null, Typeface.ITALIC);
-      holder.stopCardTrainItemBack.setBackgroundColor(activity.getColor(R.color.cardview_light_background));
+      holder.stopCardTrainItemBack.setBackgroundColor(ContextCompat.getColor(activity, R.color.cardview_light_background));
     } else {
       holder.stopCardTrainItemTime.setText(dateTimeFormatter.print(possibleTrain.getDepartureTime()));
       if (minutes < 0) {

@@ -2,6 +2,7 @@ package com.eleith.calchoochoo.fragments;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -75,7 +76,12 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
   @OnClick(R.id.departOrArriveSelect)
   public void selectClick() {
     LocalDate departOrArriveDate = infinitePagerDataDates.getData(infinitePager.getCurrentItem());
-    LocalTime departOrArriveTime = new LocalTime(timePicker.getHour(), timePicker.getMinute());
+    LocalTime departOrArriveTime;
+    if (Build.VERSION.SDK_INT >= 23) {
+      departOrArriveTime = new LocalTime(timePicker.getHour(), timePicker.getMinute());
+    } else {
+      departOrArriveTime = new LocalTime(timePicker.getCurrentHour(), timePicker.getCurrentMinute());
+    }
     LocalDateTime departOrArriveDateTime = departOrArriveDate.toLocalDateTime(departOrArriveTime);
 
     if (timeTabs.getSelectedTabPosition() == 0) {
@@ -125,8 +131,13 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
   }
 
   private void initializeDialogValues() {
-    timePicker.setHour(localDateTime.getHourOfDay());
-    timePicker.setMinute(localDateTime.getMinuteOfHour());
+    if (Build.VERSION.SDK_INT >= 23) {
+      timePicker.setHour(localDateTime.getHourOfDay());
+      timePicker.setMinute(localDateTime.getMinuteOfHour());
+    } else {
+      timePicker.setCurrentHour(localDateTime.getHourOfDay());
+      timePicker.setCurrentMinute(localDateTime.getMinuteOfHour());
+    }
 
     int position = stopMethod == RxMessageStopsAndDetails.DETAIL_ARRIVING ? 0 : 1;
     TabLayout.Tab tab = timeTabs.getTabAt(position);

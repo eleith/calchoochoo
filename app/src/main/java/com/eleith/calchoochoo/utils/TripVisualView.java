@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -73,7 +74,7 @@ public class TripVisualView extends View {
   }
 
   private void drawTripLine() {
-    paint.setColor(getResources().getColor(android.support.v7.appcompat.R.color.accent_material_light, context.getTheme()));
+    paint.setColor(ContextCompat.getColor(context, android.support.v7.appcompat.R.color.accent_material_light));
     switch (tripType) {
       case ITEM_TYPE_SOURCE:
         paint.setStyle(Paint.Style.STROKE);
