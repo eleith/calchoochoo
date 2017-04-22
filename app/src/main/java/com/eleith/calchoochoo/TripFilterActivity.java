@@ -100,6 +100,7 @@ public class TripFilterActivity extends AppCompatActivity {
   protected void onStart() {
     super.onStart();
     googleApiClient.connect();
+    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessage());
   }
 
   @Override
