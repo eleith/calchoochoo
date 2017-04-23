@@ -8,7 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.widget.RemoteViews;
 
 import com.eleith.calchoochoo.data.ChooChooDatabase;
@@ -19,11 +22,14 @@ import com.eleith.calchoochoo.utils.DataStringUtils;
 import com.eleith.calchoochoo.utils.PossibleTrainUtils;
 import com.eleith.calchoochoo.utils.TripUtils;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
+import org.joda.time.Minutes;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class ChooChooWidgetProvider extends AppWidgetProvider {
 
@@ -70,7 +76,7 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
   public static void updateOneWidget(Context context, int appWidgetId, AppWidgetManager appWidgetManager) {
     ChooChooDatabase chooChooDatabase = new ChooChooDatabase(context);
     SQLiteDatabase db = chooChooDatabase.getReadableDatabase();
-
+    DateTime now = new DateTime();
     Stop stop = ChooChooWidgetConfigure.getStopFromPreferences(context, appWidgetId);
     int direction = ChooChooWidgetConfigure.getDirectionFromPreferences(context, appWidgetId);
     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.fragment_stop_card_widget);
@@ -107,6 +113,7 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
           PossibleTrain possibleTrain = possibleTrains.get(i);
           DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
           RemoteViews item = new RemoteViews(context.getPackageName(), R.layout.fragment_stop_card_widget_trainitem);
+          Integer minutes = Minutes.minutesBetween(now, possibleTrain.getDepartureTime().toDateTimeToday()).getMinutes();
 
           Intent intent = new Intent(context, TripActivity.class);
 
@@ -128,6 +135,15 @@ public class ChooChooWidgetProvider extends AppWidgetProvider {
 
           item.setOnClickPendingIntent(R.id.stop_card_widget_train_item, pendingIntent);
           item.setTextViewText(R.id.stop_card_widget_trainitem_time, dateTimeFormatter.print(possibleTrain.getDepartureTime()));
+
+          if (minutes > 0 && minutes <= 60) {
+            SpannableStringBuilder time = new SpannableStringBuilder(String.format(Locale.getDefault(), "in %d min", minutes));
+            time.setSpan(new StyleSpan(Typeface.ITALIC), 0, time.length() - 1, 0);
+            item.setTextViewText(R.id.stop_card_widget_trainitem_time, time);
+          } else {
+            item.setTextViewText(R.id.stop_card_widget_trainitem_time, dateTimeFormatter.print(possibleTrain.getDepartureTime()));
+          }
+
           views.addView(R.id.stop_card_widget_train_items, item);
         }
       } else {
