@@ -36,7 +36,6 @@ import rx.functions.Action1;
 public class StopSummaryFragment extends Fragment {
   private Stop stop;
   private StopActivity stopActivity;
-  private Subscription subscription;
   private int direction;
 
   @BindView(R.id.stop_summary_name)
@@ -77,20 +76,17 @@ public class StopSummaryFragment extends Fragment {
       stopDirectionText.setText(stopActivity.getString(R.string.san_francisco));
     }
 
-    subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     return view;
   }
 
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    subscription.unsubscribe();
   }
 
   @Override
   public void onStop() {
     super.onStop();
-    subscription.unsubscribe();
   }
 
   @Override
@@ -104,17 +100,6 @@ public class StopSummaryFragment extends Fragment {
       stop = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP));
       direction = savedInstanceState.getInt(BundleKeys.DIRECTION);
     }
-  }
-
-  private Action1<RxMessage> handleRxMessages() {
-    return new Action1<RxMessage>() {
-      @Override
-      public void call(RxMessage rxMessage) {
-        if (rxMessage.isMessageValidFor(RxMessageKeys.FAB_CLICKED)) {
-          rxBus.send(new RxMessage(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED));
-        }
-      }
-    };
   }
 
   @OnClick(R.id.stop_summary_link)

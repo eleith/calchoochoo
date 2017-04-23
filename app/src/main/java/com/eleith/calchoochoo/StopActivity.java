@@ -107,7 +107,6 @@ public class StopActivity extends AppCompatActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    subscription.unsubscribe();
   }
 
   public ChooChooComponent getComponent() {
@@ -135,7 +134,7 @@ public class StopActivity extends AppCompatActivity {
       } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOP)) {
         stop = ((RxMessageStop) rxMessage).getMessage();
         loadFragment();
-      } else if (rxMessage.isMessageValidFor(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED)) {
+      } else if (rxMessage.isMessageValidFor(RxMessageKeys.FAB_CLICKED)) {
         direction = direction == TripUtils.DIRECTION_NORTH ? TripUtils.DIRECTION_SOUTH : TripUtils.DIRECTION_NORTH;
         loadFragment();
       }
