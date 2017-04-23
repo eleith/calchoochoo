@@ -116,7 +116,13 @@ public class TripSummaryFragment extends Fragment {
     tripSummaryTo.setText(DataStringUtils.removeCaltrain(possibleTrip.getLastStopName()));
 
     tripSummaryPrice.setText(String.format(Locale.getDefault(), "$%.2f", possibleTrip.getPrice()));
-    tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime(), possibleTrip.getDepartureTime()).getMinutes()));
+
+    if (possibleTrip.getArrivalTime().getHourOfDay() < possibleTrip.getDepartureTime().getHourOfDay()) {
+      tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime(), possibleTrip.getDepartureTime()).getMinutes()));
+    } else {
+      tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getArrivalTime().toDateTimeToday(), possibleTrip.getDepartureTime().toDateTimeToday().plusHours(24)).getMinutes()));
+    }
+
     tripSummaryNumber.setText(possibleTrip.getTripShortName());
 
     if (possibleTrip.getRouteLongName().contains("Bullet")) {

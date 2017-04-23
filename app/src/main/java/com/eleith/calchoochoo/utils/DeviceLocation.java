@@ -32,7 +32,7 @@ public class DeviceLocation
   private int requestedUpdates = 0;
   private int requestedLocation = 0;
   private Boolean requestingUpdates = false;
-  private LatLng myDefaultLatLng = new LatLng(37.30, -122.06);
+  private LatLng myDefaultLatLng = new LatLng(37.04, -121.6);
 
   @Inject
   public DeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient, Activity activity) {
@@ -110,6 +110,7 @@ public class DeviceLocation
   @Override
   public void onConnected(@Nullable Bundle bundle) {
     googleApiClientReady = true;
+    requestingUpdates = false;
 
     if (requestedUpdates > 0) {
       requestLocationUpdates();

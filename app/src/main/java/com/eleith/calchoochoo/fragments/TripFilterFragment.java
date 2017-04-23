@@ -205,6 +205,7 @@ public class TripFilterFragment extends Fragment {
           chooChooLoader.loadPossibleTrips(sourceStopId, destinationStopId, stopDateTime);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOP)) {
           Stop stop = ((RxMessageStop) rxMessage).getMessage();
+
           if (destinationStopId != null && destinationStopId.equals(stop.stop_id)) {
             destinationEdit.setText(DataStringUtils.removeCaltrain(stop.stop_name));
           }

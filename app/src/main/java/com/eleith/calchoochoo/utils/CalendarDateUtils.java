@@ -2,13 +2,8 @@ package com.eleith.calchoochoo.utils;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.support.annotation.Nullable;
-
-import com.eleith.calchoochoo.data.Routes;
 
 import org.joda.time.DateTime;
-
-import java.util.ArrayList;
 
 public class CalendarDateUtils {
 

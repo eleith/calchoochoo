@@ -56,6 +56,7 @@ public class TripActivity extends AppCompatActivity {
   private static final String PREF_PREFIX_KEY = "choochoo_trip_";
   private Notifications notifications;
   private ChooChooFab chooChooFab;
+  private ChooChooDrawer chooChooDrawer;
 
   @Inject
   RxBus rxBus;
@@ -80,9 +81,9 @@ public class TripActivity extends AppCompatActivity {
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
     notifications = new Notifications(this);
 
-    ChooChooDrawer chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
-
+    chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
     chooChooFab = new ChooChooFab(this, rxBus, getWindow().getDecorView().getRootView());
+
     chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_add_alarm_black_24dp));
     chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorAccent)));
 
@@ -96,7 +97,6 @@ public class TripActivity extends AppCompatActivity {
         stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
         stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME);
 
-        chooChooDrawer.setStopSource(sourceId);
         chooChooLoader.loadTripStops(tripId);
 
         if (destinationId != null) {
@@ -186,6 +186,9 @@ public class TripActivity extends AppCompatActivity {
 
   private void loadFragments() {
     if (tripStops != null && possibleTrip != null) {
+
+      chooChooDrawer.setStopSource(possibleTrip.getFirstParentStopId());
+
       if (notifications.getAlarmMinutes(possibleTrip.getTripId(), Notifications.ARRIVING) != -1) {
         chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorPrimary)));
       }

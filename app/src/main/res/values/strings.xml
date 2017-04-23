@@ -9,6 +9,7 @@
     <string name="search_for_stop"><i>Search for a stop</i></string>
     <string name="where_to_go"><i>Where do you want to go?</i></string>
     <string name="where_from"><i>Where are you coming from?</i></string>
+    <string name="where_catch"><i>What train do you want to catch?</i></string>
     <string name="stop">Stop</string>
     <string name="miles">mi</string>
     <string name="no_matching_stops">Sorry, no stops match your search.</string>

@@ -19,6 +19,7 @@ import com.eleith.calchoochoo.adapters.SearchResultsViewAdapter;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
+import com.eleith.calchoochoo.utils.KeyboardUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
@@ -116,6 +117,7 @@ public class SearchResultsFragment extends Fragment {
     public void call(RxMessage rxMessage) {
       if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_RESULT_STOP)) {
         Stop stop = (Stop) rxMessage.getMessage();
+        KeyboardUtils.hide(getActivity());
         chooChooRouterManager.loadStopSearchReturnActivity(getActivity(), reason, stop.stop_id);
       } else if (rxMessage.isMessageValidFor(RxMessageKeys.SEARCH_INPUT_STRING)) {
         String filterString = ((RxMessageString) rxMessage).getMessage();

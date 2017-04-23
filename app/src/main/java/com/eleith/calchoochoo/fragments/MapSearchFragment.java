@@ -54,7 +54,7 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   private ArrayList<Stop> stops = null;
   private Location lastLocation;
   private Marker locationMarker;
-  private LatLng myDefaultLatLng = new LatLng(37.30, -122.06);
+  private LatLng myDefaultLatLng = new LatLng(37.04, -121.6);
   private Subscription subscriptionRxBus;
 
   @Inject

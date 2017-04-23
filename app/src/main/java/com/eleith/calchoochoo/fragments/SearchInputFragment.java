@@ -10,6 +10,7 @@ import android.widget.EditText;
 import com.eleith.calchoochoo.ChooChooRouterManager;
 import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.StopSearchActivity;
+import com.eleith.calchoochoo.utils.KeyboardUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
@@ -38,6 +39,7 @@ public class SearchInputFragment extends Fragment {
 
   @OnClick(R.id.searchBack)
   public void onClickBack() {
+    KeyboardUtils.hide(getActivity());
     chooChooRouterManager.loadStopSearchCancelActivity(getActivity());
   }
 

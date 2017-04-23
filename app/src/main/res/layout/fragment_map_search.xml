@@ -26,7 +26,7 @@
             android:layout_marginStart="40dp"
             android:background="@android:color/transparent"
             android:focusable="false"
-            android:hint="@string/where_to_go"
+            android:hint="@string/where_catch"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:padding="10dp"

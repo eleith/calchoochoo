@@ -11,6 +11,7 @@ import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.DeviceLocation;
+import com.eleith.calchoochoo.utils.KeyboardUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
@@ -74,6 +75,7 @@ public class StopSearchActivity extends AppCompatActivity {
     googleApiClient.disconnect();
     subscription.unsubscribe();
     subscriptionLocation.unsubscribe();
+    KeyboardUtils.hide(this);
   }
 
   @Override
@@ -99,6 +101,7 @@ public class StopSearchActivity extends AppCompatActivity {
   private void loadFragments() {
     if (stops != null && location != null) {
       chooChooRouterManager.loadSearchForSpotFragment(stops, reason, filteredStopIds, location);
+      KeyboardUtils.show(this);
     }
   }
 
