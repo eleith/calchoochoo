@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.eleith.calchoochoo">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.eleith.calchoochoo">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission
+        android:name="android.permission.CHANGE_NETWORK_STATE"
+        tools:node="remove"/>
+    <uses-permission
+        android:name="android.permission.WAKE_LOCK"
+        tools:node="remove"/>
+    <uses-permission
+        android:name="android.permission.READ_PHONE_STATE"
+        tools:node="remove"/>
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        tools:node="remove"/>
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:node="remove"/>
 
     <application
         android:name=".ChooChooApplication"
@@ -46,8 +63,8 @@
 
         <receiver android:name=".ChooChooAlarmReceiver">
             <intent-filter>
-                <action android:name="android.media.action.DISPLAY_NOTIFICATION" />
-                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.media.action.DISPLAY_NOTIFICATION"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </receiver>
 

@@ -6,7 +6,7 @@ import org.parceler.Parcel;
 
 import java.util.Comparator;
 
-@Parcel(analyze = Stop.class)
+@Parcel(Parcel.Serialization.BEAN)
 public class Stop {
   public String stop_id;
   public String stop_name;
@@ -20,9 +20,6 @@ public class Stop {
   public int wheelchar_board;
 
   private Location location;
-
-  public Stop() {
-  }
 
   public Location getLocation() {
     if (location == null) {
