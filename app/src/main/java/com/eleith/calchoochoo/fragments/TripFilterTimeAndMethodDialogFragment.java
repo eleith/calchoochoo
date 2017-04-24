@@ -102,7 +102,8 @@ public class TripFilterTimeAndMethodDialogFragment extends android.support.v4.ap
       @Override
       public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
         LocalDate setDate = new LocalDate(year, month + 1, dayOfMonth);
-        infinitePager.setInfinitePagerData(new InfinitePagerDataDates(setDate));
+        infinitePagerDataDates = new InfinitePagerDataDates(setDate);
+        infinitePager.setInfinitePagerData(infinitePagerDataDates);
       }
     }, selectedDate.getYear(), selectedDate.getMonthOfYear() - 1, selectedDate.getDayOfMonth());
     dialog.show();

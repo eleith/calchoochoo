@@ -29,6 +29,7 @@ import com.eleith.calchoochoo.utils.StopTimesUtils;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.joda.time.LocalDateTime;
+import org.joda.time.chrono.BuddhistChronology;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -109,6 +110,7 @@ public class TripActivity extends AppCompatActivity {
     Boolean hadNotifications = false;
     Bundle bundle = new Bundle();
     bundle.putString(BundleKeys.TRIP, tripId);
+    bundle.putString(BundleKeys.TRIP_NAME, possibleTrip.getTripShortName());
     bundle.putString(BundleKeys.STOP_SOURCE, sourceId);
     bundle.putString(BundleKeys.STOP_DESTINATION, destinationId);
     bundle.putString(BundleKeys.STOP_SOURCE_NAME, possibleTrip.getFirstStopName());

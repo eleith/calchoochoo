@@ -1,18 +1,14 @@
 package com.eleith.calchoochoo;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.DrawableUtils;
 import com.eleith.calchoochoo.utils.Notifications;
 
 import org.joda.time.LocalTime;
@@ -23,6 +19,7 @@ public class ChooChooAlarmReceiver extends BroadcastReceiver {
   public void onReceive(Context context, Intent intent) {
     Bundle bundle = intent.getExtras();
     String tripId = bundle.getString(BundleKeys.TRIP);
+    String tripName = bundle.getString(BundleKeys.TRIP_NAME);
     String sourceId = bundle.getString(BundleKeys.STOP_SOURCE);
     String destinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
     String sourceName = bundle.getString(BundleKeys.STOP_SOURCE_NAME);
@@ -47,13 +44,13 @@ public class ChooChooAlarmReceiver extends BroadcastReceiver {
     if (method.equals(Notifications.ARRIVING)) {
       pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
       timeString = DateTimeFormat.forPattern("h:mma").print(new LocalTime(destinationTime));
-      title = String.format("Train #%s", tripId);
+      title = String.format("Train #%s", tripName);
       content = String.format("%s at %s", "Arriving", timeString);
       ticker = "Caltrain Train Arrival Notification";
     } else {
       pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
       timeString = DateTimeFormat.forPattern("h:mma").print(new LocalTime(sourceTime));
-      title = String.format("Train #%s", tripId);
+      title = String.format("Train #%s", tripName);
       content = String.format("%s at %s", "Departing", timeString);
       ticker = "Caltrain Train Departure Notification";
     }
