@@ -39,8 +39,6 @@ public class StopSearchActivity extends AppCompatActivity {
   @Inject
   RxBus rxBus;
   @Inject
-  GoogleApiClient googleApiClient;
-  @Inject
   ChooChooRouterManager chooChooRouterManager;
   @Inject
   ChooChooLoader chooChooLoader;
@@ -66,13 +64,11 @@ public class StopSearchActivity extends AppCompatActivity {
   @Override
   protected void onStart() {
     super.onStart();
-    googleApiClient.connect();
   }
 
   @Override
   protected void onStop() {
     super.onStop();
-    googleApiClient.disconnect();
     subscription.unsubscribe();
     subscriptionLocation.unsubscribe();
     KeyboardUtils.hide(this);
@@ -86,7 +82,6 @@ public class StopSearchActivity extends AppCompatActivity {
   @Override
   protected void onResume() {
     super.onResume();
-    googleApiClient.reconnect();
   }
 
   @Override

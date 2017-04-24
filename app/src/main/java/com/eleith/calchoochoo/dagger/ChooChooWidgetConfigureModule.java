@@ -31,7 +31,7 @@ public class ChooChooWidgetConfigureModule {
 
   @ChooChooWidgetConfigureScope
   @Provides
-  DeviceLocation providesDeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient) {
-    return new DeviceLocation(rxBus, googleApiClient, chooChooWidgetConfigure);
+  DeviceLocation providesDeviceLocation(RxBus rxBus) {
+    return new DeviceLocation(rxBus, chooChooWidgetConfigure);
   }
 }

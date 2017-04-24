@@ -42,8 +42,6 @@ public class StopActivity extends AppCompatActivity {
   @Inject
   RxBus rxBus;
   @Inject
-  GoogleApiClient googleApiClient;
-  @Inject
   ChooChooRouterManager chooChooRouterManager;
   @Inject
   ChooChooLoader chooChooLoader;
@@ -80,7 +78,6 @@ public class StopActivity extends AppCompatActivity {
   @Override
   protected void onStart() {
     super.onStart();
-    googleApiClient.connect();
     if (subscription.isUnsubscribed()) {
       subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
     }
@@ -89,7 +86,6 @@ public class StopActivity extends AppCompatActivity {
   @Override
   protected void onStop() {
     super.onStop();
-    googleApiClient.disconnect();
     subscription.unsubscribe();
   }
 
@@ -101,7 +97,6 @@ public class StopActivity extends AppCompatActivity {
   @Override
   protected void onResume() {
     super.onResume();
-    googleApiClient.reconnect();
   }
 
   @Override

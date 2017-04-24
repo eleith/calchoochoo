@@ -47,8 +47,6 @@ public class TripFilterActivity extends AppCompatActivity {
   @Inject
   RxBus rxBus;
   @Inject
-  GoogleApiClient googleApiClient;
-  @Inject
   ChooChooRouterManager chooChooRouterManager;
   @Inject
   ChooChooLoader chooChooLoader;
@@ -99,14 +97,12 @@ public class TripFilterActivity extends AppCompatActivity {
   @Override
   protected void onStart() {
     super.onStart();
-    googleApiClient.connect();
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessage());
   }
 
   @Override
   protected void onStop() {
     super.onStop();
-    googleApiClient.disconnect();
     fabShow();
     if (subscriptionTrips != null) {
       subscriptionTrips.unsubscribe();
@@ -122,7 +118,6 @@ public class TripFilterActivity extends AppCompatActivity {
   @Override
   protected void onResume() {
     super.onResume();
-    googleApiClient.reconnect();
   }
 
   @Override

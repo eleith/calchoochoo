@@ -68,7 +68,7 @@ public class ChooChooModule {
 
   @ChooChooScope
   @Provides
-  DeviceLocation providesDeviceLocation(RxBus rxBus, GoogleApiClient googleApiClient) {
-    return new DeviceLocation(rxBus, googleApiClient, activity);
+  DeviceLocation providesDeviceLocation(RxBus rxBus) {
+    return new DeviceLocation(rxBus, activity);
   }
 }

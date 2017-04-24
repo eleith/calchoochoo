@@ -31,12 +31,4 @@ public class AppModule {
   public Context provideApplicationContext() {
     return application;
   }
-
-  @Provides
-  @Singleton
-  GoogleApiClient providesGoogleApiClient(Context context) {
-    return new GoogleApiClient.Builder(context)
-        .addApi(LocationServices.API)
-        .build();
-  }
 }

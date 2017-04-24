@@ -18,7 +18,7 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageLocation;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStops;
 import com.eleith.calchoochoo.utils.StopUtils;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.maps.model.LatLng;
 
 import org.parceler.Parcels;
 
@@ -37,11 +37,10 @@ public class MapSearchActivity extends AppCompatActivity {
   private ArrayList<Stop> stops;
   private Location location;
   private ChooChooDrawer chooChooDrawer;
+  private LatLng myDefaultLatLng = new LatLng(37.3860517, -122.0838511);
 
   @Inject
   RxBus rxBus;
-  @Inject
-  GoogleApiClient googleApiClient;
   @Inject
   ChooChooRouterManager chooChooRouterManager;
   @Inject
@@ -71,16 +70,13 @@ public class MapSearchActivity extends AppCompatActivity {
     if (stops == null) {
       chooChooLoader.loadParentStops();
     }
-
-    deviceLocation.requestLocationUpdates();
     deviceLocation.requestLocation();
+    deviceLocation.listenForLocationUpdates();
   }
 
   @Override
   protected void onStart() {
     super.onStart();
-    googleApiClient.connect();
-
     if (subscription.isUnsubscribed()) {
       subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     }
@@ -88,14 +84,15 @@ public class MapSearchActivity extends AppCompatActivity {
     if (subscriptionLocation.isUnsubscribed()) {
       subscriptionLocation = rxBus.observeEvents(RxMessageLocation.class).take(1).subscribe(handleRxLocationMessages());
     }
+    deviceLocation.listenForLocationUpdates();
   }
 
   @Override
   protected void onStop() {
     super.onStop();
-    googleApiClient.disconnect();
     subscription.unsubscribe();
     subscriptionLocation.unsubscribe();
+    deviceLocation.stopListeningForLocationUpdates();
   }
 
   @Override
@@ -106,7 +103,6 @@ public class MapSearchActivity extends AppCompatActivity {
   @Override
   protected void onResume() {
     super.onResume();
-    googleApiClient.reconnect();
   }
 
   @Override
@@ -172,6 +168,11 @@ public class MapSearchActivity extends AppCompatActivity {
       @Override
       public void call(RxMessageLocation rxMessage) {
         location = rxMessage.getMessage();
+        if (location == null) {
+          location = new Location("default");
+          location.setLongitude(myDefaultLatLng.longitude);
+          location.setLatitude(myDefaultLatLng.latitude);
+        }
         initializeFragments();
       }
     };

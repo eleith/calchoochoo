@@ -16,7 +16,6 @@ import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.data.ChooChooLoader;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
-import com.eleith.calchoochoo.utils.DeviceLocation;
 import com.eleith.calchoochoo.utils.DrawableUtils;
 import com.eleith.calchoochoo.utils.MapUtils;
 import com.eleith.calchoochoo.utils.RxBus;
@@ -54,7 +53,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   private ArrayList<Stop> stops = null;
   private Location lastLocation;
   private Marker locationMarker;
-  private LatLng myDefaultLatLng = new LatLng(37.04, -121.6);
   private Subscription subscriptionRxBus;
 
   @Inject
@@ -63,8 +61,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   ChooChooRouterManager chooChooRouterManager;
   @Inject
   ChooChooLoader chooChooLoader;
-  @Inject
-  DeviceLocation deviceLocation;
 
   @BindView(R.id.map_search_input)
   EditText mapSearchInput;
@@ -132,12 +128,6 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
 
       MapUtils.moveMapToLocation(lastLocation, googleMap, new CameraPosition.Builder().zoom(13));
       setMyLocationMarker(lastLocation);
-    } else {
-      myLatLng = myDefaultLatLng;
-      cameraBuilder.target(myLatLng);
-      CameraPosition cameraPosition = cameraBuilder.build();
-      googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-      googleMap.setOnMarkerClickListener(new OnMarkerClickListener());
     }
 
     subscriptionRxBus = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
@@ -200,6 +190,9 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onStart() {
     super.onStart();
+    if (subscriptionRxBus != null && subscriptionRxBus.isUnsubscribed()) {
+      subscriptionRxBus = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
+    }
   }
 
   @Override
@@ -224,6 +217,10 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
   @Override
   public void onSaveInstanceState(Bundle outState) {
     googleMapView.onSaveInstanceState(outState);
+
+    outState.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
+    outState.putParcelable(BundleKeys.LOCATION, lastLocation);
+
     super.onSaveInstanceState(outState);
   }
 
@@ -250,9 +247,11 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
           LatLng myLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
           CameraPosition cameraPosition = new CameraPosition.Builder().zoom(13).target(myLatLng).build();
           googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        } else if (rxMessage.isMessageValidFor(RxMessageKeys.MY_LOCATION_UPDATE)) {
+        } else if (rxMessage.isMessageValidFor(RxMessageKeys.MY_LOCATION_UPDATE) || rxMessage.isMessageValidFor(RxMessageKeys.MY_LOCATION)) {
           Location location = ((RxMessageLocation) rxMessage).getMessage();
-          setMyLocationMarker(location);
+          if (location != null) {
+            setMyLocationMarker(location);
+          }
         }
       }
     };
