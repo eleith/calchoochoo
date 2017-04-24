@@ -29,6 +29,7 @@ import com.eleith.calchoochoo.utils.StopTimesUtils;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 import org.joda.time.chrono.BuddhistChronology;
 import org.parceler.Parcels;
 
@@ -52,7 +53,7 @@ public class TripActivity extends AppCompatActivity {
   private String tripId;
   private Trips trip;
   private Integer stopMethod;
-  private Long stopDateTime;
+  private LocalDateTime stopDateTime;
   private static final String PREFS_NAME = "com.eleith.calchoochoo.TripActivity";
   private static final String PREF_PREFIX_KEY = "choochoo_trip_";
   private Notifications notifications;
@@ -94,7 +95,7 @@ public class TripActivity extends AppCompatActivity {
         sourceId = bundle.getString(BundleKeys.STOP_SOURCE);
         destinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
         stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
-        stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME);
+        stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis()));
 
         chooChooLoader.loadTripStops(tripId);
 
@@ -124,7 +125,8 @@ public class TripActivity extends AppCompatActivity {
     chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorAccent)));
 
     if (arrivalMinutes > 0) {
-      LocalDateTime arrivingDateTime = new LocalDateTime(possibleTrip.getArrivalTime().toDateTimeToday());
+      LocalTime arrivalTime = possibleTrip.getArrivalTime();
+      LocalDateTime arrivingDateTime = new LocalDateTime(stopDateTime.getYear(), stopDateTime.getMonthOfYear(), stopDateTime.getDayOfMonth(), arrivalTime.getHourOfDay(), arrivalTime.getMinuteOfHour());
 
       bundle.putString(BundleKeys.STOP_METHOD, Notifications.ARRIVING);
       notifications.set(tripId, arrivingDateTime, arrivalMinutes, Notifications.ARRIVING, bundle);
@@ -133,7 +135,8 @@ public class TripActivity extends AppCompatActivity {
     }
 
     if (departureMinutes > 0) {
-      LocalDateTime departingDateTime = new LocalDateTime(possibleTrip.getDepartureTime().toDateTimeToday());
+      LocalTime departingTime = possibleTrip.getDepartureTime();
+      LocalDateTime departingDateTime = new LocalDateTime(stopDateTime.getYear(), stopDateTime.getMonthOfYear(), stopDateTime.getDayOfMonth(), departingTime.getHourOfDay(), departingTime.getMinuteOfHour());
 
       bundle.putString(BundleKeys.STOP_METHOD, Notifications.DEPARTING);
       notifications.set(tripId, departingDateTime, departureMinutes, Notifications.DEPARTING, bundle);
@@ -195,7 +198,7 @@ public class TripActivity extends AppCompatActivity {
       }
 
       tripStops = StopTimesUtils.filterAndOrder(tripStops, possibleTrip.getTripDirection(), sourceId, destinationId);
-      chooChooRouterManager.loadTripDetailsFragments(possibleTrip, tripStops, stopMethod, stopDateTime);
+      chooChooRouterManager.loadTripDetailsFragments(possibleTrip, tripStops, stopMethod, stopDateTime.toDateTime().getMillis());
     }
   }
 
