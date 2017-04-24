@@ -18,7 +18,9 @@ import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.DataStringUtils;
 import com.eleith.calchoochoo.utils.RxBus;
 
+import org.joda.time.LocalDateTime;
 import org.joda.time.Minutes;
+import org.joda.time.format.DateTimeFormat;
 import org.parceler.Parcels;
 
 import java.util.Locale;
@@ -59,6 +61,9 @@ public class TripSummaryFragment extends Fragment {
 
   @BindView(R.id.trip_summary_train_image)
   ImageView tripSummaryImage;
+
+  @BindView(R.id.trip_summary_date_time)
+  TextView tripSummaryDateTime;
 
   @OnClick(R.id.trip_summary_change_details)
   public void onClickChangeDetails() {
@@ -124,6 +129,7 @@ public class TripSummaryFragment extends Fragment {
     }
 
     tripSummaryNumber.setText(possibleTrip.getTripShortName());
+    tripSummaryDateTime.setText(DateTimeFormat.forPattern("E, MMM d").print(stopDateTime));
 
     if (possibleTrip.getRouteLongName().contains("Bullet")) {
       tripSummaryImage.setImageDrawable(getActivity().getDrawable(R.drawable.ic_train_bullet));
