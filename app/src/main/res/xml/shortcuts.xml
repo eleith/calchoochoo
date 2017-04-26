@@ -1,0 +1,14 @@
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="trip-filter"
+        android:enabled="true"
+        android:icon="@drawable/ic_event_shortcut"
+        android:shortcutShortLabel="@string/trip_explorer"
+        android:shortcutLongLabel="@string/trip_explorer"
+        android:shortcutDisabledMessage="@string/trip_explorer">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="com.eleith.calchoochoo"
+            android:targetClass="com.eleith.calchoochoo.TripFilterActivity" />
+    </shortcut>
+</shortcuts>

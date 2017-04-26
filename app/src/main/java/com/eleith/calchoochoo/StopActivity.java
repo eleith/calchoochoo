@@ -37,7 +37,6 @@ public class StopActivity extends AppCompatActivity {
   private Subscription subscription;
   private ArrayList<PossibleTrain> possibleTrains;
   private Stop stop;
-  private int direction;
 
   @Inject
   RxBus rxBus;
@@ -53,21 +52,17 @@ public class StopActivity extends AppCompatActivity {
 
     super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_appbar_drawer_fab);
+    setContentView(R.layout.activity_appbar_drawer);
     ButterKnife.bind(this);
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
-    ChooChooFab chooChooFab = new ChooChooFab(this, rxBus, getWindow().getDecorView().getRootView());
     ChooChooDrawer chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
-
-    chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_swap_vert_black_24dp));
 
     Intent intent = getIntent();
     if (intent != null) {
       Bundle bundle = intent.getExtras();
       if (bundle != null) {
         String stopId = bundle.getString(BundleKeys.STOP);
-        direction = bundle.getInt(BundleKeys.DIRECTION);
         chooChooLoader.loadPossibleTrains(stopId, new LocalDateTime());
         chooChooLoader.loadStopByParentId(stopId);
         chooChooDrawer.setStopSource(stopId);
@@ -110,13 +105,7 @@ public class StopActivity extends AppCompatActivity {
 
   private void loadFragment() {
     if (possibleTrains != null && stop != null) {
-      ArrayList<PossibleTrain> filteredTrains = new ArrayList<>();
-      for (PossibleTrain possibleTrain : possibleTrains) {
-        if (possibleTrain.getTripDirectionId() == direction) {
-          filteredTrains.add(possibleTrain);
-        }
-      }
-      chooChooRouterManager.loadStopsFragments(stop, filteredTrains, direction);
+      chooChooRouterManager.loadStopsFragments(stop, possibleTrains);
     }
   }
 
@@ -128,9 +117,6 @@ public class StopActivity extends AppCompatActivity {
         loadFragment();
       } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_STOP)) {
         stop = ((RxMessageStop) rxMessage).getMessage();
-        loadFragment();
-      } else if (rxMessage.isMessageValidFor(RxMessageKeys.FAB_CLICKED)) {
-        direction = direction == TripUtils.DIRECTION_NORTH ? TripUtils.DIRECTION_SOUTH : TripUtils.DIRECTION_NORTH;
         loadFragment();
       }
     }

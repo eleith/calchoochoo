@@ -1,7 +1,9 @@
 package com.eleith.calchoochoo.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -17,14 +19,15 @@ import com.eleith.calchoochoo.data.PossibleTrain;
 import com.eleith.calchoochoo.data.Stop;
 import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.RxBus;
+import com.eleith.calchoochoo.utils.TripUtils;
 
-import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,6 +35,7 @@ import butterknife.ButterKnife;
 public class StopDetailsFragment extends Fragment {
   private Stop stop;
   private ArrayList<PossibleTrain> possibleTrains = new ArrayList<>();
+  private Handler refreshHandler;
 
   @Inject
   RxBus rxBus;
@@ -39,11 +43,25 @@ public class StopDetailsFragment extends Fragment {
   ChooChooRouterManager chooChooRouterManager;
   @Inject
   ChooChooLoader chooChooLoader;
-  @Inject
-  StopTrainsAdapter stopTrainsAdapter;
 
-  @BindView(R.id.stop_details_recyclerview)
-  RecyclerView stopDetailsRecyclerView;
+  @Inject
+  @Named("north")
+  StopTrainsAdapter stopTrainsAdapterNorth;
+  @Inject
+  @Named("south")
+  StopTrainsAdapter stopTrainsAdapterSouth;
+
+  @BindView(R.id.stop_details_recyclerview_north)
+  RecyclerView stopDetailsRecyclerViewNorth;
+
+  @BindView(R.id.stop_details_recyclerview_south)
+  RecyclerView stopDetailsRecyclerViewSouth;
+
+  @BindView(R.id.stop_details_nomore_north)
+  CardView stopsNoMoreNorth;
+
+  @BindView(R.id.stop_details_nomore_south)
+  CardView stopsNoMoreSouth;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
@@ -59,9 +77,19 @@ public class StopDetailsFragment extends Fragment {
     View view = inflater.inflate(R.layout.fragment_stop_details, container, false);
     ButterKnife.bind(this, view);
 
-    stopDetailsRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+    stopDetailsRecyclerViewNorth.setLayoutManager(new LinearLayoutManager(view.getContext()));
+    stopDetailsRecyclerViewSouth.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
     setAdapterData();
-    stopDetailsRecyclerView.setAdapter(stopTrainsAdapter);
+
+    refreshHandler = new Handler();
+    refreshHandler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        setAdapterData();
+        refreshHandler.postDelayed(this, 60 * 1000);
+      }
+    }, 60 * 1000);
 
     return view;
   }
@@ -74,24 +102,46 @@ public class StopDetailsFragment extends Fragment {
   }
 
   private void setAdapterData() {
-    if (stop != null && possibleTrains.size() > 0) {
-      stopTrainsAdapter.setPossibleTrains(possibleTrains);
 
-      Integer positionToScrollTo = 0;
-      Integer selected = 0;
+    if (stop != null && possibleTrains.size() > 0) {
+      ArrayList<PossibleTrain> northTrains = new ArrayList<>();
+      ArrayList<PossibleTrain> southTrains = new ArrayList<>();
       LocalTime now = new LocalTime();
+
       for (PossibleTrain possibleTrain : possibleTrains) {
-        if (possibleTrain.getDepartureTime().isBefore(now)) {
-          positionToScrollTo++;
-          selected = positionToScrollTo;
+        if (possibleTrain.getTripDirectionId() == TripUtils.DIRECTION_NORTH) {
+          if (possibleTrain.getDepartureTime().isAfter(now)) {
+            northTrains.add(possibleTrain);
+          }
+        } else {
+          if (possibleTrain.getDepartureTime().isAfter(now)) {
+            southTrains.add(possibleTrain);
+          }
         }
       }
 
-      stopTrainsAdapter.setSelected(selected);
-      stopTrainsAdapter.notifyDataSetChanged();
-      if (positionToScrollTo > 0) {
-        stopDetailsRecyclerView.scrollToPosition(positionToScrollTo - 1);
+      if (southTrains.size() > 0) {
+        stopsNoMoreSouth.setVisibility(View.GONE);
+        stopDetailsRecyclerViewSouth.setVisibility(View.VISIBLE);
+        stopTrainsAdapterSouth.setPossibleTrains(southTrains);
+        stopTrainsAdapterSouth.notifyDataSetChanged();
+        stopDetailsRecyclerViewSouth.setAdapter(stopTrainsAdapterSouth);
+      } else {
+        stopsNoMoreSouth.setVisibility(View.VISIBLE);
+        stopDetailsRecyclerViewSouth.setVisibility(View.GONE);
       }
+
+      if (northTrains.size() > 0) {
+        stopsNoMoreNorth.setVisibility(View.GONE);
+        stopDetailsRecyclerViewNorth.setVisibility(View.VISIBLE);
+        stopTrainsAdapterNorth.setPossibleTrains(northTrains);
+        stopTrainsAdapterNorth.notifyDataSetChanged();
+        stopDetailsRecyclerViewNorth.setAdapter(stopTrainsAdapterNorth);
+      } else {
+        stopDetailsRecyclerViewNorth.setVisibility(View.GONE);
+        stopsNoMoreNorth.setVisibility(View.VISIBLE);
+      }
+
     }
   }
 
@@ -105,5 +155,11 @@ public class StopDetailsFragment extends Fragment {
   @Override
   public void onDestroy() {
     super.onDestroy();
+  }
+
+  @Override
+  public void onDestroyView() {
+    refreshHandler.removeCallbacksAndMessages(null);
+    super.onDestroyView();
   }
 }

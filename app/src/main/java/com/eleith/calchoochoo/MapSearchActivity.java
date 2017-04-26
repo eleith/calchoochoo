@@ -77,6 +77,7 @@ public class MapSearchActivity extends AppCompatActivity {
   @Override
   protected void onStart() {
     super.onStart();
+
     if (subscription.isUnsubscribed()) {
       subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     }
@@ -84,6 +85,7 @@ public class MapSearchActivity extends AppCompatActivity {
     if (subscriptionLocation.isUnsubscribed()) {
       subscriptionLocation = rxBus.observeEvents(RxMessageLocation.class).take(1).subscribe(handleRxLocationMessages());
     }
+
     deviceLocation.listenForLocationUpdates();
   }
 

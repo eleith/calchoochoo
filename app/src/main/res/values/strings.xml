@@ -54,6 +54,9 @@
     <string name="notifications_saved">Your trip notifications have been saved.</string>
     <string name="notifications_removed">Your trip notifications have been removed.</string>
     <string name="menu_calchoochoo">CalChooChoo Menu</string>
+    <string name="change_details">Change trip details</string>
+    <string name="northbound_to_sf">North bound trains to San Francisco</string>
+    <string name="southbound_to_sanjose">South bound trains to San Jose</string>
 
     <string-array name="minutes">
         <item>5 min</item>

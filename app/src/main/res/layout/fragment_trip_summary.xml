@@ -139,7 +139,7 @@
             android:drawablePadding="10dp"
             android:drawableStart="@drawable/ic_tune_black_24dp"
             android:gravity="center_vertical"
-            android:text="Change trip details"
+            android:text="@string/change_details"
             android:textColor="?android:colorBackground"/>
 
         <TextView

@@ -171,11 +171,10 @@ public class ChooChooRouterManager {
     setNextState(ChooChooRouterManager.STATE_SEARCH_FOR_STOPS, arguments);
   }
 
-  public void loadStopsFragments(Stop stop, ArrayList<PossibleTrain> possibleTrains, int direction) {
+  public void loadStopsFragments(Stop stop, ArrayList<PossibleTrain> possibleTrains) {
     Bundle arguments = new Bundle();
     arguments.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
     arguments.putParcelable(BundleKeys.POSSIBLE_TRAINS, Parcels.wrap(possibleTrains));
-    arguments.putInt(BundleKeys.DIRECTION, direction);
 
     setNextState(ChooChooRouterManager.STATE_SHOW_ALL_STOPS, arguments);
   }

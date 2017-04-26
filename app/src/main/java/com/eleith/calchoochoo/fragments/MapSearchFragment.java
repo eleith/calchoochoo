@@ -83,6 +83,11 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
 
     unWrapBundle(savedInstanceState);
 
+    // http://stackoverflow.com/questions/13900322/badparcelableexception-in-google-maps-code
+    if (savedInstanceState != null) {
+      savedInstanceState.remove(BundleKeys.STOPS);
+    }
+
     // initialize the map!
     googleMapView = ((MapView) view.findViewById(R.id.search_google_maps));
     googleMapView.onCreate(savedInstanceState);
@@ -234,7 +239,9 @@ public class MapSearchFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public boolean onMarkerClick(Marker marker) {
       String stopId = (String) marker.getTag();
-      chooChooRouterManager.loadStopActivity(getActivity(), stopId);
+      if (stopId != null) {
+        chooChooRouterManager.loadStopActivity(getActivity(), stopId);
+      }
       return true;
     }
   }

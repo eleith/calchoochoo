@@ -21,6 +21,8 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.TripUtils;
 
+import org.joda.time.LocalDateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.parceler.Parcels;
 
 import java.util.Locale;
@@ -36,16 +38,13 @@ import rx.functions.Action1;
 public class StopSummaryFragment extends Fragment {
   private Stop stop;
   private StopActivity stopActivity;
-  private int direction;
 
   @BindView(R.id.stop_summary_name)
   TextView stopName;
   @BindView(R.id.stop_summary_zone)
   TextView stopZone;
-  @BindView(R.id.stop_summary_arrow_image)
-  ImageView stopArrowImage;
-  @BindView(R.id.stop_summary_direction_text)
-  TextView stopDirectionText;
+  @BindView(R.id.stop_summary_datetime)
+  TextView stopDateTime;
 
   @Inject
   RxBus rxBus;
@@ -67,14 +66,7 @@ public class StopSummaryFragment extends Fragment {
 
     stopName.setText(DataStringUtils.removeCaltrain(stop.stop_name));
     stopZone.setText(String.format(Locale.getDefault(), "%d", stop.zone_id + 1));
-
-    if (direction == TripUtils.DIRECTION_SOUTH) {
-      stopArrowImage.setImageDrawable(stopActivity.getDrawable(R.drawable.ic_arrow_downward_black_24dp));
-      stopDirectionText.setText(stopActivity.getString(R.string.san_jose));
-    } else {
-      stopArrowImage.setImageDrawable(stopActivity.getDrawable(R.drawable.ic_arrow_upward_black_24dp));
-      stopDirectionText.setText(stopActivity.getString(R.string.san_francisco));
-    }
+    stopDateTime.setText(DateTimeFormat.forPattern("E, MMM d").print(new LocalDateTime()));
 
     return view;
   }
@@ -98,7 +90,6 @@ public class StopSummaryFragment extends Fragment {
   private void unWrapBundle(Bundle savedInstanceState) {
     if (savedInstanceState != null) {
       stop = Parcels.unwrap(savedInstanceState.getParcelable(BundleKeys.STOP));
-      direction = savedInstanceState.getInt(BundleKeys.DIRECTION);
     }
   }
 

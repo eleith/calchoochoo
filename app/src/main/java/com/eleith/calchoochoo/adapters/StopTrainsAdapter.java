@@ -2,6 +2,7 @@ package com.eleith.calchoochoo.adapters;
 
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,13 +36,13 @@ import butterknife.OnClick;
 @ChooChooScope
 public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.RouteViewHolder> {
   private ArrayList<PossibleTrain> possibleTrains = new ArrayList<>();
-  private StopActivity activity;
+  private AppCompatActivity activity;
   private ChooChooRouterManager chooChooRouterManager;
   private Integer selected = null;
   private DateTime now = new DateTime();
 
   @Inject
-  public StopTrainsAdapter(StopActivity activity, ChooChooRouterManager chooChooRouterManager) {
+  public StopTrainsAdapter(AppCompatActivity activity, ChooChooRouterManager chooChooRouterManager) {
     this.activity = activity;
     this.chooChooRouterManager = chooChooRouterManager;
   }
@@ -76,15 +77,12 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
       holder.stopCardTrainItemImage.setImageDrawable(activity.getDrawable(R.drawable.ic_train_local));
     }
 
-    if (minutes > 0 && minutes <= 60) {
+    if (minutes >= 0 && minutes <= 60) {
       holder.stopCardTrainItemTime.setText(String.format(Locale.getDefault(), "in %d min", minutes));
       holder.stopCardTrainItemTime.setTypeface(null, Typeface.ITALIC);
       holder.stopCardTrainItemBack.setBackgroundColor(ContextCompat.getColor(activity, R.color.cardview_light_background));
     } else {
       holder.stopCardTrainItemTime.setText(dateTimeFormatter.print(possibleTrain.getDepartureTime()));
-      if (minutes < 0) {
-        holder.stopCardTrainItemBack.setBackgroundColor(ColorUtils.getThemeColor(activity, android.R.attr.textColorSecondaryInverse));
-      }
     }
   }
 
