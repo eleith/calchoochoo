@@ -3,7 +3,6 @@ package com.eleith.calchoochoo;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
@@ -26,20 +25,16 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessagePossibleTrip;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTrip;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageTripStops;
 import com.eleith.calchoochoo.utils.StopTimesUtils;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
-import org.joda.time.chrono.BuddhistChronology;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 

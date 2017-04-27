@@ -64,8 +64,8 @@ public class TripFilterSuggestionAdapter extends RecyclerView.Adapter<TripFilter
     Float price = possibleTrip.getPrice();
     DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("h:mma");
 
-    holder.arrivalTime.setText(dateTimeFormatter.print(possibleTrip.getArrivalTime()));
-    holder.departureTime.setText(dateTimeFormatter.print(possibleTrip.getDepartureTime()));
+    holder.departureTime.setText(dateTimeFormatter.print(possibleTrip.getArrivalTime()));
+    holder.arrivalTime.setText(dateTimeFormatter.print(possibleTrip.getDepartureTime()));
     holder.tripPrice.setText(String.format(Locale.getDefault(), "$%.2f", price));
 
     if (possibleTrip.getRouteLongName().contains("Bullet")) {

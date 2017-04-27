@@ -39,8 +39,8 @@ public class PossibleTripUtils {
       LocalTime stopTwoArrivalTime = new LocalTime(DataStringUtils.adjustLateTimes(cursor.getString(cursor.getColumnIndex("st2__arrival_time"))));
 
       if (stopOneSequence < stopTwoSequence) {
-        possibleTrip.setArrivalTime(stopOneDepartureTime);
-        possibleTrip.setDepartureTime(stopTwoArrivalTime);
+        possibleTrip.setArrivalTime(stopTwoArrivalTime);
+        possibleTrip.setDepartureTime(stopOneDepartureTime);
         possibleTrip.setFirstStopSequence(stopOneSequence);
         possibleTrip.setLastStopSequence(stopTwoSequence);
         possibleTrip.setFirstStopId(stop1Id);
@@ -50,8 +50,8 @@ public class PossibleTripUtils {
         possibleTrip.setFirstStopName(stop1Name);
         possibleTrip.setLastStopName(stop2Name);
       } else {
-        possibleTrip.setArrivalTime(stopTwoDepartureTime);
-        possibleTrip.setDepartureTime(stopOneArrivalTime);
+        possibleTrip.setArrivalTime(stopOneArrivalTime);
+        possibleTrip.setDepartureTime(stopTwoDepartureTime);
         possibleTrip.setFirstStopSequence(stopTwoSequence);
         possibleTrip.setLastStopSequence(stopOneSequence);
         possibleTrip.setFirstStopId(stop2Id);

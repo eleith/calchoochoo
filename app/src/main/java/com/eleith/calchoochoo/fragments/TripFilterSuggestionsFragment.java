@@ -84,9 +84,17 @@ public class TripFilterSuggestionsFragment extends Fragment {
   }
 
   @Override
-  public void onDestroyView() {
-    super.onDestroyView();
+  public void onStop() {
+    super.onStop();
     subscription.unsubscribe();
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+    if (subscription.isUnsubscribed()) {
+      subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
+    }
   }
 
   public void setPossibleTrips(ArrayList<PossibleTrip> possibleTrips) {

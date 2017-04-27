@@ -115,7 +115,12 @@ public class MapSearchActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
           Bundle bundle = data.getExtras();
           String stopId = bundle.getString(BundleKeys.STOP);
-          chooChooRouterManager.loadStopActivity(this, stopId);
+          Stop closestStop = StopUtils.findStopClosestTo(stops, location);
+          if (closestStop != null) {
+            chooChooRouterManager.loadTripFilterActivity(this, closestStop.stop_id, stopId);
+          } else {
+            chooChooRouterManager.loadTripFilterActivity(this, null, stopId);
+          }
         }
       }
     }
