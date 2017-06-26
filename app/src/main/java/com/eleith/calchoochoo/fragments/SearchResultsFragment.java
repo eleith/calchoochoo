@@ -94,6 +94,8 @@ public class SearchResultsFragment extends Fragment {
   public void onSaveInstanceState(Bundle outState) {
     outState.putStringArrayList(BundleKeys.STOP_IDS, filteredStopIds);
     outState.putParcelable(BundleKeys.STOPS, Parcels.wrap(parentStops));
+    outState.putParcelable(BundleKeys.LOCATION, location);
+    outState.putInt(BundleKeys.SEARCH_REASON, reason);
     super.onSaveInstanceState(outState);
   }
 

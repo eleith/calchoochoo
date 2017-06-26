@@ -181,12 +181,12 @@ public class PossibleTripUtils {
       LocalTime departureTime = possibleTrip.getDepartureTime();
       LocalTime arrivalTime = possibleTrip.getArrivalTime();
 
-      if (arriving) {
-        if (departureTime.isBefore(dateTime.toLocalTime()) && departureTime.plusHours(3).isAfter(dateTime.toLocalTime())) {
+      if (!arriving) {
+        if (departureTime.isAfter(dateTime.toLocalTime())) {
           possibleTripsFiltered.add(possibleTrip);
         }
       } else {
-        if (arrivalTime.isAfter(dateTime.toLocalTime())) {
+        if (arrivalTime.isBefore(dateTime.toLocalTime()) && arrivalTime.isAfter(dateTime.minusHours(3).toLocalTime())) {
           possibleTripsFiltered.add(possibleTrip);
         }
       }

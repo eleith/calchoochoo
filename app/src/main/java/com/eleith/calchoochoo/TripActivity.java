@@ -82,21 +82,31 @@ public class TripActivity extends AppCompatActivity {
     chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_add_alarm_black_24dp));
     chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorAccent)));
 
-    Intent intent = getIntent();
-    if (intent != null) {
-      Bundle bundle = intent.getExtras();
-      if (bundle != null) {
-        tripId = bundle.getString(BundleKeys.TRIP);
-        sourceId = bundle.getString(BundleKeys.STOP_SOURCE);
-        destinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
-        stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
-        stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis()));
+    if (savedInstanceState != null) {
+      unWrapBundle(savedInstanceState);
+    } else {
+      Intent intent = getIntent();
+      if (intent != null) {
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+          tripId = bundle.getString(BundleKeys.TRIP);
+          sourceId = bundle.getString(BundleKeys.STOP_SOURCE);
+          destinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
+          stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+          stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis()));
+        }
+      }
 
-        chooChooLoader.loadTripStops(tripId);
+      if (tripId != null) {
+        if (tripStops == null) {
+          chooChooLoader.loadTripStops(tripId);
+        }
 
-        if (destinationId != null) {
+        if (destinationId != null && possibleTrip == null) {
           chooChooLoader.loadPossibleTrip(tripId, sourceId, destinationId);
         }
+
+        loadFragments();
       }
     }
   }
@@ -195,6 +205,32 @@ public class TripActivity extends AppCompatActivity {
       tripStops = StopTimesUtils.filterAndOrder(tripStops, possibleTrip.getTripDirection(), sourceId, destinationId);
       chooChooRouterManager.loadTripDetailsFragments(possibleTrip, tripStops, stopMethod, stopDateTime.toDateTime().getMillis());
     }
+  }
+
+  private void unWrapBundle(Bundle bundle) {
+    if (bundle != null) {
+      tripId = bundle.getString(BundleKeys.TRIP);
+      sourceId = bundle.getString(BundleKeys.STOP_SOURCE);
+      destinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
+      stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+      stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis()));
+      trip = Parcels.unwrap(bundle.getParcelable(BundleKeys.TRIP_NAME));
+      possibleTrip = Parcels.unwrap(bundle.getParcelable(BundleKeys.POSSIBLE_TRIP));
+      tripStops = Parcels.unwrap(bundle.getParcelable(BundleKeys.TRIP_STOP_STOPTIMES));
+    }
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    outState.putString(BundleKeys.TRIP, tripId);
+    outState.putString(BundleKeys.STOP_SOURCE, sourceId);
+    outState.putString(BundleKeys.STOP_DESTINATION, destinationId);
+    outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
+    outState.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDateTime().getMillis());
+    outState.putParcelable(BundleKeys.TRIP_STOP_STOPTIMES, Parcels.wrap(tripStops));
+    outState.putParcelable(BundleKeys.TRIP_NAME, Parcels.wrap(trip));
+    outState.putParcelable(BundleKeys.POSSIBLE_TRIP, Parcels.wrap(possibleTrip));
+    super.onSaveInstanceState(outState);
   }
 
   private class HandleRxMessages implements Action1<RxMessage> {

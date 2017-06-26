@@ -80,17 +80,6 @@ public class StopDetailsFragment extends Fragment {
     stopDetailsRecyclerViewNorth.setLayoutManager(new LinearLayoutManager(view.getContext()));
     stopDetailsRecyclerViewSouth.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-    setAdapterData();
-
-    refreshHandler = new Handler();
-    refreshHandler.postDelayed(new Runnable() {
-      @Override
-      public void run() {
-        setAdapterData();
-        refreshHandler.postDelayed(this, 60 * 1000);
-      }
-    }, 60 * 1000);
-
     return view;
   }
 
@@ -153,13 +142,22 @@ public class StopDetailsFragment extends Fragment {
   }
 
   @Override
-  public void onDestroy() {
-    super.onDestroy();
+  public void onStart() {
+    refreshHandler = new Handler();
+    refreshHandler.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        setAdapterData();
+        refreshHandler.postDelayed(this, 60 * 1000);
+      }
+    }, 60 * 1000);
+    setAdapterData();
+    super.onStart();
   }
 
   @Override
-  public void onDestroyView() {
+  public void onStop() {
     refreshHandler.removeCallbacksAndMessages(null);
-    super.onDestroyView();
+    super.onStop();
   }
 }

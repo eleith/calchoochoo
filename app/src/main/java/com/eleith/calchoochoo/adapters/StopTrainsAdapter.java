@@ -48,6 +48,7 @@ public class StopTrainsAdapter extends RecyclerView.Adapter<StopTrainsAdapter.Ro
   }
 
   public void setPossibleTrains(ArrayList<PossibleTrain> possibleTrains) {
+    this.now = new DateTime();
     this.possibleTrains = possibleTrains;
   }
 

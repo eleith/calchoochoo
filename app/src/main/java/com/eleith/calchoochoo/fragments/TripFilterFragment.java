@@ -44,9 +44,10 @@ public class TripFilterFragment extends Fragment {
   private LocalDateTime stopDateTime = new LocalDateTime();
   private int stopMethod = RxMessageStopsAndDetails.DETAIL_DEPARTING;
   private Subscription subscription;
-  private ArrayList<PossibleTrip> possibleTrips;
   private String sourceStopId;
   private String destinationStopId;
+  private Stop stopSource;
+  private Stop stopDestination;
 
   @BindView(R.id.trip_filter_destination)
   TextView destinationEdit;
@@ -69,7 +70,6 @@ public class TripFilterFragment extends Fragment {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     ((TripFilterActivity) getActivity()).getComponent().inject(this);
     unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
   }
@@ -108,16 +108,24 @@ public class TripFilterFragment extends Fragment {
   }
 
   private void updateStops() {
-    if (sourceStopId != null) {
+    if (stopSource == null && sourceStopId != null) {
       chooChooLoader.loadStopByParentId(sourceStopId);
     }
 
-    if (destinationStopId != null) {
+    if (stopDestination == null && destinationStopId != null) {
       chooChooLoader.loadStopByParentId(destinationStopId);
     }
 
     sourceEdit.setVisibility(View.VISIBLE);
     destinationEdit.setVisibility(View.VISIBLE);
+
+    if (stopDestination != null) {
+      destinationEdit.setText(DataStringUtils.removeCaltrain(stopDestination.stop_name));
+    }
+
+    if (stopSource != null) {
+      sourceEdit.setText(DataStringUtils.removeCaltrain(stopSource.stop_name));
+    }
 
     updateTimeEdit();
   }
@@ -172,19 +180,23 @@ public class TripFilterFragment extends Fragment {
 
   @Override
   public void onSaveInstanceState(Bundle outState) {
-    outState.putParcelable(BundleKeys.POSSIBLE_TRIPS, Parcels.wrap(possibleTrips));
     outState.putLong(BundleKeys.STOP_DATETIME, stopDateTime.toDate().getTime());
     outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
+    outState.putString(BundleKeys.STOP_SOURCE_ID, sourceStopId);
+    outState.putString(BundleKeys.STOP_DESTINATION_ID, destinationStopId);
+    outState.putParcelable(BundleKeys.STOP_SOURCE, Parcels.wrap(stopSource));
+    outState.putParcelable(BundleKeys.STOP_DESTINATION, Parcels.wrap(stopDestination));
     super.onSaveInstanceState(outState);
   }
 
   private void unWrapBundle(Bundle bundle) {
     if (bundle != null) {
-      possibleTrips = Parcels.unwrap(bundle.getParcelable(BundleKeys.POSSIBLE_TRIPS));
       stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME));
       stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
-      sourceStopId = bundle.getString(BundleKeys.STOP_SOURCE);
-      destinationStopId = bundle.getString(BundleKeys.STOP_DESTINATION);
+      sourceStopId = bundle.getString(BundleKeys.STOP_SOURCE_ID);
+      destinationStopId = bundle.getString(BundleKeys.STOP_DESTINATION_ID);
+      stopSource = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP_SOURCE));
+      stopDestination = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP_DESTINATION));
     }
   }
 
@@ -194,8 +206,11 @@ public class TripFilterFragment extends Fragment {
       public void call(RxMessage rxMessage) {
         if (rxMessage.isMessageValidFor(RxMessageKeys.SWITCH_SOURCE_DESTINATION_SELECTED)) {
           String tempId = destinationStopId;
+          Stop tempStop = stopDestination;
           destinationStopId = sourceStopId;
+          stopDestination = stopSource;
           sourceStopId = tempId;
+          stopSource = tempStop;
           chooChooLoader.loadPossibleTrips(sourceStopId, destinationStopId, stopDateTime);
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.DATE_TIME_SELECTED)) {
           Pair<Integer, LocalDateTime> pair = ((RxMessageStopMethodAndDateTime) rxMessage).getMessage();
@@ -207,14 +222,15 @@ public class TripFilterFragment extends Fragment {
           Stop stop = ((RxMessageStop) rxMessage).getMessage();
 
           if (destinationStopId != null && destinationStopId.equals(stop.stop_id)) {
-            destinationEdit.setText(DataStringUtils.removeCaltrain(stop.stop_name));
+            stopDestination = stop;
           }
 
           if (sourceStopId != null && sourceStopId.equals(stop.stop_id)) {
-            sourceEdit.setText(DataStringUtils.removeCaltrain(stop.stop_name));
+            stopSource = stop;
           }
+
+          updateStops();
         } else if (rxMessage.isMessageValidFor(RxMessageKeys.LOADED_POSSIBLE_TRIPS)) {
-          possibleTrips = ((RxMessagePossibleTrips) rxMessage).getMessage();
           updateStops();
         }
       }

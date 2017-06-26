@@ -112,7 +112,7 @@ public class ChooChooRouterManager {
         tripFilterSelectMoreFragment.setArguments(arguments);
         tripFilterSuggestionsFragment.setArguments(arguments);
 
-        if (arguments.getString(BundleKeys.STOP_DESTINATION) != null && arguments.getString(BundleKeys.STOP_SOURCE) != null) {
+        if (arguments.getString(BundleKeys.STOP_DESTINATION_ID) != null && arguments.getString(BundleKeys.STOP_SOURCE_ID) != null) {
           updateAppBarFragments(tripFilterFragmentResults, tripFilterSuggestionsFragment, stateID);
         } else {
           updateAppBarFragments(tripFilterFragmentResults, tripFilterSelectMoreFragment, stateID);
@@ -298,10 +298,10 @@ public class ChooChooRouterManager {
 
     arguments.putInt(BundleKeys.STOP_METHOD, stopMethod);
     if (stopSourceId != null) {
-      arguments.putString(BundleKeys.STOP_SOURCE, stopSourceId);
+      arguments.putString(BundleKeys.STOP_SOURCE_ID, stopSourceId);
     }
     if (stopDestinationId != null) {
-      arguments.putString(BundleKeys.STOP_DESTINATION, stopDestinationId);
+      arguments.putString(BundleKeys.STOP_DESTINATION_ID, stopDestinationId);
     }
 
     if (stopDateTime != null) {

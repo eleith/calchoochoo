@@ -12,7 +12,6 @@ import com.eleith.calchoochoo.R;
 import com.eleith.calchoochoo.StopSearchActivity;
 import com.eleith.calchoochoo.utils.KeyboardUtils;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageString;
 

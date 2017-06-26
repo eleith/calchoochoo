@@ -8,8 +8,8 @@ android {
         applicationId "com.eleith.calchoochoo"
         minSdkVersion 22
         targetSdkVersion 25
-        versionCode 8
-        versionName "1.7"
+        versionCode 12
+        versionName "1.11"
         resValue "string", "GOOGLE_MAPS_API_KEY", GOOGLE_MAPS_API_KEY
     }
     buildTypes {

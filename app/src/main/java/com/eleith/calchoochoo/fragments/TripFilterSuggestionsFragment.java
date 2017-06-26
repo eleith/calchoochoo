@@ -79,7 +79,6 @@ public class TripFilterSuggestionsFragment extends Fragment {
     recyclerView.setAdapter(tripFilterSuggestionAdapter);
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
-    chooChooLoader.loadRoutes();
     return view;
   }
 

@@ -19,6 +19,8 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageLocation;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStops;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 
 import javax.inject.Inject;
@@ -57,8 +59,13 @@ public class StopSearchActivity extends AppCompatActivity {
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessages());
     subscriptionLocation = rxBus.observeEvents(RxMessageLocation.class).take(1).subscribe(handleRxLocationMessages());
-    chooChooLoader.loadParentStops();
-    deviceLocation.requestLocation();
+
+    if (savedInstanceState == null) {
+      chooChooLoader.loadParentStops();
+      deviceLocation.requestLocation();
+    } else {
+      unWrapBundle(savedInstanceState);
+    }
   }
 
   @Override
@@ -91,6 +98,24 @@ public class StopSearchActivity extends AppCompatActivity {
 
   public ChooChooComponent getComponent() {
     return chooChooComponent;
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    outState.putParcelable(BundleKeys.STOPS, Parcels.wrap(stops));
+    outState.putInt(BundleKeys.SEARCH_REASON, reason);
+    outState.putStringArrayList(BundleKeys.STOP_IDS, filteredStopIds);
+    outState.putParcelable(BundleKeys.LOCATION, location);
+    super.onSaveInstanceState(outState);
+  }
+
+  private void unWrapBundle(Bundle bundle) {
+    if (bundle != null) {
+      stops = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOPS));
+      filteredStopIds = bundle.getStringArrayList(BundleKeys.STOP_IDS);
+      reason = bundle.getInt(BundleKeys.SEARCH_REASON);
+      location = bundle.getParcelable(BundleKeys.LOCATION);
+    }
   }
 
   private void loadFragments() {

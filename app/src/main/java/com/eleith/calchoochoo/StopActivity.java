@@ -2,9 +2,7 @@ package com.eleith.calchoochoo;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 
 import com.eleith.calchoochoo.dagger.ChooChooComponent;
 import com.eleith.calchoochoo.dagger.ChooChooModule;
@@ -17,18 +15,15 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageNextTrains;
 import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStop;
-import com.eleith.calchoochoo.utils.TripUtils;
-import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.joda.time.LocalDateTime;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Subscription;
 import rx.functions.Action1;
 
@@ -57,9 +52,11 @@ public class StopActivity extends AppCompatActivity {
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
     ChooChooDrawer chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
-
     Intent intent = getIntent();
-    if (intent != null) {
+
+    if (savedInstanceState != null && intent == null) {
+      unWrapBundle(savedInstanceState);
+    } else if(intent != null){
       Bundle bundle = intent.getExtras();
       if (bundle != null) {
         String stopId = bundle.getString(BundleKeys.STOP);
@@ -101,6 +98,20 @@ public class StopActivity extends AppCompatActivity {
 
   public ChooChooComponent getComponent() {
     return chooChooComponent;
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    outState.putParcelable(BundleKeys.STOP, Parcels.wrap(stop));
+    outState.putParcelable(BundleKeys.POSSIBLE_TRAINS, Parcels.wrap(possibleTrains));
+    super.onSaveInstanceState(outState);
+  }
+
+  private void unWrapBundle(Bundle bundle) {
+    if (bundle != null) {
+      stop = Parcels.unwrap(bundle.getParcelable(BundleKeys.STOP));
+      possibleTrains = Parcels.unwrap(bundle.getParcelable(BundleKeys.POSSIBLE_TRAINS));
+    }
   }
 
   private void loadFragment() {

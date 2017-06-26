@@ -122,7 +122,7 @@ public class TripSummaryFragment extends Fragment {
 
     tripSummaryPrice.setText(String.format(Locale.getDefault(), "$%.2f", possibleTrip.getPrice()));
 
-    if (possibleTrip.getArrivalTime().getHourOfDay() <= possibleTrip.getDepartureTime().getHourOfDay()) {
+    if (possibleTrip.getArrivalTime().getHourOfDay() >= possibleTrip.getDepartureTime().getHourOfDay()) {
       tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getDepartureTime(), possibleTrip.getArrivalTime()).getMinutes()));
     } else {
       tripSummaryTotalTime.setText(String.format(Locale.getDefault(), "%d min", Minutes.minutesBetween(possibleTrip.getDepartureTime().toDateTimeToday(), possibleTrip.getArrivalTime().toDateTimeToday().plusHours(24)).getMinutes()));

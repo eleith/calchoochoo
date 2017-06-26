@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.eleith.calchoochoo.R;
@@ -17,9 +16,6 @@ import com.eleith.calchoochoo.utils.BundleKeys;
 import com.eleith.calchoochoo.utils.ColorUtils;
 import com.eleith.calchoochoo.utils.DataStringUtils;
 import com.eleith.calchoochoo.utils.RxBus;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessage;
-import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageKeys;
-import com.eleith.calchoochoo.utils.TripUtils;
 
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -32,8 +28,6 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import rx.Subscription;
-import rx.functions.Action1;
 
 public class StopSummaryFragment extends Fragment {
   private Stop stop;
@@ -54,7 +48,7 @@ public class StopSummaryFragment extends Fragment {
     super.onCreate(savedInstanceState);
     stopActivity = (StopActivity) getActivity();
     stopActivity.getComponent().inject(this);
-    unWrapBundle(savedInstanceState == null ? getArguments() : savedInstanceState);
+    unWrapBundle(savedInstanceState != null ? savedInstanceState : getArguments());
   }
 
   @Override
@@ -63,22 +57,15 @@ public class StopSummaryFragment extends Fragment {
     ButterKnife.bind(this, view);
 
     unWrapBundle(savedInstanceState);
-
-    stopName.setText(DataStringUtils.removeCaltrain(stop.stop_name));
-    stopZone.setText(String.format(Locale.getDefault(), "%d", stop.zone_id + 1));
-    stopDateTime.setText(DateTimeFormat.forPattern("E, MMM d").print(new LocalDateTime()));
-
     return view;
   }
 
   @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-  }
-
-  @Override
-  public void onStop() {
-    super.onStop();
+  public void onStart() {
+    super.onStart();
+    stopName.setText(DataStringUtils.removeCaltrain(stop.stop_name));
+    stopZone.setText(String.format(Locale.getDefault(), "%d", stop.zone_id + 1));
+    stopDateTime.setText(DateTimeFormat.forPattern("E, MMM d").print(new LocalDateTime()));
   }
 
   @Override

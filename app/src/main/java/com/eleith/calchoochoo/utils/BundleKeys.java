@@ -6,6 +6,8 @@ public class BundleKeys {
   public static final String STOP_IDS = "stop_ids";
   public static final String LOCATION = "location";
   public static final String SEARCH_REASON = "search_reason";
+  public static final String STOP_DESTINATION_ID = "stop_destination_id";
+  public static final String STOP_SOURCE_ID = "stop_source_id";
   public static final String STOP_DESTINATION = "stop_destination";
   public static final String STOP_SOURCE = "stop_source";
   public static final String STOP_METHOD = "stop_method";

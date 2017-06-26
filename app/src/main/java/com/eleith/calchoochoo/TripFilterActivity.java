@@ -22,6 +22,8 @@ import com.eleith.calchoochoo.utils.RxBusMessage.RxMessageStopsAndDetails;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.joda.time.LocalDateTime;
+import org.parceler.Parcel;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 
@@ -67,28 +69,38 @@ public class TripFilterActivity extends AppCompatActivity {
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessage());
 
-    Intent intent = getIntent();
-    if (intent != null) {
-      Bundle bundle = intent.getExtras();
-      if (bundle != null) {
-        stopSourceId = bundle.getString(BundleKeys.STOP_SOURCE);
-        stopDestinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
-        stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
-        stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis());
-
-        if (stopSourceId != null && stopSourceId.equals(stopDestinationId)) {
-          stopDestinationId = null;
+    if (savedInstanceState != null) {
+      unWrapBundle(savedInstanceState);
+    } else {
+      Intent intent = getIntent();
+      if (intent != null) {
+        Bundle bundle = intent.getExtras();
+        if (bundle != null) {
+          stopSourceId = bundle.getString(BundleKeys.STOP_SOURCE);
+          stopDestinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
+          stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+          stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis());
         }
+      }
 
-        if (stopDestinationId != null && stopSourceId != null) {
-          subscriptionTrips = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessagePossibleTrips());
-          chooChooLoader.loadPossibleTrips(stopSourceId, stopDestinationId, new LocalDateTime(stopDateTime));
-        } else {
-          chooChooRouterManager.loadTripFilterFragment(null, stopMethod, new LocalDateTime(stopDateTime), stopSourceId, stopDestinationId);
-        }
-      } else {
-        stopDateTime = new LocalDateTime().toDateTime().getMillis();
+      if (stopSourceId != null && stopSourceId.equals(stopDestinationId)) {
+        stopDestinationId = null;
+      }
+
+      if (stopMethod == null) {
         stopMethod = RxMessageStopsAndDetails.DETAIL_DEPARTING;
+      }
+
+      if (stopDateTime == null) {
+        stopDateTime = new LocalDateTime().toDateTime().getMillis();
+      }
+
+      if (possibleTrips != null && possibleTrips.size() > 0) {
+        chooChooRouterManager.loadTripFilterFragment(possibleTrips, stopMethod, new LocalDateTime(stopDateTime), stopSourceId, stopDestinationId);
+      } else if (stopDestinationId != null && stopSourceId != null) {
+        subscriptionTrips = rxBus.observeEvents(RxMessagePossibleTrips.class).take(1).subscribe(handleRxMessagePossibleTrips());
+        chooChooLoader.loadPossibleTrips(stopSourceId, stopDestinationId, new LocalDateTime(stopDateTime));
+      } else {
         chooChooRouterManager.loadTripFilterFragment(null, stopMethod, new LocalDateTime(stopDateTime), stopSourceId, stopDestinationId);
       }
     }
@@ -145,6 +157,24 @@ public class TripFilterActivity extends AppCompatActivity {
         }
       }
     }
+  }
+
+  private void unWrapBundle(Bundle bundle) {
+    stopSourceId = bundle.getString(BundleKeys.STOP_SOURCE);
+    stopDestinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
+    stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+    stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis());
+    possibleTrips = Parcels.unwrap(bundle.getParcelable(BundleKeys.POSSIBLE_TRIPS));
+  }
+
+  @Override
+  protected void onSaveInstanceState(Bundle outState) {
+    outState.putString(BundleKeys.STOP_SOURCE, stopSourceId);
+    outState.putString(BundleKeys.STOP_DESTINATION, stopDestinationId);
+    outState.putInt(BundleKeys.STOP_METHOD, stopMethod);
+    outState.putLong(BundleKeys.STOP_DATETIME, stopDateTime);
+    outState.putParcelable(BundleKeys.POSSIBLE_TRIPS, Parcels.wrap(possibleTrips));
+    super.onSaveInstanceState(outState);
   }
 
   public ChooChooComponent getComponent() {
