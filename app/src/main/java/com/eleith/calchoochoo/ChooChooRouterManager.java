@@ -195,6 +195,11 @@ public class ChooChooRouterManager {
     setNextState(ChooChooRouterManager.STATE_SHOW_MAP, mapSearchArgs);
   }
 
+  public void loadMapSearchActivity(Activity activity) {
+    Intent intent = new Intent(activity, MapSearchActivity.class);
+    activity.startActivity(intent);
+  }
+
   public void loadTripFilterActivity(Activity activity, String stopSourceId, String stopDestinationId) {
     loadTripFilterActivity(activity, stopSourceId, stopDestinationId, RxMessageStopsAndDetails.DETAIL_DEPARTING, new LocalDateTime().toDateTime().getMillis());
   }

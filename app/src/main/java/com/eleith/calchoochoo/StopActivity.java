@@ -64,6 +64,8 @@ public class StopActivity extends AppCompatActivity {
         chooChooLoader.loadStopByParentId(stopId);
         chooChooDrawer.setStopSource(stopId);
       }
+    } else {
+        chooChooRouterManager.loadMapSearchActivity(this);
     }
   }
 

@@ -68,19 +68,17 @@ public class TripFilterActivity extends AppCompatActivity {
     chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_swap_vert_black_24dp));
 
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(handleRxMessage());
+    Intent intent = getIntent();
 
     if (savedInstanceState != null) {
       unWrapBundle(savedInstanceState);
-    } else {
-      Intent intent = getIntent();
-      if (intent != null) {
-        Bundle bundle = intent.getExtras();
-        if (bundle != null) {
-          stopSourceId = bundle.getString(BundleKeys.STOP_SOURCE);
-          stopDestinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
-          stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
-          stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis());
-        }
+    } else if (intent != null){
+      Bundle bundle = intent.getExtras();
+      if (bundle != null) {
+        stopSourceId = bundle.getString(BundleKeys.STOP_SOURCE);
+        stopDestinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
+        stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+        stopDateTime = bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis());
       }
 
       if (stopSourceId != null && stopSourceId.equals(stopDestinationId)) {
@@ -103,6 +101,8 @@ public class TripFilterActivity extends AppCompatActivity {
       } else {
         chooChooRouterManager.loadTripFilterFragment(null, stopMethod, new LocalDateTime(stopDateTime), stopSourceId, stopDestinationId);
       }
+    } else {
+      chooChooRouterManager.loadMapSearchActivity(this);
     }
   }
 

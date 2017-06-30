@@ -81,20 +81,18 @@ public class TripActivity extends AppCompatActivity {
 
     chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_add_alarm_black_24dp));
     chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorAccent)));
+    Intent intent = getIntent();
 
     if (savedInstanceState != null) {
       unWrapBundle(savedInstanceState);
-    } else {
-      Intent intent = getIntent();
-      if (intent != null) {
-        Bundle bundle = intent.getExtras();
-        if (bundle != null) {
-          tripId = bundle.getString(BundleKeys.TRIP);
-          sourceId = bundle.getString(BundleKeys.STOP_SOURCE);
-          destinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
-          stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
-          stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis()));
-        }
+    } else if (intent != null) {
+      Bundle bundle = intent.getExtras();
+      if (bundle != null) {
+        tripId = bundle.getString(BundleKeys.TRIP);
+        sourceId = bundle.getString(BundleKeys.STOP_SOURCE);
+        destinationId = bundle.getString(BundleKeys.STOP_DESTINATION);
+        stopMethod = bundle.getInt(BundleKeys.STOP_METHOD);
+        stopDateTime = new LocalDateTime(bundle.getLong(BundleKeys.STOP_DATETIME, new LocalDateTime().toDateTime().getMillis()));
       }
 
       if (tripId != null) {
@@ -108,6 +106,8 @@ public class TripActivity extends AppCompatActivity {
 
         loadFragments();
       }
+    } else {
+      chooChooRouterManager.loadMapSearchActivity(this);
     }
   }
 
