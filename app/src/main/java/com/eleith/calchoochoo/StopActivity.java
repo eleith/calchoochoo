@@ -53,19 +53,26 @@ public class StopActivity extends AppCompatActivity {
     subscription = rxBus.observeEvents(RxMessage.class).subscribe(new HandleRxMessages());
     ChooChooDrawer chooChooDrawer = new ChooChooDrawer(this, getWindow().getDecorView().getRootView());
     Intent intent = getIntent();
+    Boolean valid = false;
 
-    if (savedInstanceState != null && intent == null) {
+    if (savedInstanceState != null) {
       unWrapBundle(savedInstanceState);
-    } else if(intent != null){
+      valid = true;
+    } else if (intent != null) {
       Bundle bundle = intent.getExtras();
       if (bundle != null) {
         String stopId = bundle.getString(BundleKeys.STOP);
-        chooChooLoader.loadPossibleTrains(stopId, new LocalDateTime());
-        chooChooLoader.loadStopByParentId(stopId);
-        chooChooDrawer.setStopSource(stopId);
+        if (stopId != null) {
+          valid = true;
+          chooChooLoader.loadPossibleTrains(stopId, new LocalDateTime());
+          chooChooLoader.loadStopByParentId(stopId);
+          chooChooDrawer.setStopSource(stopId);
+        }
       }
-    } else {
-        chooChooRouterManager.loadMapSearchActivity(this);
+    }
+
+    if (!valid) {
+      chooChooRouterManager.loadMapSearchActivity(this);
     }
   }
 
