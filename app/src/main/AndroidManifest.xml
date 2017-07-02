@@ -31,7 +31,6 @@
         android:supportsRtl="true"
         android:theme="@style/CalChooChooTheme">
         <activity
-            android:alwaysRetainTaskState="true"
             android:name=".MapSearchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

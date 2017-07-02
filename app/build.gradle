@@ -8,8 +8,8 @@ android {
         applicationId "com.eleith.calchoochoo"
         minSdkVersion 22
         targetSdkVersion 25
-        versionCode 14
-        versionName "1.14"
+        versionCode 15
+        versionName "1.15"
         resValue "string", "GOOGLE_MAPS_API_KEY", GOOGLE_MAPS_API_KEY
     }
     buildTypes {
@@ -52,8 +52,8 @@ dependencies {
     // sqliteasset helper
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     //Parceler
-    compile 'org.parceler:parceler-api:1.1.1'
-    apt 'org.parceler:parceler:1.1.1'
+    compile 'org.parceler:parceler-api:1.1.9'
+    apt 'org.parceler:parceler:1.1.9'
     // chrome custom tabs
     compile 'com.android.support:customtabs:25.3.1'
 }

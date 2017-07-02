@@ -3,7 +3,7 @@ package com.eleith.calchoochoo.data;
 import org.joda.time.LocalTime;
 import org.parceler.Parcel;
 
-@Parcel(Parcel.Serialization.BEAN)
+@Parcel
 public class PossibleTrain {
   private String stopParentId;
   private String stopId;

@@ -101,8 +101,6 @@ public class TripFilterActivity extends AppCompatActivity {
       } else {
         chooChooRouterManager.loadTripFilterFragment(null, stopMethod, new LocalDateTime(stopDateTime), stopSourceId, stopDestinationId);
       }
-    } else {
-      chooChooRouterManager.loadMapSearchActivity(this);
     }
   }
 

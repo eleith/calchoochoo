@@ -6,7 +6,7 @@ import org.parceler.Parcel;
 
 import java.util.Comparator;
 
-@Parcel(Parcel.Serialization.BEAN)
+@Parcel
 public class Stop {
   public String stop_id;
   public String stop_name;

@@ -82,11 +82,9 @@ public class TripActivity extends AppCompatActivity {
     chooChooFab.setImageDrawable(getDrawable(R.drawable.ic_add_alarm_black_24dp));
     chooChooFab.setBackgroundTintList(ColorStateList.valueOf(ColorUtils.getThemeColor(this, R.attr.colorAccent)));
     Intent intent = getIntent();
-    Boolean valid = false;
 
     if (savedInstanceState != null) {
       unWrapBundle(savedInstanceState);
-      valid = true;
     } else if (intent != null) {
       Bundle bundle = intent.getExtras();
       if (bundle != null) {
@@ -99,23 +97,15 @@ public class TripActivity extends AppCompatActivity {
 
       if (tripId != null) {
         if (tripStops == null) {
-          valid = true;
           chooChooLoader.loadTripStops(tripId);
         }
 
         if (destinationId != null && possibleTrip == null) {
-          valid = true;
           chooChooLoader.loadPossibleTrip(tripId, sourceId, destinationId);
         }
 
-        if (valid) {
-          loadFragments();
-        }
+        loadFragments();
       }
-    }
-
-    if (!valid) {
-      chooChooRouterManager.loadMapSearchActivity(this);
     }
   }
 
