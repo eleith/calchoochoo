@@ -1,15 +1,14 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.eleith.calchoochoo"
         minSdkVersion 22
         targetSdkVersion 25
-        versionCode 15
-        versionName "1.15"
+        versionCode 17
+        versionName "1.17"
         resValue "string", "GOOGLE_MAPS_API_KEY", GOOGLE_MAPS_API_KEY
     }
     buildTypes {
@@ -43,17 +42,17 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.0'
     compile 'io.reactivex:rxjava:1.1.4'
     //dagger2 (dependency injection)
-    apt 'com.google.dagger:dagger-compiler:2.7'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.7'
     compile 'com.google.dagger:dagger:2.7'
     provided 'javax.annotation:jsr250-api:1.0'
     //butterknife (view injection)
     compile 'com.jakewharton:butterknife:8.4.0'
-    apt 'com.jakewharton:butterknife-compiler:8.4.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     // sqliteasset helper
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     //Parceler
     compile 'org.parceler:parceler-api:1.1.9'
-    apt 'org.parceler:parceler:1.1.9'
+    annotationProcessor 'org.parceler:parceler:1.1.9'
     // chrome custom tabs
     compile 'com.android.support:customtabs:25.3.1'
 }
