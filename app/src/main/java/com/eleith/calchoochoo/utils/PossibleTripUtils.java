@@ -131,7 +131,7 @@ public class PossibleTripUtils {
   }
 
   public static Cursor getPossibleTripsByParentStopQuery(SQLiteDatabase db, Long dateTime, String stop1_id, String stop2_id) {
-    String calendarFilter = CalendarDateUtils.getCalendarFilter(db, dateTime);
+    String calendarFilter = CalendarDateUtils.getFilterForDate(db, dateTime);
     String query = "SELECT " +
         "routes.route_id as route_id, " +
         "routes.route_long_name as route_long_name, " +

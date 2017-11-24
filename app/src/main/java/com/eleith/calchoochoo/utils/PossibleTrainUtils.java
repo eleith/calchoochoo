@@ -64,8 +64,9 @@ public class PossibleTrainUtils {
         "WHERE trips.trip_id = st1.trip_id " +
         "  AND trips.route_id = routes.route_id " +
         "  AND calendar.service_id = trips.service_id " +
-        CalendarDateUtils.getCalendarFilter(db, dateTimeString) +
+        CalendarDateUtils.getFilterForDate(db, dateTimeString) +
         "ORDER BY st1__departure_time ASC ";
+
     String[] args = {stop_id};
     return db.rawQuery(query, args);
   }
